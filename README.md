@@ -1,3 +1,5 @@
+![version](https://img.shields.io/badge/version-2019.0.0--PR-blue.svg?style=flat-square)
+
 # cynoodle-core
 
 `cynoodle-core` is the core application for the cynoodle Discord bot.
