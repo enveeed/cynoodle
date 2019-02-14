@@ -28,11 +28,11 @@ final def getGitHash = { ->
     return stdout.toString().trim()
 }
 
-//final def gitHash = getGitHash.call()
+final def gitHash = getGitHash.call()
 
 // ======
 
-version "2019.0.0-PR-local" //"2019.0.0-PR-$gitHash"
+version "2019.0.0-PR-$gitHash"
 group "cynoodle"
 
 // ======
