@@ -7,8 +7,12 @@
 package cynoodle.core.discord;
 
 import net.dv8tion.jda.core.entities.ISnowflake;
+import org.bson.BsonInt64;
+import org.bson.BsonNull;
+import org.bson.BsonValue;
 
 import javax.annotation.Nonnull;
+import java.util.function.Function;
 
 /**
  * Immutable pointer to any snowflake-identified entity within Discord.
@@ -56,5 +60,23 @@ public final class DiscordPointer {
     @Nonnull
     public static DiscordPointer to(@Nonnull ISnowflake entity) {
         return to(entity.getIdLong());
+    }
+
+    // ===
+
+    public static Function<DiscordPointer, BsonInt64> toBson() {
+        return pointer -> new BsonInt64(pointer.getID());
+    }
+
+    public static Function<DiscordPointer, BsonValue> toBsonNullable() {
+        return pointer -> pointer == null ? BsonNull.VALUE : new BsonInt64(pointer.getID());
+    }
+
+    public static Function<BsonValue, DiscordPointer> fromBson() {
+        return value -> DiscordPointer.to(value.asInt64().getValue());
+    }
+
+    public static Function<BsonValue, DiscordPointer> fromBsonNullable() {
+        return value -> value.isNull() ? null : DiscordPointer.to(value.asInt64().getValue());
     }
 }
