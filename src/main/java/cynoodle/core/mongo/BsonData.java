@@ -6,6 +6,7 @@
 
 package cynoodle.core.mongo;
 
+import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.BsonDocument;
 
 import javax.annotation.Nonnull;
@@ -22,7 +23,7 @@ public interface BsonData {
      * @throws BsonDataException if the BSON is invalid or doesnt match the expected format
      * or there was an issue with updating the state
      */
-    default void fromBson(@Nonnull BsonDocument data) throws BsonDataException {
+    default void fromBson(@Nonnull FluentDocument data) throws BsonDataException {
         //
     }
 
@@ -32,7 +33,7 @@ public interface BsonData {
      * @throws BsonDataException if there was an issue with outputting the state
      */
     @Nonnull
-    default BsonDocument toBson() throws BsonDataException {
-        return new BsonDocument();
+    default FluentDocument toBson() throws BsonDataException {
+        return FluentDocument.wrap(new BsonDocument());
     }
 }
