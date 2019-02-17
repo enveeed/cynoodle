@@ -27,7 +27,7 @@ public final class Either<L, R> {
     }
 
     /**
-     * Turns a left into a right and vice-versa.
+     * Turns a left into a right either and vice-versa.
      *
      * @return A new swapped either instance.
      */
@@ -36,7 +36,7 @@ public final class Either<L, R> {
     }
 
     /**
-     * Returns an optional the will be {@link Optional#isPresent() present} is this is a left
+     * Returns an optional that will be {@link Optional#isPresent() present} is this is a left
      * instance.
      *
      * @return An optional value for the left.
@@ -46,7 +46,7 @@ public final class Either<L, R> {
     }
 
     /**
-     * Returns an optional the will be {@link Optional#isPresent() present} is this is a right
+     * Returns an optional that will be {@link Optional#isPresent() present} is this is a right
      * instance.
      *
      * @return An optional value for the right.
