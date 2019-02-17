@@ -9,17 +9,17 @@ package cynoodle.core.discord;
 import com.mongodb.client.model.Filters;
 import cynoodle.core.entities.Entity;
 import cynoodle.core.mongo.BsonDataException;
+import cynoodle.core.mongo.fluent.FluentDocument;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
-import org.bson.BsonDocument;
-import org.bson.BsonInt64;
-import org.bson.BsonNull;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
+
+import static cynoodle.core.discord.DiscordPointer.*;
 
 /**
  * An Entity which belongs to a {@link Member}.
@@ -111,36 +111,37 @@ public abstract class MEntity extends Entity implements GHolder, UHolder {
 
     @Nonnull
     public static Bson filterGuild(@Nonnull Guild guild) {
-        return filterGuild(DiscordPointer.to(guild));
+        return filterGuild(to(guild));
     }
 
     @Nonnull
     public static Bson filterUser(@Nonnull User user) {
-        return filterUser(DiscordPointer.to(user));
+        return filterUser(to(user));
     }
 
     @Nonnull
     public static Bson filterMember(@Nonnull Member member) {
-        return filterMember(DiscordPointer.to(member.getGuild()), DiscordPointer.to(member.getUser()));
+        return filterMember(to(member.getGuild()), to(member.getUser()));
     }
 
     // === DATA ===
 
     @Override
-    public void fromBson(@Nonnull BsonDocument source) throws BsonDataException {
+    public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
         super.fromBson(source);
 
-        Optional.of(source.get(KEY_GUILD)).ifPresent(v -> this.guild = v.isInt64() ? DiscordPointer.to(v.asInt64().getValue()) : null);
-        Optional.of(source.get(KEY_USER)).ifPresent(v -> this.user = v.isInt64() ? DiscordPointer.to(v.asInt64().getValue()) : null);
+        this.guild = source.getAt(KEY_GUILD).as(fromBsonNullable()).or(this.guild);
+        this.user = source.getAt(KEY_USER).as(fromBsonNullable()).or(this.user);
+
     }
 
     @Nonnull
     @Override
-    public BsonDocument toBson() throws BsonDataException {
-        BsonDocument data = super.toBson();
+    public FluentDocument toBson() throws BsonDataException {
+        FluentDocument data = super.toBson();
 
-        data.put(KEY_GUILD, this.guild == null ? new BsonNull() : new BsonInt64(this.guild.getID()));
-        data.put(KEY_USER, this.user == null ? new BsonNull() : new BsonInt64(this.user.getID()));
+        data.setAt(KEY_GUILD).as(toBsonNullable()).to(this.guild);
+        data.setAt(KEY_USER).as(toBsonNullable()).to(this.user);
 
         return data;
     }

@@ -9,15 +9,15 @@ package cynoodle.core.discord;
 import com.mongodb.client.model.Filters;
 import cynoodle.core.entities.Entity;
 import cynoodle.core.mongo.BsonDataException;
+import cynoodle.core.mongo.fluent.FluentDocument;
 import net.dv8tion.jda.core.entities.Guild;
-import org.bson.BsonDocument;
-import org.bson.BsonInt64;
-import org.bson.BsonNull;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
+
+import static cynoodle.core.discord.DiscordPointer.*;
 
 /**
  * An Entity which belongs to a {@link Guild}.
@@ -64,24 +64,24 @@ public abstract class GEntity extends Entity implements GHolder {
 
     @Nonnull
     public static Bson filterGuild(@Nonnull Guild guild) {
-        return filterGuild(DiscordPointer.to(guild));
+        return filterGuild(to(guild));
     }
 
     // === DATA ===
 
     @Override
-    public void fromBson(@Nonnull BsonDocument source) throws BsonDataException {
+    public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
         super.fromBson(source);
 
-        Optional.of(source.get(KEY_GUILD)).ifPresent(v -> this.guild = v.isInt64() ? DiscordPointer.to(v.asInt64().getValue()) : null);
+        this.guild = source.getAt(KEY_GUILD).as(fromBsonNullable()).or(this.guild);
     }
 
     @Nonnull
     @Override
-    public BsonDocument toBson() throws BsonDataException {
-        BsonDocument data = super.toBson();
+    public FluentDocument toBson() throws BsonDataException {
+        FluentDocument data = super.toBson();
 
-        data.put(KEY_GUILD, this.guild == null ? new BsonNull() : new BsonInt64(this.guild.getID()));
+        data.setAt(KEY_GUILD).as(toBsonNullable()).to(this.guild);
 
         return data;
     }
