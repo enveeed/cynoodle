@@ -42,19 +42,19 @@ public final class FluentDocument implements FluentValue {
 
     // ===
 
-    public SetAPI<BsonValue> set(String key) {
+    public SetAPI<BsonValue> setAt(String key) {
         return at(key).set();
     }
 
-    public GetAPI<BsonValue> get(String key) {
+    public GetAPI<BsonValue> getAt(String key) {
         return at(key).get();
     }
 
     // ===
 
-    public final class AtAPI {
+    public class AtAPI {
 
-        private final String key;
+        protected final String key;
 
         // ===
 
@@ -77,19 +77,25 @@ public final class FluentDocument implements FluentValue {
         public boolean exists() {
             return document.containsKey(this.key);
         }
+
+        // ===
+
+        public FluentDocument remove() {
+            document.remove(this.key);
+            return FluentDocument.this;
+        }
     }
 
     // ===
 
-    public final class SetAPI<T> {
+    public final class SetAPI<T> extends AtAPI {
 
-        private final String key;
         private final Function<? super T, ? extends BsonValue> function;
 
         // ===
 
         private SetAPI(String key, Function<? super T, ? extends BsonValue> function) {
-            this.key = key;
+            super(key);
             this.function = function;
         }
 
@@ -103,6 +109,10 @@ public final class FluentDocument implements FluentValue {
 
         public SetAPI<FluentDocument> asDocument() {
             return as(FluentDocument::asBson);
+        }
+
+        public SetAPI<FluentArray> asArray() {
+            return as(FluentArray::asBson);
         }
 
         //
@@ -136,15 +146,14 @@ public final class FluentDocument implements FluentValue {
 
     }
 
-    public final class GetAPI<T> {
+    public final class GetAPI<T> extends AtAPI {
 
-        private final String key;
         private final Function<? super BsonValue, ? extends T> function;
 
         // ===
 
         private GetAPI(String key, Function<? super BsonValue, ? extends T> function) {
-            this.key = key;
+            super(key);
             this.function = function;
         }
 
@@ -157,7 +166,11 @@ public final class FluentDocument implements FluentValue {
         //
 
         public GetAPI<FluentDocument> asDocument() {
-            return as(value -> new FluentDocument(value.asDocument()));
+            return as(value -> FluentDocument.wrap(value.asDocument()));
+        }
+
+        public GetAPI<FluentArray> asArray() {
+            return as(value -> FluentArray.wrap(value.asArray()));
         }
 
         //
