@@ -7,7 +7,6 @@
 package cynoodle.core.mongo;
 
 import cynoodle.core.mongo.fluent.FluentDocument;
-import org.bson.BsonDocument;
 
 import javax.annotation.Nonnull;
 
@@ -34,6 +33,6 @@ public interface BsonData {
      */
     @Nonnull
     default FluentDocument toBson() throws BsonDataException {
-        return FluentDocument.wrap(new BsonDocument());
+        return FluentDocument.wrapNew();
     }
 }

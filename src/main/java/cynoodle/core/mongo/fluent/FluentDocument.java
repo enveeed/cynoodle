@@ -105,6 +105,10 @@ public final class FluentDocument implements FluentValue {
             return new SetAPI<>(this.key, function);
         }
 
+        public <V> SetAPI<V> map(Function<? super V, ? extends T> function) {
+            return new SetAPI<>(this.key, function.andThen(this.function));
+        }
+
         //
 
         public SetAPI<FluentDocument> asDocument() {
@@ -137,6 +141,38 @@ public final class FluentDocument implements FluentValue {
             return as(BsonBoolean::new);
         }
 
+        //
+
+        public SetAPI<FluentDocument> asDocumentNullable() {
+            return as(x -> x == null ? BsonNull.VALUE : x.asBson());
+        }
+
+        public SetAPI<FluentArray> asArrayNullable() {
+            return as(x -> x == null ? BsonNull.VALUE : x.asBson());
+        }
+
+        //
+
+        public SetAPI<String> asStringNullable() {
+            return as(x -> x == null ? BsonNull.VALUE : new BsonString(x));
+        }
+
+        public SetAPI<Integer> asIntegerNullable() {
+            return as(x -> x == null ? BsonNull.VALUE : new BsonInt32(x));
+        }
+
+        public SetAPI<Long> asLongNullable() {
+            return as(x -> x == null ? BsonNull.VALUE : new BsonInt64(x));
+        }
+
+        public SetAPI<Double> asDoubleNullable() {
+            return as(x -> x == null ? BsonNull.VALUE : new BsonDouble(x));
+        }
+
+        public SetAPI<Boolean> asBooleanNullable() {
+            return as(x -> x == null ? BsonNull.VALUE : new BsonBoolean(x));
+        }
+
         // ===
 
         public FluentDocument to(T value) {
@@ -161,6 +197,10 @@ public final class FluentDocument implements FluentValue {
 
         public <V> GetAPI<V> as(Function<? super BsonValue, ? extends V> function) {
             return new GetAPI<>(this.key, function);
+        }
+
+        public <V> GetAPI<V> map(Function<? super T, ? extends V> function) {
+            return new GetAPI<>(this.key, this.function.andThen(function));
         }
 
         //
@@ -195,6 +235,38 @@ public final class FluentDocument implements FluentValue {
             return as(value -> value.asBoolean().getValue());
         }
 
+        //
+
+        public GetAPI<FluentDocument> asDocumentNullable() {
+            return as(value -> value.isNull() ? null : FluentDocument.wrap(value.asDocument()));
+        }
+
+        public GetAPI<FluentArray> asArrayNullable() {
+            return as(value -> value.isNull() ? null : FluentArray.wrap(value.asArray()));
+        }
+
+        //
+
+        public GetAPI<String> asStringNullable() {
+            return as(value -> value.isNull() ? null : value.asString().getValue());
+        }
+
+        public GetAPI<Integer> asIntegerNullable() {
+            return as(value -> value.isNull() ? null : value.asInt32().getValue());
+        }
+
+        public GetAPI<Long> asLongNullable() {
+            return as(value -> value.isNull() ? null : value.asInt64().getValue());
+        }
+
+        public GetAPI<Double> asDoubleNullable() {
+            return as(value -> value.isNull() ? null : value.asDouble().getValue());
+        }
+
+        public GetAPI<Boolean> asBooleanNullable() {
+            return as(value -> value.isNull() ? null : value.asBoolean().getValue());
+        }
+
         // ===
 
         public T value() throws NoSuchElementException {
@@ -222,5 +294,9 @@ public final class FluentDocument implements FluentValue {
 
     public static FluentDocument wrap(BsonDocument bson) {
         return new FluentDocument(bson);
+    }
+
+    public static FluentDocument wrapNew() {
+        return new FluentDocument(new BsonDocument());
     }
 }
