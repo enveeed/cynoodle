@@ -72,7 +72,8 @@ public final class Options implements Parser<Options.Result> {
 
     @Override
     public Result parse(@Nonnull String input) throws ParserException {
-        throw new UnsupportedOperationException(); // TODO
+        return new Result();
+        //throw new ParserException("Parsing is currently not supported. :(\nInput was: "+input); // TODO
     }
 
     // ===
