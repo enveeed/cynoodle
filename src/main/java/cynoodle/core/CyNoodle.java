@@ -10,7 +10,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.flogger.FluentLogger;
 import com.mongodb.client.MongoClient;
 import cynoodle.core.base.TestModule;
-import cynoodle.core.base.commands.CommandModule;
+import cynoodle.core.base.command.CommandModule;
 import cynoodle.core.base.strikes.StrikesModule;
 import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.ModuleClassException;
