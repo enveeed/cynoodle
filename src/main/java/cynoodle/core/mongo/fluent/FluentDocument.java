@@ -40,7 +40,7 @@ public final class FluentDocument implements FluentValue {
         return new AtAPI(key);
     }
 
-    // ===
+    //
 
     public SetAPI<BsonValue> setAt(String key) {
         return at(key).set();
@@ -48,6 +48,12 @@ public final class FluentDocument implements FluentValue {
 
     public GetAPI<BsonValue> getAt(String key) {
         return at(key).get();
+    }
+
+    // ===
+
+    public int size() {
+        return this.document.size();
     }
 
     // ===

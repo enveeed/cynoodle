@@ -33,7 +33,9 @@ public final class FluentArray implements FluentValue {
 
     // ===
 
-
+    public int size() {
+        return this.array.size();
+    }
 
     // ===
 
