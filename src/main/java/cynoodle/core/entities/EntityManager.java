@@ -19,6 +19,7 @@ import cynoodle.core.Snowflake;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.MongoModule;
+import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.conversions.Bson;
@@ -189,6 +190,14 @@ public class EntityManager<E extends Entity> {
 
     //
 
+    @Nonnull
+    public E firstOrCreate(@Nonnull Bson filter, @Nonnull Consumer<E> action) throws EntityIOException {
+        Optional<E> result = this.first(filter);
+        return result.orElseGet(() -> this.create(action));
+    }
+
+    //
+
     /**
      * Count the amount of Entities of which the saved state matches the given filter.
      * @param filter the filter
@@ -288,7 +297,7 @@ public class EntityManager<E extends Entity> {
         BsonDocument data;
 
         try {
-            data = entity.toBson();
+            data = entity.toBson().asBson();
         } catch (BsonDataException e) {
             throw new EntityIOException("Failed to create BSON from Entity state!", e);
         }
@@ -336,7 +345,7 @@ public class EntityManager<E extends Entity> {
         //
 
         try {
-            entity.fromBson(data);
+            entity.fromBson(FluentDocument.wrap(data));
         } catch (BsonDataException e) {
             throw new EntityIOException("Failed to load BSON into Entity state!", e);
         }

@@ -6,13 +6,14 @@
 
 package cynoodle.core.discord;
 
+import com.mongodb.client.model.Filters;
 import cynoodle.core.Snowflake;
 import cynoodle.core.entities.EntityManager;
 import cynoodle.core.entities.EntityType;
 import net.dv8tion.jda.core.entities.User;
+import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -54,14 +55,25 @@ public class UEntityManager<E extends UEntity> extends EntityManager<E> {
     //
 
     @Nonnull
+    public final E firstOrCreate(@Nonnull DiscordPointer user, @Nonnull Bson filter, @Nonnull Consumer<E> action) {
+        return this.firstOrCreate(Filters.and(UEntity.filterUser(user), filter),
+                ((Consumer<E>) e -> e.setUser(user)).andThen(action));
+    }
+
+    @Nonnull
     public final E firstOrCreate(@Nonnull DiscordPointer user, @Nonnull Consumer<E> action) {
-        Optional<E> result = this.first(UEntity.filterUser(user));
-        return result.orElseGet(() -> this.create(((Consumer<E>) e -> e.setUser(user)).andThen(action)));
+        return this.firstOrCreate(UEntity.filterUser(user),
+                ((Consumer<E>) e -> e.setUser(user)).andThen(action));
     }
 
     @Nonnull
     public final E firstOrCreate(@Nonnull DiscordPointer user) {
         return this.firstOrCreate(user, e -> {});
+    }
+
+    @Nonnull
+    public final E firstOrCreate(@Nonnull User user, @Nonnull Bson filter, @Nonnull Consumer<E> action) {
+        return this.firstOrCreate(DiscordPointer.to(user), filter, action);
     }
 
     @Nonnull
