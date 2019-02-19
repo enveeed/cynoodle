@@ -86,7 +86,7 @@ public final class Options implements Parser<Options.Result> {
 
         // 0 start or separator, 1 parameter, 2 oc1, 3 oc2, 4 lo, 5 so, 6 value
         int state = 0;
-        // 0 nothing, 1 parameter, 2 short option, 3 long option
+        // 0 nothing, 1 parameter, 2 short option, 3 long option, 4 value
         int drain = 0;
 
         boolean inEscape = false;
@@ -196,7 +196,7 @@ public final class Options implements Parser<Options.Result> {
             } else { // state == 6
                 // value for an option
 
-                // this should happen since all redirects to
+                // this shouldn't happen since all redirects to
                 // this state set value_option beforehand
                 if (value_option == null) throw new IllegalStateException();
 
@@ -206,11 +206,8 @@ public final class Options implements Parser<Options.Result> {
                         state = 6;
                     } else {
                         if (last) collector.append(character);
-                        result.addOptionWithValue(value_option, collector.drainString());
-                        state = 0;
+                        drain = 4;
                     }
-
-                    value_option = null;
                 } else {
                     collector.append(character);
                     state = 6;
@@ -241,7 +238,7 @@ public final class Options implements Parser<Options.Result> {
                         if (option.isValueRequired()) {
                             if (!last_short)
                                 throw new ParserException("Options which require values must be the last element " +
-                                        "in a option listing, if used in the short form: `" + character_short + "`");
+                                        "in a option listing, if used in the short form: `" + this.char_option + character_short + "`");
                             else {
                                 value_option = option;
                                 state = 6;
@@ -270,6 +267,12 @@ public final class Options implements Parser<Options.Result> {
                     }
                 }
 
+            } else if (drain == 4) {
+
+                result.addOptionWithValue(value_option, collector.drainString());
+
+                state = 0;
+                value_option = null;
             }
 
             // reset drain
