@@ -11,6 +11,7 @@ import com.google.common.collect.Iterables;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,6 +60,11 @@ public final class Parameters {
     @Nonnull
     public static Parameters of(@Nonnull String[] parameters) {
         return new Parameters(parameters);
+    }
+
+    @Nonnull
+    public static Parameters of(@Nonnull Collection<String> parameters) {
+        return new Parameters(Iterables.toArray(parameters, String.class));
     }
 
     @Nonnull
