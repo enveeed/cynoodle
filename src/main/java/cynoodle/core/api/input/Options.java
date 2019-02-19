@@ -84,7 +84,7 @@ public final class Options implements Parser<Options.Result> {
 
         Collector collector = new Collector();
 
-        // 0 start or separator, 1 parameter, 2 oc1, 3 oc2, 4 lo, 5 so, 6 value
+        // 0 start or separator, 1 parameter, 2 oc1, 3 oc2, 4 lo, 5 so, 6 value, 7 escape or block
         int state = 0;
         // 0 nothing, 1 parameter, 2 short option, 3 long option, 4 value
         int drain = 0;
@@ -103,15 +103,20 @@ public final class Options implements Parser<Options.Result> {
             // if this is the last character
             boolean last = i == input.length() - 1;
 
-            // toggle block
-            if (character == char_block) {
+            // this (last) character is an escape or block character
+            boolean last_be = false;
+
+            // toggle block (not if escaped)
+            if (character == char_block && !inEscape) {
                 inBlock = !inBlock;
-                continue; // go to next
+                if(!last) continue; // go to next (if not last one)
+                last_be = true;
             }
-            // set escape
-            if (character == char_escape) {
+            // set escape (not if escaped)
+            if (character == char_escape && !inEscape) {
                 inEscape = true;
-                continue; // go to next
+                if(!last) continue; // go to next (if not last one)
+                last_be = true;
             }
 
             // if this character is in a block or is escaped,
@@ -131,7 +136,7 @@ public final class Options implements Parser<Options.Result> {
                         state = 1;
                     } else state = 2;
                 } else {
-                    collector.append(character);
+                    if(!last_be) collector.append(character);
                     state = 1;
                     if(last) drain = 1;
                 }
@@ -142,7 +147,7 @@ public final class Options implements Parser<Options.Result> {
                         collector.append(character);
                         state = 1;
                     } else {
-                        if (last) collector.append(character);
+                        if (last && !last_be) collector.append(character);
                         drain = 1;
                     }
                 } else {
@@ -153,7 +158,7 @@ public final class Options implements Parser<Options.Result> {
                 // option-char 1
                 if (character == char_separator || last) {
                     if(last) {
-                        collector.append(character);
+                        if(!last_be) collector.append(character);
                         drain = 2;
                     }
                     state = 0;
@@ -166,6 +171,10 @@ public final class Options implements Parser<Options.Result> {
             } else if (state == 3) {
                 // option-char 2
                 if (character == char_separator || last) {
+                    if(last) {
+                        if(!last_be) collector.append(character);
+                        drain = 3;
+                    }
                     state = 0;
                 } else if (character == char_option) {
                     state = 3;
@@ -176,7 +185,7 @@ public final class Options implements Parser<Options.Result> {
             } else if (state == 4) {
                 // long option
                 if (character == char_separator || last) {
-                    if (last) collector.append(character);
+                    if (last && !last_be) collector.append(character);
                     drain = 3;
                 } else {
                     collector.append(character);
@@ -185,7 +194,7 @@ public final class Options implements Parser<Options.Result> {
             } else if (state == 5) {
                 // short option
                 if (character == char_separator || last) {
-                    if (last) collector.append(character);
+                    if (last && !last_be) collector.append(character);
                     drain = 2;
                 } else if (character == char_option) {
                     state = 5;
@@ -193,7 +202,7 @@ public final class Options implements Parser<Options.Result> {
                     collector.append(character);
                     state = 5;
                 }
-            } else { // state == 6
+            } else {
                 // value for an option
 
                 // this shouldn't happen since all redirects to
@@ -205,7 +214,7 @@ public final class Options implements Parser<Options.Result> {
                         collector.append(character);
                         state = 6;
                     } else {
-                        if (last) collector.append(character);
+                        if (last && !last_be) collector.append(character);
                         drain = 4;
                     }
                 } else {
