@@ -8,6 +8,8 @@ package cynoodle.core.api.input;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import cynoodle.core.api.text.Parser;
+import cynoodle.core.api.text.ParserException;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -53,6 +55,13 @@ public final class Parameters {
 
     public boolean has(int index) {
         return index >= 0 && index < this.parameters.length;
+    }
+
+    // ===
+
+    @Nonnull
+    public <T> T getAs(int index, @Nonnull Parser<T> parser) throws ParserException {
+        return parser.parse(get(index));
     }
 
     // ===
