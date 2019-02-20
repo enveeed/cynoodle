@@ -6,12 +6,16 @@
 
 package cynoodle.core.discord;
 
+import cynoodle.core.module.Module;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.ISnowflake;
+import net.dv8tion.jda.core.entities.User;
 import org.bson.BsonInt64;
 import org.bson.BsonNull;
 import org.bson.BsonValue;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -35,6 +39,20 @@ public final class DiscordPointer {
      */
     public long getID() {
         return this.id;
+    }
+
+    // ===
+
+    @Nonnull
+    public Optional<User> asUser() {
+        return Optional.ofNullable(Module.get(DiscordModule.class)
+                .getAPI().getUserById(this.id));
+    }
+
+    @Nonnull
+    public Optional<Guild> asGuild() {
+        return Optional.ofNullable(Module.get(DiscordModule.class)
+                .getAPI().getGuildById(this.id));
     }
 
     // ===
