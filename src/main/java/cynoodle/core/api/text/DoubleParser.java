@@ -13,6 +13,10 @@ import javax.annotation.Nonnull;
  */
 public final class DoubleParser implements Parser<Double> {
 
+    private final static DoubleParser instance = new DoubleParser();
+
+    // ===
+
     @Override
     public Double parse(@Nonnull String input) throws ParserException {
         try {
@@ -22,4 +26,10 @@ public final class DoubleParser implements Parser<Double> {
         }
     }
 
+    // ===
+
+    @Nonnull
+    public static DoubleParser get() {
+        return instance;
+    }
 }

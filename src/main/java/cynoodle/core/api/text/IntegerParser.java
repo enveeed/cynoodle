@@ -13,6 +13,10 @@ import javax.annotation.Nonnull;
  */
 public final class IntegerParser implements Parser<Integer> {
 
+    private final static IntegerParser instance = new IntegerParser();
+
+    // ===
+
     @Override
     public Integer parse(@Nonnull String input) throws ParserException {
         try {
@@ -22,4 +26,10 @@ public final class IntegerParser implements Parser<Integer> {
         }
     }
 
+    // ===
+
+    @Nonnull
+    public static IntegerParser get() {
+        return instance;
+    }
 }

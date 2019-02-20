@@ -13,6 +13,10 @@ import javax.annotation.Nonnull;
  */
 public final class LongParser implements Parser<Long> {
 
+    private final static LongParser instance = new LongParser();
+
+    // ===
+
     @Override
     public Long parse(@Nonnull String input) throws ParserException {
         try {
@@ -22,4 +26,10 @@ public final class LongParser implements Parser<Long> {
         }
     }
 
+    // ===
+
+    @Nonnull
+    public static LongParser get() {
+        return instance;
+    }
 }

@@ -13,9 +13,19 @@ import javax.annotation.Nonnull;
  */
 public final class StringParser implements Parser<String> {
 
+    private static final StringParser instance = new StringParser();
+
+    // ===
+
     @Override
     public String parse(@Nonnull String input) {
         return input;
     }
 
+    // ===
+
+    @Nonnull
+    public static StringParser get() {
+        return instance;
+    }
 }
