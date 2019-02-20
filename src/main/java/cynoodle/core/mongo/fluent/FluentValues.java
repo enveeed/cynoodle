@@ -10,6 +10,7 @@ import org.bson.BsonInt64;
 import org.bson.BsonNull;
 import org.bson.BsonValue;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Function;
 
@@ -31,6 +32,22 @@ public final class FluentValues {
     }
 
     public static Function<BsonValue, Instant> toInstantNullable() {
-        return x -> x.isNull() ? null :Instant.ofEpochMilli(x.asInt64().getValue());
+        return x -> x.isNull() ? null : Instant.ofEpochMilli(x.asInt64().getValue());
+    }
+
+    public static Function<Duration, BsonInt64> fromDuration() {
+        return x -> new BsonInt64(x.toMillis());
+    }
+
+    public static Function<Duration, BsonValue> fromDurationNullable() {
+        return x -> x == null ? BsonNull.VALUE : new BsonInt64(x.toMillis());
+    }
+
+    public static Function<BsonValue, Duration> toDuration() {
+        return x -> Duration.ofMillis(x.asInt64().getValue());
+    }
+
+    public static Function<BsonValue, Duration> toDurationNullable() {
+        return x -> x.isNull() ? null : Duration.ofMillis(x.asInt64().getValue());
     }
 }
