@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,20 +49,31 @@ public final class Parameters {
 
     // ===
 
-    @Nonnull
-    public String get(int index) throws ArrayIndexOutOfBoundsException {
-        return this.parameters[index];
-    }
-
     public boolean has(int index) {
         return index >= 0 && index < this.parameters.length;
+    }
+
+    public void ensureHas(int index) throws ParametersException {
+        if(!has(index))
+            throw new ParametersException("At least `" + (index + 1) + "` parameter(s) required!");
     }
 
     // ===
 
     @Nonnull
-    public <T> T getAs(int index, @Nonnull Parser<T> parser) throws ParserException {
-        return parser.parse(get(index));
+    public Optional<String> get(int index) {
+        if(has(index)) return Optional.of(this.parameters[index]);
+        else return Optional.empty();
+    }
+
+    // ===
+
+    @Nonnull
+    public <T> Optional<T> getAs(int index, @Nonnull Parser<T> parser) throws ParserException {
+        // re-wrap the optional because functional map() cannot handle checked exceptions.
+        Optional<String> opt = get(index);
+        if(opt.isPresent()) return Optional.of(parser.parse(opt.orElseThrow()));
+        else return Optional.empty();
     }
 
     // ===

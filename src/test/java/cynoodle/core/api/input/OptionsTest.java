@@ -54,13 +54,13 @@ class OptionsTest {
 
         assertEquals("value", result.getOptionValue(z));
 
-        assertEquals("param0", result.getParameters().get(0));
-        assertEquals("parameter 1", result.getParameters().get(1));
-        assertEquals("parameter with escaping 2", result.getParameters().get(2));
-        assertEquals("param3", result.getParameters().get(3));
-        assertEquals("param4", result.getParameters().get(4));
-        assertEquals("-d", result.getParameters().get(5));
-        assertEquals("param5", result.getParameters().get(6));
+        assertEquals("param0", result.getParameters().get(0).orElse(null));
+        assertEquals("parameter 1", result.getParameters().get(1).orElse(null));
+        assertEquals("parameter with escaping 2", result.getParameters().get(2).orElse(null));
+        assertEquals("param3", result.getParameters().get(3).orElse(null));
+        assertEquals("param4", result.getParameters().get(4).orElse(null));
+        assertEquals("-d", result.getParameters().get(5).orElse(null));
+        assertEquals("param5", result.getParameters().get(6).orElse(null));
 
     }
 
@@ -101,7 +101,7 @@ class OptionsTest {
 
         Options.Result result = assertDoesNotThrow(() -> options.parse(input));
 
-        assertEquals("4", result.getParameters().get(4));
+        assertEquals("4", result.getParameters().get(4).orElse(null));
 
     }
 
