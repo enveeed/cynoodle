@@ -7,6 +7,7 @@
 package cynoodle.core.discord;
 
 import com.mongodb.client.model.Filters;
+import cynoodle.core.entities.EIndex;
 import cynoodle.core.entities.Entity;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
@@ -22,12 +23,13 @@ import static cynoodle.core.discord.DiscordPointer.*;
 /**
  * An Entity which belongs to a {@link Guild}.
  */
+@EIndex(GEntity.KEY_GUILD)
 public abstract class GEntity extends Entity implements GHolder {
     protected GEntity() {}
 
     // ===
 
-    private static final String KEY_GUILD = "guild";
+    static final String KEY_GUILD = "guild";
 
     // ===
 

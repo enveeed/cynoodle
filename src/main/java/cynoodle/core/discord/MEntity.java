@@ -7,6 +7,7 @@
 package cynoodle.core.discord;
 
 import com.mongodb.client.model.Filters;
+import cynoodle.core.entities.EIndex;
 import cynoodle.core.entities.Entity;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
@@ -25,13 +26,15 @@ import static cynoodle.core.discord.DiscordPointer.*;
  * An Entity which belongs to a {@link Member}.
  * Is both a {@link GHolder} and {@link UHolder} implementation.
  */
+@EIndex(MEntity.KEY_GUILD)
+@EIndex(MEntity.KEY_USER)
 public abstract class MEntity extends Entity implements GHolder, UHolder {
     protected MEntity() {}
 
     // ===
 
-    private static final String KEY_GUILD = "guild";
-    private static final String KEY_USER = "user";
+    static final String KEY_GUILD = "guild";
+    static final String KEY_USER = "user";
 
     // ===
 

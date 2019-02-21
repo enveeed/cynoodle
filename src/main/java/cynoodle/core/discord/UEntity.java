@@ -7,6 +7,7 @@
 package cynoodle.core.discord;
 
 import com.mongodb.client.model.Filters;
+import cynoodle.core.entities.EIndex;
 import cynoodle.core.entities.Entity;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
@@ -22,12 +23,13 @@ import static cynoodle.core.discord.DiscordPointer.*;
 /**
  * An Entity which belongs to a {@link User}.
  */
+@EIndex(UEntity.KEY_USER)
 public abstract class UEntity extends Entity implements UHolder {
     protected UEntity() {}
 
     // ===
 
-    private static final String KEY_USER = "user";
+    static final String KEY_USER = "user";
 
     // ===
 
