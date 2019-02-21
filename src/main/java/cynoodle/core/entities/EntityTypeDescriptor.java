@@ -7,10 +7,14 @@
 package cynoodle.core.entities;
 
 import com.google.common.flogger.FluentLogger;
+import cynoodle.core.api.Checks;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Descriptor for an {@link Entity} class and its {@link EntityType}.
@@ -27,14 +31,16 @@ public final class EntityTypeDescriptor {
 
     private final String identifier;
     private final String collection;
+    private final Set<String> indexes;
 
     // ===
 
     private EntityTypeDescriptor(@Nonnull Builder builder) {
         this.entityClass = builder.entityClass;
 
-        this.identifier = builder.identifier;
-        this.collection = builder.collection;
+        this.identifier = Checks.notNull(builder.identifier, "identifier");
+        this.collection = Checks.notNull(builder.collection, "collection");
+        this.indexes = Checks.notNull(builder.indexes, "indexes");
     }
 
     // ===
@@ -56,6 +62,11 @@ public final class EntityTypeDescriptor {
         return collection;
     }
 
+    @Nonnull
+    public Set<String> getIndexes() {
+        return this.indexes;
+    }
+
     // ===
 
     /**
@@ -69,6 +80,7 @@ public final class EntityTypeDescriptor {
 
         private String identifier;
         private String collection;
+        private Set<String> indexes;
 
         // ======
 
@@ -87,6 +99,12 @@ public final class EntityTypeDescriptor {
         @Nonnull
         public Builder setCollection(@Nonnull String collection) {
             this.collection = collection;
+            return this;
+        }
+
+        @Nonnull
+        public Builder setIndexes(@Nonnull Set<String> indexes) {
+            this.indexes = indexes;
             return this;
         }
     }
@@ -131,8 +149,9 @@ public final class EntityTypeDescriptor {
         // ======
 
         // find annotations
-        EIdentifier annIdentifier = entityClass.getDeclaredAnnotation(EIdentifier.class);
-        ECollection annCollection = entityClass.getDeclaredAnnotation(ECollection.class);
+        EIdentifier annIdentifier = entityClass.getAnnotation(EIdentifier.class);
+        ECollection annCollection = entityClass.getAnnotation(ECollection.class);
+        EIndexes annIndexes = entityClass.getAnnotation(EIndexes.class);
 
         // ensure required annotations
         if(annIdentifier == null) throw new EntityClassException("Entity class is missing @EIdentifier annotation!");
@@ -154,6 +173,17 @@ public final class EntityTypeDescriptor {
         String collection = annCollection != null ? annCollection.value() : identifier;
 
         builder.setCollection(collection);
+
+        // ======
+
+        Set<String> indexes = new HashSet<>();
+
+        if(annIndexes != null) {
+            for (EIndex annIndex : annIndexes.value())
+                indexes.add(annIndex.value());
+        }
+
+        builder.setIndexes(Collections.unmodifiableSet(indexes));
 
         // ======
 

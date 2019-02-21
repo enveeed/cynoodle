@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -56,6 +57,8 @@ public class EntityManager<E extends Entity> {
     private static final CountOptions   OPTIONS_COUNT       = new CountOptions();
     private static final CountOptions   OPTIONS_COUNT_EXIST = new CountOptions().limit(1);
 
+    private static final IndexOptions   OPTIONS_INDEX       = new IndexOptions();
+
     // ======
 
     private final EntityType<E> type;
@@ -68,6 +71,10 @@ public class EntityManager<E extends Entity> {
      * Entity cache.
      */
     private final MutableLongObjectMap<E> entities = new LongObjectHashMap<>();
+
+    // ======
+
+    private boolean indexesEnsured = false;
 
     // ======
 
@@ -101,6 +108,11 @@ public class EntityManager<E extends Entity> {
     public final Optional<E> get(long id) {
 
         // TODO improvements / thread safety
+
+        if(!indexesEnsured) {
+            indexesEnsured = true;
+            ensureIndexes();
+        }
 
         // attempt to get the entity from the cache
         E entity = entities.get(id);
@@ -388,6 +400,27 @@ public class EntityManager<E extends Entity> {
     public final void discard(long id) {
         if(this.entities.containsKey(id))
             this.entities.remove(id);
+    }
+
+    // === INDEX ===
+
+    public final void ensureIndexes() throws EntityIOException {
+
+        Set<String> indexes = this.type.getDescriptor().getIndexes();
+
+        if(indexes.size() == 0) return;
+
+        List<IndexModel> models = indexes.stream()
+                .map(field -> new IndexModel(Indexes.ascending(field), new IndexOptions().name(field).sparse(true)))
+                .collect(Collectors.toList());
+
+        //
+
+        try {
+            collection().createIndexes(models);
+        } catch (MongoException e) {
+            throw new EntityIOException("Exception while issuing MongoDB createIndexes command!", e);
+        }
     }
 
     // === MONGO ===
