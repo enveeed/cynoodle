@@ -57,6 +57,23 @@ public final class DiscordPointer {
 
     // ===
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DiscordPointer that = (DiscordPointer) o;
+
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
+
+    // ===
+
     /**
      * Create a new pointer to the given snowflake ID.
      * @param snowflake the snowflake ID
