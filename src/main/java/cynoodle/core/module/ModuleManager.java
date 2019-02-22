@@ -70,6 +70,8 @@ public final class ModuleManager {
     // TODO exceptions (!!!)
     public void start() throws Exception {
 
+        this.checkDependenciesExist();
+
         // collect module identifier list
         List<ModuleIdentifier> modules = this.registry.allIdentifiers().collect(Collectors.toList());
 
