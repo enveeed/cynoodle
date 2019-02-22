@@ -9,6 +9,7 @@ package cynoodle.core.mongo;
 import com.google.common.flogger.FluentLogger;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import cynoodle.core.BuildConfig;
@@ -16,6 +17,9 @@ import cynoodle.core.CyNoodle;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MSystem;
 import cynoodle.core.module.Module;
+import cynoodle.core.module.ModuleStartException;
+import org.bson.BsonDocument;
+import org.bson.BsonInt32;
 
 import javax.annotation.Nonnull;
 
@@ -58,6 +62,20 @@ public final class MongoModule extends Module {
         // create the client
 
         this.client = MongoClients.create(mongoClientSettings);
+
+        // ping the database
+
+        LOG.atConfig().log("Connecting to MongoDB ...");
+
+        try {
+            this.client
+                    .getDatabase(CyNoodle.DB_NAME)
+                    .runCommand(new BsonDocument().append("ping", new BsonInt32(1)));
+        } catch (MongoException e) {
+            throw new RuntimeException("Initial database ping failed!", e); // TODO exception type
+        }
+
+
     }
 
     @Override

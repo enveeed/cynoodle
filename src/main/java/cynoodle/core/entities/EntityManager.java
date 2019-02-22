@@ -463,7 +463,7 @@ public class EntityManager<E extends Entity> {
 
         MongoClient client = module.getClient();
 
-        String database = "cynoodle-entities"; // TODO configurable
+        String database = CyNoodle.DB_NAME;
 
         return client
                 .getDatabase(database)

@@ -43,6 +43,11 @@ public final class CyNoodle {
      */
     public static final Instant DISCORD_EPOCH = Instant.ofEpochMilli(1420070400000L);
 
+    /**
+     * Database name for all cynoodle MongoDB collections (possibly temporary).
+     */
+    public static final String DB_NAME = "cynoodle";
+
     // === INSTANCE ===
 
     /**
