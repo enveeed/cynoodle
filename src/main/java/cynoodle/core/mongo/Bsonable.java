@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * Types implementing this interface have the ability to output their state
  * as MongoDB BSON or update it from MongoDB BSON.
  */
-public interface BsonData {
+public interface Bsonable {
 
     /**
      * Update the state of this object with the state given as BSON.

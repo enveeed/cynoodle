@@ -17,7 +17,6 @@ import cynoodle.core.CyNoodle;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MSystem;
 import cynoodle.core.module.Module;
-import cynoodle.core.module.ModuleStartException;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
 
@@ -65,7 +64,7 @@ public final class MongoModule extends Module {
 
         // ping the database
 
-        LOG.atConfig().log("Connecting to MongoDB ...");
+        LOG.atInfo().log("Connecting to MongoDB ...");
 
         try {
             this.client

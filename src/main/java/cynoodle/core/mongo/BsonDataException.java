@@ -7,9 +7,9 @@
 package cynoodle.core.mongo;
 
 /**
- * Exception for issues with the syntax, loading and saving of {@link BsonData}.
+ * Exception for issues with the syntax, loading and saving of {@link Bsonable}.
  */
-public final class BsonDataException extends Exception {
+public final class BsonDataException extends RuntimeException {
 
     public BsonDataException() {}
 
