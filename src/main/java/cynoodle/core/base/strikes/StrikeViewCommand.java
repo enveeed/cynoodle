@@ -18,10 +18,10 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CIdentifier("base:strikes:restore")
-@CAliases({"strikerestore","strikere","strre","strre"})
-public final class StrikeRestoreCommand extends Command {
-    private StrikeRestoreCommand() {}
+@CIdentifier("base:strikes:view")
+@CAliases({"strikeview","strview","strv"})
+public final class StrikeViewCommand extends Command {
+    private StrikeViewCommand() {}
 
     private final StrikesModule module = Module.get(StrikesModule.class);
 
@@ -49,22 +49,8 @@ public final class StrikeRestoreCommand extends Command {
 
         Strike strike = strikes.get(index);
 
-        if(!strike.isRemoved())
-            context.getChannel().sendMessage("This strike is not removed cannot be restored!").queue();
+        context.getChannel().sendMessage(new StrikeFormatter().format(strike)).queue();
 
-        strike.setRemoved(false);
-        strike.persist();
-
-        //
-
-        StringBuilder out = new StringBuilder();
-
-        out.append("**|** Strike is no longer marked as removed.");
-        out.append("\n");
-
-        out.append(new StrikeFormatter().format(strike));
-
-        context.getChannel().sendMessage(out.toString()).queue();
     }
 
 }
