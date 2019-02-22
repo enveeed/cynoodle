@@ -118,10 +118,7 @@ public class EntityManager<E extends Entity> {
 
         // TODO improvements / thread safety
 
-        if(!indexesEnsured) {
-            indexesEnsured = true;
-            ensureIndexes();
-        }
+        this.ensureIndexes();
 
         // attempt to get the entity from the cache
         E entity = entities.get(id);
@@ -290,6 +287,8 @@ public class EntityManager<E extends Entity> {
     @Nonnull
     public final E create(@Nonnull Consumer<E> action) throws EntityIOException {
 
+        this.ensureIndexes();
+
         // generate a new ID
         long id = this.snowflake.next();
 
@@ -432,6 +431,9 @@ public class EntityManager<E extends Entity> {
     // === INDEX ===
 
     public final void ensureIndexes() throws EntityIOException {
+        if(indexesEnsured) return;
+
+        indexesEnsured = true;
 
         Set<IndexModel> indexes = this.type.getDescriptor().getIndexes();
 

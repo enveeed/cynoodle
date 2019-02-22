@@ -11,6 +11,7 @@ import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import cynoodle.core.api.Checks;
+import cynoodle.core.api.reflect.Annotations;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
@@ -155,7 +156,7 @@ public final class EntityTypeDescriptor {
         // find annotations
         EIdentifier annIdentifier = entityClass.getAnnotation(EIdentifier.class);
         ECollection annCollection = entityClass.getAnnotation(ECollection.class);
-        EIndexes annIndexes = entityClass.getAnnotation(EIndexes.class);
+        Set<EIndex> annsIndexes = Annotations.collect(entityClass, EIndex.class, Entity.class);
 
         // ensure required annotations
         if(annIdentifier == null) throw new EntityClassException("Entity class is missing @EIdentifier annotation!");
@@ -182,17 +183,17 @@ public final class EntityTypeDescriptor {
 
         Set<IndexModel> indexes = new HashSet<>();
 
-        if(annIndexes != null) {
-            for (EIndex annIndex : annIndexes.value()) {
+        System.out.println("found indexes annotations for: "+entityClass+" " +annsIndexes.size());
 
-                Bson index = Indexes.ascending(annIndex.value());
-                IndexOptions options = new IndexOptions()
-                        .unique(annIndex.unique())
-                        .name(annIndex.value())
-                        .sparse(true);
+        for (EIndex annIndex : annsIndexes) {
 
-                indexes.add(new IndexModel(index, options));
-            }
+            Bson index = Indexes.ascending(annIndex.value());
+            IndexOptions options = new IndexOptions()
+                    .unique(annIndex.unique())
+                    .name(annIndex.value())
+                    .sparse(true);
+
+            indexes.add(new IndexModel(index, options));
         }
 
         builder.setIndexes(Collections.unmodifiableSet(indexes));
