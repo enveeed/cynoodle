@@ -17,4 +17,6 @@ public @interface EIndex {
     @Nonnull
     String value();
 
+    boolean unique() default false;
+
 }

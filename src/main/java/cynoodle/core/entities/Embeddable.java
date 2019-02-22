@@ -6,11 +6,11 @@
 
 package cynoodle.core.entities;
 
-import cynoodle.core.mongo.BsonData;
+import cynoodle.core.mongo.Bsonable;
 
 /**
  * An Embeddable, a persistent data object which can be embedded into an {@link Entity}.
  */
-public abstract class Embeddable implements BsonData {
+public abstract class Embeddable implements Bsonable {
     // TODO
 }

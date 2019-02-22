@@ -6,6 +6,7 @@
 
 package cynoodle.core.entities;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.google.common.flogger.FluentLogger;
 import com.mongodb.MongoException;
@@ -432,18 +433,14 @@ public class EntityManager<E extends Entity> {
 
     public final void ensureIndexes() throws EntityIOException {
 
-        Set<String> indexes = this.type.getDescriptor().getIndexes();
+        Set<IndexModel> indexes = this.type.getDescriptor().getIndexes();
 
         if(indexes.size() == 0) return;
-
-        List<IndexModel> models = indexes.stream()
-                .map(field -> new IndexModel(Indexes.ascending(field), new IndexOptions().name(field).sparse(true)))
-                .collect(Collectors.toList());
 
         //
 
         try {
-            collection().createIndexes(models);
+            collection().createIndexes(Lists.newArrayList(indexes));
         } catch (MongoException e) {
             throw new EntityIOException("Exception while issuing MongoDB createIndexes command!", e);
         }

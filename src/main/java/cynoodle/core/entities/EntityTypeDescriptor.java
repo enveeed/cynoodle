@@ -7,7 +7,11 @@
 package cynoodle.core.entities;
 
 import com.google.common.flogger.FluentLogger;
+import com.mongodb.client.model.IndexModel;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import cynoodle.core.api.Checks;
+import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
@@ -31,7 +35,7 @@ public final class EntityTypeDescriptor {
 
     private final String identifier;
     private final String collection;
-    private final Set<String> indexes;
+    private final Set<IndexModel> indexes;
 
     // ===
 
@@ -63,7 +67,7 @@ public final class EntityTypeDescriptor {
     }
 
     @Nonnull
-    public Set<String> getIndexes() {
+    public Set<IndexModel> getIndexes() {
         return this.indexes;
     }
 
@@ -80,7 +84,7 @@ public final class EntityTypeDescriptor {
 
         private String identifier;
         private String collection;
-        private Set<String> indexes;
+        private Set<IndexModel> indexes;
 
         // ======
 
@@ -103,7 +107,7 @@ public final class EntityTypeDescriptor {
         }
 
         @Nonnull
-        public Builder setIndexes(@Nonnull Set<String> indexes) {
+        public Builder setIndexes(@Nonnull Set<IndexModel> indexes) {
             this.indexes = indexes;
             return this;
         }
@@ -176,11 +180,19 @@ public final class EntityTypeDescriptor {
 
         // ======
 
-        Set<String> indexes = new HashSet<>();
+        Set<IndexModel> indexes = new HashSet<>();
 
         if(annIndexes != null) {
-            for (EIndex annIndex : annIndexes.value())
-                indexes.add(annIndex.value());
+            for (EIndex annIndex : annIndexes.value()) {
+
+                Bson index = Indexes.ascending(annIndex.value());
+                IndexOptions options = new IndexOptions()
+                        .unique(annIndex.unique())
+                        .name(annIndex.value())
+                        .sparse(true);
+
+                indexes.add(new IndexModel(index, options));
+            }
         }
 
         builder.setIndexes(Collections.unmodifiableSet(indexes));
