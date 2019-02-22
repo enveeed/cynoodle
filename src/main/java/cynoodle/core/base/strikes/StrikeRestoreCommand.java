@@ -32,7 +32,7 @@ public final class StrikeRestoreCommand extends Command {
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer member = parameters.getAs(0, new MParser(context.getGuild())).orElseThrow();
+        DiscordPointer member = parameters.getAs(0, MParser.create(context)).orElseThrow();
         int index = parameters.getAs(1, IntegerParser.get()).orElseThrow();
 
         //

@@ -13,7 +13,7 @@ import cynoodle.core.base.command.CIdentifier;
 import cynoodle.core.base.command.Command;
 import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.MNameFormatter;
+import cynoodle.core.discord.MFormatter;
 import cynoodle.core.discord.MParser;
 import cynoodle.core.module.Module;
 
@@ -51,7 +51,7 @@ public final class StrikeListCommand extends Command {
 
         boolean displayAll = input.hasOption(OPT_ALL);
 
-        DiscordPointer member = parameters.getAs(0, new MParser(context.getGuild())).orElseThrow();
+        DiscordPointer member = parameters.getAs(0, MParser.create(context)).orElseThrow();
 
         // ===
 
@@ -65,8 +65,8 @@ public final class StrikeListCommand extends Command {
         StringBuilder out = new StringBuilder();
 
         out.append("Strikes for **")
-                .append(MNameFormatter.of(context.getGuild())
-                        .setMode(MNameFormatter.Mode.USER_FULL)
+                .append(MFormatter.of(context.getGuild())
+                        .setMode(MFormatter.Mode.USER_FULL)
                         .format(member))
                 .append("**")
                 .append("\n\n");

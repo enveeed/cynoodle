@@ -35,7 +35,7 @@ public final class StrikeAddCommand extends Command {
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer member   = parameters.getAs(0, new MParser(context.getGuild())).orElseThrow();
+        DiscordPointer member   = parameters.getAs(0, MParser.create(context)).orElseThrow();
         String reason           = parameters.getAs(1, StringParser.get()).orElseThrow();
         Decay decay             = parameters.getAs(2, DecayParser.get()).orElse(settings.getEffectiveDefaultDecay());
         Instant timestamp       = Instant.now(); // TODO timestamp from parameters
