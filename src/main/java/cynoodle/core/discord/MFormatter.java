@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 /**
  * Formatter for {@link Member} names.
  */
-public final class MNameFormatter implements Formatter<DiscordPointer> {
+public final class MFormatter implements Formatter<DiscordPointer> {
 
     private final DiscordModule module = Module.get(DiscordModule.class);
 
@@ -27,7 +27,7 @@ public final class MNameFormatter implements Formatter<DiscordPointer> {
 
     // ===
 
-    private MNameFormatter(@Nonnull DiscordPointer guild) {
+    private MFormatter(@Nonnull DiscordPointer guild) {
         this.guild = guild;
     }
 
@@ -76,7 +76,7 @@ public final class MNameFormatter implements Formatter<DiscordPointer> {
     // ===
 
     @Nonnull
-    public MNameFormatter setMode(@Nonnull Mode mode) {
+    public MFormatter setMode(@Nonnull Mode mode) {
         this.mode = mode;
         return this;
     }
@@ -84,12 +84,12 @@ public final class MNameFormatter implements Formatter<DiscordPointer> {
     // ===
 
     @Nonnull
-    public static MNameFormatter of(@Nonnull DiscordPointer guild) {
-        return new MNameFormatter(guild);
+    public static MFormatter of(@Nonnull DiscordPointer guild) {
+        return new MFormatter(guild);
     }
 
     @Nonnull
-    public static MNameFormatter of(@Nonnull Guild guild) {
+    public static MFormatter of(@Nonnull Guild guild) {
         return of(DiscordPointer.to(guild));
     }
 

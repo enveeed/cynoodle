@@ -8,22 +8,23 @@ package cynoodle.core.discord;
 
 import cynoodle.core.api.text.Parser;
 import cynoodle.core.api.text.ParserException;
-import net.dv8tion.jda.core.entities.Guild;
+import cynoodle.core.base.command.CommandContext;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Parser for Members of a Guild.
  */
 public final class MParser implements Parser<DiscordPointer> {
 
-    private final Guild guild;
+    private DiscordPointer guild = null;
+
+    private DiscordPointer selfUser = null;
 
     // ===
 
-    public MParser(@Nonnull Guild guild) {
-        this.guild = guild;
-    }
+    private MParser() {}
 
     // ===
 
@@ -33,7 +34,39 @@ public final class MParser implements Parser<DiscordPointer> {
 
         if(input.charAt(0) == '+') return DiscordPointerParser.get().parse(input.substring(1));
 
+        if(input.equalsIgnoreCase("~me")) {
+            if(selfUser != null) return selfUser;
+            else throw new ParserException("`~me` cannot be used here.");
+        }
+
         throw new ParserException("Please only use IDs until this is implemented!");
     }
 
+    // ===
+
+    @Nonnull
+    public MParser setGuild(@Nullable DiscordPointer guild) {
+        this.guild = guild;
+        return this;
+    }
+
+    @Nonnull
+    public MParser setSelfUser(@Nullable DiscordPointer selfUser) {
+        this.selfUser = selfUser;
+        return this;
+    }
+
+    // ===
+
+    @Nonnull
+    public static MParser create() {
+        return new MParser();
+    }
+
+    @Nonnull
+    public static MParser create(@Nonnull CommandContext context) {
+        return new MParser()
+                .setGuild(DiscordPointer.to(context.getGuild()))
+                .setSelfUser(DiscordPointer.to(context.getUser()));
+    }
 }
