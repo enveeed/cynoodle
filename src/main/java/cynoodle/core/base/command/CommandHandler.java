@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.command;
 
+import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -69,9 +70,19 @@ public final class CommandHandler {
 
         // ===
 
-        // TODO while in development, use the identifier (replace with mappings in the future)
+        DiscordPointer guildPointer = DiscordPointer.to(guild);
 
-        Optional<Command> result = this.registry.get(rawCommand);
+        // TODO improve, this is horribly unsafe
+        if(!module.mappers.containsKey(guildPointer)) {
+            event.getChannel()
+                    .sendMessage("**|** Collecting mappings, this may take a second or two ...").queue();
+            module.mappers.put(guildPointer, CommandMapper.collect(guildPointer));
+        }
+
+        CommandMapper mapper = module.mappers.get(guildPointer);
+
+        Optional<Command> result = mapper.find(rawCommand)
+                .flatMap(identifier -> module.getRegistry().get(identifier));
 
         if(result.isPresent()) {
 

@@ -9,9 +9,7 @@ package cynoodle.core.base.command;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * A registry for {@link Command Commands}, used within {@link CommandModule}.
@@ -45,6 +43,13 @@ public final class CommandRegistry {
         // ===
 
         return descriptor.getIdentifier();
+    }
+
+    // ===
+
+    @Nonnull
+    public Set<Command> all() {
+        return Set.copyOf(this.commands.values());
     }
 
     // ===

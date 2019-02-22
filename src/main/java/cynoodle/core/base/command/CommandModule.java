@@ -9,12 +9,15 @@ package cynoodle.core.base.command;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.discord.DiscordEvent;
+import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("UnstableApiUsage")
 @MIdentifier("base:command")
@@ -38,6 +41,9 @@ public final class CommandModule extends Module {
     private CommandHandler handler;
 
     private CommandPool pool;
+
+    // TODO replace with GCache when implemented
+    final Map<DiscordPointer, CommandMapper> mappers = new HashMap<>();
 
     // ===
 
