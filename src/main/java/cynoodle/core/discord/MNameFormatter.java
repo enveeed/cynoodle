@@ -15,24 +15,20 @@ import net.dv8tion.jda.core.entities.User;
 import javax.annotation.Nonnull;
 
 /**
- * Formatter for Members.
+ * Formatter for {@link Member} names.
  */
 public final class MNameFormatter implements Formatter<DiscordPointer> {
 
     private final DiscordModule module = Module.get(DiscordModule.class);
-    private final Guild guild;
+
+    private final DiscordPointer guild;
 
     private Mode mode;
 
     // ===
 
-    public MNameFormatter(@Nonnull Guild guild, @Nonnull Mode mode) {
+    private MNameFormatter(@Nonnull DiscordPointer guild) {
         this.guild = guild;
-        this.mode = mode;
-    }
-
-    public MNameFormatter(@Nonnull Guild guild) {
-        this(guild, Mode.MEMBER);
     }
 
     // ===
@@ -70,6 +66,8 @@ public final class MNameFormatter implements Formatter<DiscordPointer> {
 
     @Nonnull
     private String formatMember(@Nonnull DiscordPointer input) {
+        Guild guild = module.getAPI().getGuildById(this.guild.getID());
+        if(guild == null) return formatUser(input);
         Member member = guild.getMemberById(input.getID());
         if(member == null) return formatID(input);
         else return member.getEffectiveName();
@@ -81,6 +79,18 @@ public final class MNameFormatter implements Formatter<DiscordPointer> {
     public MNameFormatter setMode(@Nonnull Mode mode) {
         this.mode = mode;
         return this;
+    }
+
+    // ===
+
+    @Nonnull
+    public static MNameFormatter of(@Nonnull DiscordPointer guild) {
+        return new MNameFormatter(guild);
+    }
+
+    @Nonnull
+    public static MNameFormatter of(@Nonnull Guild guild) {
+        return of(DiscordPointer.to(guild));
     }
 
     // ===
