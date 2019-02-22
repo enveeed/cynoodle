@@ -208,6 +208,21 @@ public class EntityManager<E extends Entity> {
         return result.orElseGet(() -> this.create(action));
     }
 
+    @Nonnull
+    public E firstOrCreate(@Nonnull Bson filter) throws EntityIOException {
+        return firstOrCreate(filter, e -> {});
+    }
+
+    @Nonnull
+    public E firstOrCreate(@Nonnull Consumer<E> action) throws EntityIOException {
+        return firstOrCreate(DEFAULT_FILTER, action);
+    }
+
+    @Nonnull
+    public E firstOrCreate() throws EntityIOException {
+        return firstOrCreate(DEFAULT_FILTER, e -> {});
+    }
+
     //
 
     /**
