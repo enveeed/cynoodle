@@ -23,10 +23,13 @@ import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.conversions.Bson;
+import org.eclipse.collections.api.map.primitive.MutableLongLongMap;
 import org.eclipse.collections.api.map.primitive.MutableLongObjectMap;
+import org.eclipse.collections.impl.map.mutable.primitive.LongLongHashMap;
 import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 
 import javax.annotation.Nonnull;
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -71,6 +74,11 @@ public class EntityManager<E extends Entity> {
      * Entity cache.
      */
     private final MutableLongObjectMap<E> entities = new LongObjectHashMap<>();
+
+    /**
+     * Entity access times.
+     */
+    private final MutableLongLongMap timings = new LongLongHashMap();
 
     // ======
 
@@ -133,6 +141,9 @@ public class EntityManager<E extends Entity> {
 
         // update the cached entity before returning it
         this.update(id);
+
+        // update access time
+        this.updateAccess(id);
 
         return Optional.of(entity);
     }
@@ -390,7 +401,7 @@ public class EntityManager<E extends Entity> {
             throws NoSuchElementException, EntityIOException {
 
         E entity = this.entities.get(id);
-        if(entity != null) this.entities.remove(id);
+        if(entity != null) discard(id);
 
         //
 
@@ -413,8 +424,8 @@ public class EntityManager<E extends Entity> {
      * @param id the Entity ID
      */
     public final void discard(long id) {
-        if(this.entities.containsKey(id))
-            this.entities.remove(id);
+        this.entities.remove(id);
+        this.resetAccess(id);
     }
 
     // === INDEX ===
@@ -457,5 +468,30 @@ public class EntityManager<E extends Entity> {
         return client
                 .getDatabase(database)
                 .getCollection(this.type.getCollection(), BsonDocument.class);
+    }
+
+    // === ACCESS TIMES ===
+
+    private void updateAccess(long id) {
+        this.timings.put(id, Instant.now().toEpochMilli());
+    }
+
+    //
+
+    private void resetAccess(long id) {
+        // remove from timing store
+        this.timings.remove(id);
+    }
+
+    private void clearAccess() {
+        this.timings.clear();
+    }
+
+    //
+
+    @Nonnull
+    private Optional<Instant> getAccess(long id) {
+        if(!this.timings.containsKey(id)) return Optional.empty();
+        else return Optional.of(Instant.ofEpochMilli(this.timings.get(id)));
     }
 }
