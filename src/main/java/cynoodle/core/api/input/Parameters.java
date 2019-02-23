@@ -53,11 +53,6 @@ public final class Parameters {
         return index >= 0 && index < this.parameters.length;
     }
 
-    public void ensureHas(int index) throws ParametersException {
-        if(!has(index))
-            throw new ParametersException("At least `" + (index + 1) + "` parameter(s) required!");
-    }
-
     // ===
 
     @Nonnull
