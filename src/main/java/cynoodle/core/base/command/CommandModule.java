@@ -60,6 +60,11 @@ public final class CommandModule extends Module {
         // TODO test only
 
         this.registry.register(TestCommand.class);
+
+        //
+
+        this.settings.ensureIndexes();
+        this.properties.ensureIndexes();
     }
 
     @Override

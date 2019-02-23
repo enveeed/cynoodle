@@ -9,6 +9,7 @@ package cynoodle.core.base.command;
 import com.mongodb.client.model.Filters;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
+import cynoodle.core.entities.EIndex;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentArray;
 import cynoodle.core.mongo.fluent.FluentDocument;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  * Properties for a single command on a guild.
  */
 @EIdentifier("base:command:properties")
+@EIndex("identifier")
 public final class CommandProperties extends GEntity {
     private CommandProperties() {}
 
