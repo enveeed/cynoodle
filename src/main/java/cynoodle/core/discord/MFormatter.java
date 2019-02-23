@@ -23,11 +23,11 @@ public final class MFormatter implements Formatter<DiscordPointer> {
 
     private final DiscordPointer guild;
 
-    private Mode mode;
+    private Mode mode = Mode.MEMBER;
 
     // ===
 
-    private MFormatter(@Nonnull DiscordPointer guild) {
+    public MFormatter(@Nonnull DiscordPointer guild) {
         this.guild = guild;
     }
 
@@ -76,21 +76,9 @@ public final class MFormatter implements Formatter<DiscordPointer> {
     // ===
 
     @Nonnull
-    public MFormatter setMode(@Nonnull Mode mode) {
+    public MFormatter withMode(@Nonnull Mode mode) {
         this.mode = mode;
         return this;
-    }
-
-    // ===
-
-    @Nonnull
-    public static MFormatter of(@Nonnull DiscordPointer guild) {
-        return new MFormatter(guild);
-    }
-
-    @Nonnull
-    public static MFormatter of(@Nonnull Guild guild) {
-        return of(DiscordPointer.to(guild));
     }
 
     // ===

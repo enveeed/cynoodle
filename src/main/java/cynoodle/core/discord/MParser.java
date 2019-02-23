@@ -8,7 +8,6 @@ package cynoodle.core.discord;
 
 import cynoodle.core.api.text.Parser;
 import cynoodle.core.api.text.ParserException;
-import cynoodle.core.base.command.CommandContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,13 +17,15 @@ import javax.annotation.Nullable;
  */
 public final class MParser implements Parser<DiscordPointer> {
 
-    private DiscordPointer guild = null;
+    private final DiscordPointer guild;
 
     private DiscordPointer selfUser = null;
 
     // ===
 
-    private MParser() {}
+    public MParser(@Nonnull DiscordPointer guild) {
+        this.guild = guild;
+    }
 
     // ===
 
@@ -45,28 +46,8 @@ public final class MParser implements Parser<DiscordPointer> {
     // ===
 
     @Nonnull
-    public MParser setGuild(@Nullable DiscordPointer guild) {
-        this.guild = guild;
-        return this;
-    }
-
-    @Nonnull
-    public MParser setSelfUser(@Nullable DiscordPointer selfUser) {
+    public MParser withSelfUser(@Nullable DiscordPointer selfUser) {
         this.selfUser = selfUser;
         return this;
-    }
-
-    // ===
-
-    @Nonnull
-    public static MParser create() {
-        return new MParser();
-    }
-
-    @Nonnull
-    public static MParser create(@Nonnull CommandContext context) {
-        return new MParser()
-                .setGuild(DiscordPointer.to(context.getGuild()))
-                .setSelfUser(DiscordPointer.to(context.getUser()));
     }
 }
