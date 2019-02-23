@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.command;
 
+import cynoodle.core.discord.DiscordPointer;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -34,7 +35,7 @@ public final class CommandContext {
         this.rawInput = rawInput;
     }
 
-    // ===
+    // === DATA ===
 
     @Nonnull
     public Message getMessage() {
@@ -56,14 +57,36 @@ public final class CommandContext {
         return this.event.getGuild();
     }
 
-    //
+    // === POINTERS ==
+
+    @Nonnull
+    public DiscordPointer getMessagePointer() {
+        return DiscordPointer.to(getMessage());
+    }
+
+    @Nonnull
+    public DiscordPointer getUserPointer() {
+        return DiscordPointer.to(getUser());
+    }
+
+    @Nonnull
+    public DiscordPointer getChannelPointer() {
+        return DiscordPointer.to(getChannel());
+    }
+
+    @Nonnull
+    public DiscordPointer getGuildPointer() {
+        return DiscordPointer.to(getGuild());
+    }
+
+    // === EVENT ===
 
     @Nonnull
     public GuildMessageReceivedEvent getEvent() {
         return this.event;
     }
 
-    //
+    // === INTERNALS ===
 
     @Nonnull
     String getRawCommand() {
