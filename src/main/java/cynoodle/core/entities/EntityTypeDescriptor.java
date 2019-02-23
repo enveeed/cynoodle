@@ -183,8 +183,6 @@ public final class EntityTypeDescriptor {
 
         Set<IndexModel> indexes = new HashSet<>();
 
-        System.out.println("found indexes annotations for: "+entityClass+" " +annsIndexes.size());
-
         for (EIndex annIndex : annsIndexes) {
 
             Bson index = Indexes.ascending(annIndex.value());

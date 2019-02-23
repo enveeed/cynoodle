@@ -61,10 +61,18 @@ public abstract class Entity implements Bsonable {
      * @return the manager
      */
     @Nonnull
-    public final EntityManager<?> getManager() {
+    public EntityManager<?> getManager() {
         return this.manager;
     }
 
+    /**
+     * Get the {@link EntityManager} for this Entity, casted to
+     * a useful type rather than using the wildcard. Given type must match
+     * the actual entity class.
+     * @param entityClass the entity class of this entity
+     * @param <E> the entity type
+     * @return the casted manager
+     */
     @Nonnull
     @SuppressWarnings("unchecked")
     public final <E extends Entity> EntityManager<E> getManager(@Nonnull Class<E> entityClass) {

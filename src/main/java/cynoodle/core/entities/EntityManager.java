@@ -295,10 +295,16 @@ public class EntityManager<E extends Entity> {
         // create a new entity instance
         E instance = this.type.createInstance(this, id);
 
+        try {
+            action.accept(instance);
+        } catch (Exception e) {
+            LOG.atSevere().withCause(e).log("Failed to create Entity %s with ID %s because its creation" +
+                    " action failed.", this.type.getIdentifier(), id);
+            throw new EntityIOException("Exception in creation action!", e);
+        }
+
         // insert instance into the cache
         this.entities.put(id, instance);
-
-        action.accept(instance);
 
         this.persist(id);
 
