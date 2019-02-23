@@ -12,7 +12,7 @@ import cynoodle.core.api.text.IntegerParser;
 import cynoodle.core.api.text.StringParser;
 import cynoodle.core.base.command.*;
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.MParser;
+import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
@@ -33,7 +33,7 @@ public final class StrikeEditCommand extends Command {
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer member = parameters.getAs(0, MParser.create(context))
+        DiscordPointer member = parameters.getAs(0, Members.parserOf(context))
                 .orElseThrow();
         int index = parameters.getAs(1, IntegerParser.get())
                 .orElseThrow();

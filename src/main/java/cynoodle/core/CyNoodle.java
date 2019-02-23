@@ -11,6 +11,7 @@ import com.google.common.flogger.FluentLogger;
 import com.mongodb.client.MongoClient;
 import cynoodle.core.base.TestModule;
 import cynoodle.core.base.command.CommandModule;
+import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.base.strikes.StrikesModule;
 import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.ModuleClassException;
@@ -309,6 +310,7 @@ public final class CyNoodle {
         this.modules.register(CommandModule.class);
 
         this.modules.register(StrikesModule.class);
+        this.modules.register(XPModule.class);
 
 
         this.modules.register(TestModule.class); //TODO test only

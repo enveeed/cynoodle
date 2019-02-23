@@ -11,7 +11,7 @@ import cynoodle.core.api.input.Parameters;
 import cynoodle.core.api.text.IntegerParser;
 import cynoodle.core.base.command.*;
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.MParser;
+import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
@@ -32,7 +32,7 @@ public final class StrikeRestoreCommand extends Command {
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer member = parameters.getAs(0, MParser.create(context)).orElseThrow();
+        DiscordPointer member = parameters.getAs(0, Members.parserOf(context)).orElseThrow();
         int index = parameters.getAs(1, IntegerParser.get()).orElseThrow();
 
         //
@@ -49,8 +49,10 @@ public final class StrikeRestoreCommand extends Command {
 
         Strike strike = strikes.get(index);
 
-        if(!strike.isRemoved())
+        if(!strike.isRemoved()) {
             context.getChannel().sendMessage("This strike is not removed cannot be restored!").queue();
+            return;
+        }
 
         strike.setRemoved(false);
         strike.persist();

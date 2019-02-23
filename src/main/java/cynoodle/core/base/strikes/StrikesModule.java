@@ -52,6 +52,11 @@ public final class StrikesModule extends Module {
         registry.register(StrikeRestoreCommand.class);
         registry.register(StrikeEditCommand.class);
         registry.register(StrikeViewCommand.class);
+
+        //
+
+        this.strikes.ensureIndexes();
+        this.settings.ensureIndexes();
     }
 
     @Override

@@ -14,7 +14,7 @@ import cynoodle.core.base.command.CIdentifier;
 import cynoodle.core.base.command.Command;
 import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.MParser;
+import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public final class StrikeAddCommand extends Command {
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer member   = parameters.getAs(0, MParser.create(context)).orElseThrow();
+        DiscordPointer member   = parameters.getAs(0, Members.parserOf(context)).orElseThrow();
         String reason           = parameters.getAs(1, StringParser.get()).orElseThrow();
         Decay decay             = parameters.getAs(2, DecayParser.get()).orElse(settings.getEffectiveDefaultDecay());
         Instant timestamp       = Instant.now(); // TODO timestamp from parameters

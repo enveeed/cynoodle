@@ -9,6 +9,7 @@ package cynoodle.core.base.strikes;
 import cynoodle.core.api.output.Formatter;
 import cynoodle.core.api.output.InstantFormatter;
 import cynoodle.core.discord.MFormatter;
+import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
@@ -29,8 +30,7 @@ public final class StrikeFormatter implements Formatter<Strike> {
         StringBuilder out = new StringBuilder();
 
         out.append("**|** Strike for **")
-                .append(MFormatter.of(strike.requireGuild())
-                        .setMode(MFormatter.Mode.USER_FULL)
+                .append(Members.formatAt(strike.requireGuild()).withMode(MFormatter.Mode.USER_FULL)
                         .format(strike.requireUser()))
                 .append("**\n\n");
 
