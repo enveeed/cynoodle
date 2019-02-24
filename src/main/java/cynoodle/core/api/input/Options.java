@@ -5,6 +5,7 @@ import cynoodle.core.api.text.Parser;
 import cynoodle.core.api.text.ParserException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,9 @@ public final class Options implements Parser<Options.Result> {
         //
 
         this.options_long = this.options.stream().collect(Collectors.toMap(Option::getLong, option -> option));
-        this.options_short = this.options.stream().collect(Collectors.toMap(Option::getShort, option -> option));
+        this.options_short = this.options.stream()
+                .filter(option -> option.getShort() != null) // dont map null short options
+                .collect(Collectors.toMap(Option::getShort, option -> option));
     }
 
     // ===
@@ -368,13 +371,13 @@ public final class Options implements Parser<Options.Result> {
     public static final class Option {
 
         private final String option_long;
-        private final char option_short;
+        private final Character option_short;
 
         private final boolean requires_value;
 
         // ===
 
-        private Option(@Nonnull String option_long, char option_short, boolean requires_value) {
+        private Option(@Nonnull String option_long, @Nullable Character option_short, boolean requires_value) {
             this.option_long = option_long;
             this.option_short = option_short;
             this.requires_value = requires_value;
@@ -397,7 +400,8 @@ public final class Options implements Parser<Options.Result> {
          *
          * @return the option short form
          */
-        public char getShort() {
+        @Nullable
+        public Character getShort() {
             return this.option_short;
         }
 
@@ -421,28 +425,25 @@ public final class Options implements Parser<Options.Result> {
 
             Option option = (Option) o;
 
-            if (option_short != option.option_short) return false;
             return option_long.equals(option.option_long);
         }
 
         @Override
         public int hashCode() {
-            int result = option_long.hashCode();
-            result = 31 * result + (int) option_short;
-            return result;
+            return option_long.hashCode();
         }
     }
 
     // ===
 
     @Nonnull
-    public static Option newValueOption(@Nonnull String option_long, char option_short) {
+    public static Option newValueOption(@Nonnull String option_long, @Nullable Character option_short) {
         Checks.notEmpty(option_long);
         return new Option(option_long, option_short, true);
     }
 
     @Nonnull
-    public static Option newFlagOption(@Nonnull String option_long, char option_short) {
+    public static Option newFlagOption(@Nonnull String option_long, @Nullable Character option_short) {
         Checks.notEmpty(option_long);
         return new Option(option_long, option_short, false);
     }
