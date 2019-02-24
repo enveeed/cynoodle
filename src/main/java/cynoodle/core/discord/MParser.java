@@ -8,6 +8,9 @@ package cynoodle.core.discord;
 
 import cynoodle.core.api.text.Parser;
 import cynoodle.core.api.text.ParserException;
+import cynoodle.core.module.Module;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,6 +19,8 @@ import javax.annotation.Nullable;
  * Parser for Members of a Guild.
  */
 public final class MParser implements Parser<DiscordPointer> {
+
+    private final DiscordModule discord = Module.get(DiscordModule.class);
 
     private final DiscordPointer guild;
 
@@ -35,12 +40,25 @@ public final class MParser implements Parser<DiscordPointer> {
 
         if(input.charAt(0) == '+') return DiscordPointerParser.get().parse(input.substring(1));
 
-        if(input.equalsIgnoreCase("~me")) {
+        if(input.equals("~me")) {
             if(selfUser != null) return selfUser;
             else throw new ParserException("`~me` cannot be used here.");
         }
 
-        throw new ParserException("Please only use IDs until this is implemented!");
+        Guild guild = discord.getAPI().getGuildById(this.guild.getID());
+
+        if(guild == null) throw new ParserException("Guild not available!");
+
+        for (Member member : guild.getMembers()) {
+            if(member.getUser().getId().equalsIgnoreCase(input))
+                return DiscordPointer.to(member.getUser());
+            if(member.getNickname() != null && input.contains(member.getNickname()))
+                return DiscordPointer.to(member.getUser());
+            if(input.contains(member.getUser().getName()))
+                return DiscordPointer.to(member.getUser());
+        }
+
+        throw new ParserException("No Member found.");
     }
 
     // ===
