@@ -7,9 +7,7 @@
 package cynoodle.core.discord;
 
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.ISnowflake;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import org.bson.BsonInt64;
 import org.bson.BsonNull;
 import org.bson.BsonValue;
@@ -53,6 +51,18 @@ public final class DiscordPointer {
     public Optional<Guild> asGuild() {
         return Optional.ofNullable(Module.get(DiscordModule.class)
                 .getAPI().getGuildById(this.id));
+    }
+
+    // ===
+
+    @Nonnull
+    public Optional<Member> asMember(@Nonnull Guild guild) {
+        return asUser().map(guild::getMember);
+    }
+
+    @Nonnull
+    public Optional<Role> asRole(@Nonnull Guild guild) {
+        return asUser().map(user -> guild.getRoleById(getID()));
     }
 
     // ===
