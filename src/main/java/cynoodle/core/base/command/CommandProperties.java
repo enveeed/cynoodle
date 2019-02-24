@@ -108,8 +108,8 @@ public final class CommandProperties extends GEntity {
 
         data.setAt("identifier").asString().to(this.identifier);
         data.setAt("permission").asLong().to(this.permission);
-        data.setAt("aliases").asArray().toAndGet(FluentArray.wrapNew())
-                .insert().asString().atEnd(this.aliases);
+        data.setAt("aliases").asArray()
+                .to(FluentArray.wrapNew().insert().asString().atEnd(this.aliases));
 
         return data;
     }

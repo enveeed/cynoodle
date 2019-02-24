@@ -186,11 +186,6 @@ public final class FluentDocument implements FluentValue {
             return FluentDocument.this;
         }
 
-        public T toAndGet(T value) {
-            to(value);
-            return value;
-        }
-
     }
 
     public final class GetAPI<T> extends AtAPI {
