@@ -8,6 +8,11 @@ package cynoodle.core.base.command;
 
 import cynoodle.core.api.input.Options;
 import cynoodle.core.api.text.ParserException;
+import cynoodle.core.base.xp.Rank;
+import cynoodle.core.base.xp.RankManager;
+import cynoodle.core.base.xp.XPModule;
+import cynoodle.core.discord.DiscordPointer;
+import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
@@ -20,6 +25,7 @@ public final class TestCommand extends Command {
     private static final Options.Option OPT_THROW_PEX = Options.newFlagOption("throw-pex",'2');
     private static final Options.Option OPT_THROW_EX = Options.newFlagOption("throw-ex", '3');
     private static final Options.Option OPT_RESPOND = Options.newValueOption("respond", '4');
+    private static final Options.Option OPT_SETUP = Options.newFlagOption("setup", 's');
 
     @Override
     protected void onInit() {
@@ -27,7 +33,8 @@ public final class TestCommand extends Command {
                 OPT_SEND,
                 OPT_THROW_PEX,
                 OPT_THROW_EX,
-                OPT_RESPOND
+                OPT_RESPOND,
+                OPT_SETUP
         );
     }
 
@@ -44,6 +51,26 @@ public final class TestCommand extends Command {
             throw new Exception("This is a unexpected Exception.");
         else if(input.hasOption(OPT_RESPOND)) {
             context.getChannel().sendMessage("Responding with: " + input.getOptionValue(OPT_RESPOND)).queue();
+        } else if(input.hasOption(OPT_SETUP)) {
+
+            context.getChannel().sendMessage("Setting up test data ...").queue();
+
+            XPModule xpModule = Module.get(XPModule.class);
+
+            RankManager ranks = xpModule.getRankManager();
+
+            Rank r3 = ranks.create(context.getGuildPointer(), "nice blue girl", 3);
+            Rank r6 = ranks.create(context.getGuildPointer(), "pink dude", 6);
+            Rank r10 = ranks.create(context.getGuildPointer(), "orange bro", 10);
+
+            r3.addRoles(Rank.createRole(DiscordPointer.to(410133534175526912L)));
+            r6.addRoles(Rank.createRole(DiscordPointer.to(410132981945204756L)));
+            r10.addRoles(Rank.createRole(DiscordPointer.to(411610242619670529L)));
+
+            ranks.persistAll(r3, r6, r10);
+
+            context.getChannel().sendMessage("Test data was created!").queue();
+
         }
     }
 }
