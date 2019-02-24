@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.xp;
 
+import cynoodle.core.api.Numbers;
 import cynoodle.core.api.input.Options;
 import cynoodle.core.api.input.Parameters;
 import cynoodle.core.api.text.LongParser;
@@ -50,12 +51,12 @@ public final class XPAddCommand extends Command {
         xp.add(value);
         xp.persist();
 
+        //
+
         context.getChannel().sendMessage(
                 String.format("  **|** Successfully added `%s` XP to **%s**.",
-                        Long.toString(value),
+                        Numbers.format(value),
                         Members.formatOf(context).format(member)
                 )).queue();
-
-        // TODO number formatter
     }
 }

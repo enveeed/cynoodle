@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.xp;
 
+import cynoodle.core.api.Numbers;
 import cynoodle.core.api.input.Options;
 import cynoodle.core.api.input.Parameters;
 import cynoodle.core.api.text.LongParser;
@@ -52,12 +53,12 @@ public final class XPRemoveCommand extends Command {
         xp.remove(value);
         xp.persist();
 
+        //
+
         context.getChannel().sendMessage(
                 String.format("  **|** Successfully removed `%s` XP from **%s**.",
-                        Long.toString(value),
+                        Numbers.format(value),
                         Members.formatOf(context).format(member)
                 )).queue();
-
-        // TODO number formatter
     }
 }

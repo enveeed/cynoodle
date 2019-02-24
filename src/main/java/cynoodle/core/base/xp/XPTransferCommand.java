@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.xp;
 
+import cynoodle.core.api.Numbers;
 import cynoodle.core.api.input.Options;
 import cynoodle.core.api.input.Parameters;
 import cynoodle.core.api.text.LongParser;
@@ -62,14 +63,14 @@ public final class XPTransferCommand extends Command {
         xpFrom.persist();
         xpTo.persist();
 
+        //
+
         context.getChannel().sendMessage(
                 String.format("  **|** Successfully transferred `%s` XP from **%s** to **%s**.",
-                        Long.toString(value),
+                        Numbers.format(value),
                         Members.formatOf(context).format(memberFrom),
                         Members.formatOf(context).format(memberTo)
                 )).queue();
-
-        // TODO number formatter
 
     }
 }
