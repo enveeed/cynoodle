@@ -63,8 +63,11 @@ public final class TestCommand extends Command {
             Rank r6 = ranks.create(context.getGuildPointer(), "pink dude", 6);
             Rank r10 = ranks.create(context.getGuildPointer(), "orange bro", 10);
 
+            Rank.Role metaRole = Rank.createRole(DiscordPointer.to(549201532931932206L));
+            metaRole.setKeepEnabled(true);
+
             r3.addRoles(Rank.createRole(DiscordPointer.to(410133534175526912L)));
-            r6.addRoles(Rank.createRole(DiscordPointer.to(410132981945204756L)));
+            r6.addRoles(Rank.createRole(DiscordPointer.to(410132981945204756L)), metaRole);
             r10.addRoles(Rank.createRole(DiscordPointer.to(411610242619670529L)));
 
             ranks.persistAll(r3, r6, r10);
