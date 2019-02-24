@@ -24,6 +24,7 @@ import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.conversions.Bson;
+import org.eclipse.collections.api.block.procedure.primitive.LongProcedure;
 import org.eclipse.collections.api.map.primitive.MutableLongLongMap;
 import org.eclipse.collections.api.map.primitive.MutableLongObjectMap;
 import org.eclipse.collections.impl.map.mutable.primitive.LongLongHashMap;
@@ -201,7 +202,10 @@ public class EntityManager<E extends Entity> {
 
     @Nonnull
     public Optional<E> first(@Nonnull Bson filter) throws EntityIOException {
-        return this.stream(filter).findFirst();
+        return this.stream(filter)
+                .sorted() // add natural ordering to the stream
+                .limit(1)
+                .findFirst();
     }
 
     @Nonnull
@@ -356,6 +360,28 @@ public class EntityManager<E extends Entity> {
         } catch (MongoException e) {
             throw new EntityIOException("Exception while issuing MongoDB replace command!", e);
         }
+    }
+
+    public final void persist(@Nonnull E entity) {
+        persist(entity.getID());
+    }
+
+    //
+
+    public final void persistAll() {
+        this.entities
+                .forEachKey((LongProcedure) this::persist);
+    }
+
+    public final void persistAll(long... ids) {
+        for (long id : ids)
+            persist(id);
+    }
+
+    @SafeVarargs
+    public final void persistAll(@Nonnull E... entities) {
+        for (E entity : entities)
+            persist(entity);
     }
 
     //
