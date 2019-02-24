@@ -6,7 +6,6 @@
 
 package cynoodle.core.entities;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.google.common.flogger.FluentLogger;
 import com.mongodb.MongoException;
@@ -32,10 +31,7 @@ import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -63,6 +59,10 @@ public class EntityManager<E extends Entity> {
     private static final CountOptions   OPTIONS_COUNT_EXIST = new CountOptions().limit(1);
 
     private static final IndexOptions   OPTIONS_INDEX       = new IndexOptions();
+
+    private static final IndexModel     ID_INDEX =
+            new IndexModel(Indexes.ascending(KEY_ID),
+            new IndexOptions().unique(true).name(KEY_ID));
 
     // ======
 
@@ -469,12 +469,15 @@ public class EntityManager<E extends Entity> {
 
         Set<IndexModel> indexes = this.type.getDescriptor().getIndexes();
 
-        if(indexes.size() == 0) return;
+        List<IndexModel> all = new ArrayList<>();
+
+        all.add(ID_INDEX);
+        all.addAll(indexes);
 
         //
 
         try {
-            collection().createIndexes(Lists.newArrayList(indexes));
+            collection().createIndexes(all);
         } catch (MongoException e) {
             throw new EntityIOException("Exception while issuing MongoDB createIndexes command!", e);
         }
