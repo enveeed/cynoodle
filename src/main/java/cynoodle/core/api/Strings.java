@@ -11,10 +11,13 @@ import javax.annotation.Nonnull;
 public final class Strings {
     private Strings() {}
 
+    public static final char NON_BREAKING_WHITESPACE = '\u00A0';
+    public static final char ZERO_WIDTH_WHITESPACE = '\u200b';
+
     // === BOX ===
 
     @Nonnull
-    public static String box(@Nonnull String text, int length, @Nonnull BoxAlignment alignment) {
+    public static String box(@Nonnull String text, int length, @Nonnull BoxAlignment alignment, char whitespace) {
 
         if(text.length() > length) text = ellipsis(text, length);
 
@@ -36,7 +39,7 @@ public final class Strings {
         for (int i = 0; i < length; i++) {
             int t = i - offset;
             if(t >= 0 && t < text.length()) out.append(text.charAt(t));
-            else out.append(' ');
+            else out.append(whitespace);
         }
 
         return out.toString();
@@ -44,7 +47,17 @@ public final class Strings {
 
     @Nonnull
     public static String box(@Nonnull String text, int length) {
-        return box(text, length, BoxAlignment.LEFT);
+        return box(text, length, BoxAlignment.LEFT, ' ');
+    }
+
+    @Nonnull
+    public static String box(@Nonnull String text, int length, @Nonnull BoxAlignment alignment) {
+        return box(text, length, alignment, ' ');
+    }
+
+    @Nonnull
+    public static String box(@Nonnull String text, int length, char whitespace) {
+        return box(text, length, BoxAlignment.LEFT, whitespace);
     }
 
     //
