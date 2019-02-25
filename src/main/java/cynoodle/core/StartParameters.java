@@ -8,6 +8,8 @@ package cynoodle.core;
 
 import com.mongodb.ConnectionString;
 import cynoodle.core.api.Checks;
+import cynoodle.core.api.input.Options;
+import cynoodle.core.api.text.ParserException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +24,18 @@ public final class StartParameters {
     private final static Path DEF_CONFIGURATION_FILE = Paths.get("config.json");
 
     // TODO temporary:
-    private final ConnectionString DEF_MONGO_CONNECTION = new ConnectionString("mongodb://localhost");
+    private final static ConnectionString DEF_MONGO_CONNECTION = new ConnectionString("mongodb://localhost");
+
+    // ======
+
+    private final static Options.Option OPT_TOKEN = Options.newValueOption("token", 't');
+    private final static Options.Option OPT_MONGO_CONNECTION = Options.newValueOption("db", 'd');
+
+    private final static Options OPTIONS = Options.newBuilder()
+            .addOptions(
+                    OPT_TOKEN,
+                    OPT_MONGO_CONNECTION)
+            .build();
 
     // ======
 
@@ -118,5 +131,26 @@ public final class StartParameters {
 
             return new StartParameters(this);
         }
+    }
+
+    // ===
+
+    @Nonnull
+    public static StartParameters parse(@Nonnull String input) throws ParserException {
+
+        Options.Result result = OPTIONS.parse(input);
+
+        Builder builder = newBuilder();
+
+        //
+
+        if(result.hasOption(OPT_TOKEN))
+            builder.setDiscordToken(result.getOptionValue(OPT_TOKEN));
+        if(result.hasOption(OPT_MONGO_CONNECTION))
+            builder.setMongoConnection(new ConnectionString(result.getOptionValue(OPT_MONGO_CONNECTION)));
+
+        //
+
+        return builder.build();
     }
 }
