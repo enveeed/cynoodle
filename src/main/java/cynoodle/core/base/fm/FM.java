@@ -61,8 +61,8 @@ public final class FM extends UEntity {
         super.fromBson(source);
 
         this.username = source.getAt("username").asStringNullable().or(this.username);
-        this.preferredFormat = FMFormat
-                .values()[source.getAt("preferred_format").asInteger().or(this.preferredFormat.ordinal())];
+        this.preferredFormat = source.getAt("preferred_format").asInteger()
+                .map(i -> FMFormat.values()[i]).or(this.preferredFormat);
     }
 
     @Nonnull
@@ -71,7 +71,7 @@ public final class FM extends UEntity {
         FluentDocument data = super.toBson();
 
         data.setAt("username").asStringNullable().to(this.username);
-        data.setAt("preferred_format").asInteger().to(this.preferredFormat.ordinal());
+        data.setAt("preferred_format").asInteger().map(FMFormat::ordinal).to(this.preferredFormat);
 
         return data;
     }

@@ -90,10 +90,10 @@ public final class FMCommand extends Command {
 
         int spacing = 70;
 
-        String description = String.format("%s\n%s\n\n**%s**",
+        String description = String.format("**%s**\n\n%s\n%s",
+                Strings.box(track.getName(), spacing, Strings.NON_BREAKING_WHITESPACE),
                 Strings.box(track.getArtist(), spacing, Strings.NON_BREAKING_WHITESPACE),
-                Strings.box(track.getAlbum(), spacing, Strings.NON_BREAKING_WHITESPACE),
-                Strings.box(track.getName(), spacing, Strings.NON_BREAKING_WHITESPACE));
+                Strings.box(track.getAlbum(), spacing, Strings.NON_BREAKING_WHITESPACE));
 
         eOut.setDescription(description);
 
