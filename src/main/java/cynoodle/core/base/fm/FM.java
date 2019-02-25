@@ -24,6 +24,12 @@ public final class FM extends UEntity {
 
     // ===
 
+    public static String DEF_USERNAME = null;
+    public static FMFormat DEF_PREFERRED_FORMAT = FMFormat.SIMPLE;
+    public static boolean DEF_PROFILE_ENABLED = false;
+
+    // ===
+
     /**
      * The last.fm username.
      */
@@ -33,6 +39,11 @@ public final class FM extends UEntity {
      * The preferred format for {@link FMCommand}.
      */
     private FMFormat preferredFormat = FMFormat.SIMPLE;
+
+    /**
+     * If the last.fm account should be linked on the profile.
+     */
+    private boolean profileEnabled = false;
 
     // ===
 
@@ -54,15 +65,24 @@ public final class FM extends UEntity {
         this.preferredFormat = preferredFormat;
     }
 
-    // ===
+    public boolean isProfileEnabled() {
+        return this.profileEnabled;
+    }
+
+    public void setProfileEnabled(boolean profileEnabled) {
+        this.profileEnabled = profileEnabled;
+    }
+
+// ===
 
     @Override
     public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
         super.fromBson(source);
 
         this.username = source.getAt("username").asStringNullable().or(this.username);
-        this.preferredFormat = source.getAt("preferred_format").asInteger()
+        this.preferredFormat = source.getAt("format_preferred").asInteger()
                 .map(i -> FMFormat.values()[i]).or(this.preferredFormat);
+        this.profileEnabled = source.getAt("profile").asBoolean().or(this.profileEnabled);
     }
 
     @Nonnull
@@ -71,7 +91,8 @@ public final class FM extends UEntity {
         FluentDocument data = super.toBson();
 
         data.setAt("username").asStringNullable().to(this.username);
-        data.setAt("preferred_format").asInteger().map(FMFormat::ordinal).to(this.preferredFormat);
+        data.setAt("format_preferred").asInteger().map(FMFormat::ordinal).to(this.preferredFormat);
+        data.setAt("profile").asBoolean().to(this.profileEnabled);
 
         return data;
     }
