@@ -8,6 +8,7 @@ package cynoodle.core.discord;
 
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.CyNoodle;
+import cynoodle.core.api.text.ParserException;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MSystem;
 import cynoodle.core.module.Module;
@@ -61,9 +62,17 @@ public final class DiscordModule extends Module {
 
         LOG.atFine().log("Loading configuration ...");
 
-        // TODO temporary: get this from config file rather than start parameters
+        DiscordParameters parameters;
+
+        try {
+            parameters = DiscordParameters.parse(CyNoodle.get().getLaunchSettings().getParameters());
+        } catch (ParserException e) {
+            throw new RuntimeException("Failed to parse parameters required for Discord!", e);
+        }
+
+        // TODO unify DiscordParameters and DiscordConfiguration
         this.configuration = DiscordConfiguration.newBuilder()
-                .setToken(CyNoodle.get().getParameters().getDiscordToken()).build();
+                .setToken(parameters.getToken()).build();
 
         // === SETUP ==
 
