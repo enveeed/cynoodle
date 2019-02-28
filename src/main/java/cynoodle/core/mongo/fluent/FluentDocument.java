@@ -60,7 +60,7 @@ public final class FluentDocument implements FluentValue {
 
     public class AtAPI {
 
-        protected final String key;
+        final String key;
 
         // ===
 
@@ -111,6 +111,14 @@ public final class FluentDocument implements FluentValue {
             return new SetAPI<>(this.key, function);
         }
 
+        // directly passes null values without trying to convert
+        public <V> SetAPI<V> asNullable(Function<? super V, ? extends BsonValue> function) {
+            return new SetAPI<>(this.key,
+                    v -> v == null ? BsonNull.VALUE : function.apply(v));
+        }
+
+        //
+
         public <V> SetAPI<V> map(Function<? super V, ? extends T> function) {
             return new SetAPI<>(this.key, function.andThen(this.function));
         }
@@ -150,33 +158,33 @@ public final class FluentDocument implements FluentValue {
         //
 
         public SetAPI<FluentDocument> asDocumentNullable() {
-            return as(x -> x == null ? BsonNull.VALUE : x.asBson());
+            return asNullable(FluentDocument::asBson);
         }
 
         public SetAPI<FluentArray> asArrayNullable() {
-            return as(x -> x == null ? BsonNull.VALUE : x.asBson());
+            return asNullable(FluentArray::asBson);
         }
 
         //
 
         public SetAPI<String> asStringNullable() {
-            return as(x -> x == null ? BsonNull.VALUE : new BsonString(x));
+            return asNullable(BsonString::new);
         }
 
         public SetAPI<Integer> asIntegerNullable() {
-            return as(x -> x == null ? BsonNull.VALUE : new BsonInt32(x));
+            return asNullable(BsonInt32::new);
         }
 
         public SetAPI<Long> asLongNullable() {
-            return as(x -> x == null ? BsonNull.VALUE : new BsonInt64(x));
+            return asNullable(BsonInt64::new);
         }
 
         public SetAPI<Double> asDoubleNullable() {
-            return as(x -> x == null ? BsonNull.VALUE : new BsonDouble(x));
+            return asNullable(BsonDouble::new);
         }
 
         public SetAPI<Boolean> asBooleanNullable() {
-            return as(x -> x == null ? BsonNull.VALUE : new BsonBoolean(x));
+            return asNullable(BsonBoolean::new);
         }
 
         // ===
@@ -204,6 +212,12 @@ public final class FluentDocument implements FluentValue {
         public <V> GetAPI<V> as(Function<? super BsonValue, ? extends V> function) {
             return new GetAPI<>(this.key, function);
         }
+
+        public <V> GetAPI<V> asNullable(Function<? super BsonValue, ? extends V> function) {
+            return new GetAPI<>(this.key, value -> value.isNull() ? null : function.apply(value));
+        }
+
+        //
 
         public <V> GetAPI<V> map(Function<? super T, ? extends V> function) {
             return new GetAPI<>(this.key, this.function.andThen(function));
@@ -244,33 +258,33 @@ public final class FluentDocument implements FluentValue {
         //
 
         public GetAPI<FluentDocument> asDocumentNullable() {
-            return as(value -> value.isNull() ? null : FluentDocument.wrap(value.asDocument()));
+            return asNullable(value -> FluentDocument.wrap(value.asDocument()));
         }
 
         public GetAPI<FluentArray> asArrayNullable() {
-            return as(value -> value.isNull() ? null : FluentArray.wrap(value.asArray()));
+            return asNullable(value -> FluentArray.wrap(value.asArray()));
         }
 
         //
 
         public GetAPI<String> asStringNullable() {
-            return as(value -> value.isNull() ? null : value.asString().getValue());
+            return asNullable(value -> value.asString().getValue());
         }
 
         public GetAPI<Integer> asIntegerNullable() {
-            return as(value -> value.isNull() ? null : value.asInt32().getValue());
+            return asNullable(value -> value.asInt32().getValue());
         }
 
         public GetAPI<Long> asLongNullable() {
-            return as(value -> value.isNull() ? null : value.asInt64().getValue());
+            return as(value -> value.asInt64().getValue());
         }
 
         public GetAPI<Double> asDoubleNullable() {
-            return as(value -> value.isNull() ? null : value.asDouble().getValue());
+            return asNullable(value -> value.asDouble().getValue());
         }
 
         public GetAPI<Boolean> asBooleanNullable() {
-            return as(value -> value.isNull() ? null : value.asBoolean().getValue());
+            return asNullable(value -> value.asBoolean().getValue());
         }
 
         // ===

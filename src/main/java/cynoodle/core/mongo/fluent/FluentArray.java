@@ -84,6 +84,10 @@ public final class FluentArray implements FluentValue {
             return new InsertAPI<>(function);
         }
 
+        public <V> InsertAPI<V> asNullable(Function<? super V, ? extends BsonValue> function) {
+            return new InsertAPI<>(v -> v == null ? BsonNull.VALUE : function.apply(v));
+        }
+
         public <V> InsertAPI<V> map(Function<? super V, ? extends T> function) {
             return new InsertAPI<>(function.andThen(this.function));
         }
@@ -210,6 +214,10 @@ public final class FluentArray implements FluentValue {
 
         public <V> CollectAPI<V> as(Function<? super BsonValue, ? extends V> function) {
             return new CollectAPI<>(this.from, this.to, function);
+        }
+
+        public <V> CollectAPI<V> asNullable(Function<? super BsonValue, ? extends V> function) {
+            return new CollectAPI<>(this.from, this.to, value -> value.isNull() ? null : function.apply(value));
         }
 
         public <V> CollectAPI<V> map(Function<? super T, ? extends V> function) {
