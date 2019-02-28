@@ -6,7 +6,7 @@
 
 package cynoodle.core;
 
-import cynoodle.core.api.input.Parameters;
+import cynoodle.core.api.text.Parameters;
 
 import javax.annotation.Nonnull;
 

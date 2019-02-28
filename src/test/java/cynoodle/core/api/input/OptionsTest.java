@@ -6,6 +6,7 @@
 
 package cynoodle.core.api.input;
 
+import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.ParserException;
 import org.junit.jupiter.api.Test;
 

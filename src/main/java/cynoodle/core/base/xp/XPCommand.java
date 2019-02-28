@@ -8,9 +8,9 @@ package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Progress;
-import cynoodle.core.api.input.Options;
-import cynoodle.core.api.input.Parameters;
-import cynoodle.core.api.output.ProgressFormatter;
+import cynoodle.core.api.text.Options;
+import cynoodle.core.api.text.Parameters;
+import cynoodle.core.api.text.ProgressFormatter;
 import cynoodle.core.base.command.*;
 import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;

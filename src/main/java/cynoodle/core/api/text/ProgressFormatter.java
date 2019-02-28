@@ -4,7 +4,7 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.api.output;
+package cynoodle.core.api.text;
 
 import cynoodle.core.api.Progress;
 

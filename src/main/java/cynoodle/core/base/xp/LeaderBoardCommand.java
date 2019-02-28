@@ -8,8 +8,8 @@ package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
-import cynoodle.core.api.input.Options;
-import cynoodle.core.api.input.Parameters;
+import cynoodle.core.api.text.Options;
+import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.IntegerParser;
 import cynoodle.core.base.command.*;
 import cynoodle.core.discord.GEntityManager;

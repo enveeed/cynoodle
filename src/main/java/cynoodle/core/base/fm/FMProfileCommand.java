@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.fm;
 
-import cynoodle.core.api.input.Options;
+import cynoodle.core.api.text.Options;
 import cynoodle.core.base.command.*;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;

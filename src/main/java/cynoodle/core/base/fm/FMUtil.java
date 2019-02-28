@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.fm;
 
-import cynoodle.core.Colors;
+import cynoodle.core.api.Colors;
 import de.umass.lastfm.ImageHolder;
 import de.umass.lastfm.ImageSize;
 

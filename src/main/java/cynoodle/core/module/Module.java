@@ -8,7 +8,7 @@ package cynoodle.core.module;
 
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.CyNoodle;
-import cynoodle.core.api.output.ANSIColors;
+import cynoodle.core.api.text.ANSIColors;
 import cynoodle.core.events.EventListener;
 
 import javax.annotation.Nonnull;

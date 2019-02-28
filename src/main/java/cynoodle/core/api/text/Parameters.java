@@ -4,13 +4,11 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.api.input;
+package cynoodle.core.api.text;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import cynoodle.core.api.text.Parser;
-import cynoodle.core.api.text.ParserException;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

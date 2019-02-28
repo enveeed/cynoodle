@@ -6,8 +6,8 @@
 
 package cynoodle.core.base.fm;
 
-import cynoodle.core.api.input.Options;
-import cynoodle.core.api.input.Parameters;
+import cynoodle.core.api.text.Options;
+import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.BooleanParser;
 import cynoodle.core.api.text.StringParser;
 import cynoodle.core.base.command.*;

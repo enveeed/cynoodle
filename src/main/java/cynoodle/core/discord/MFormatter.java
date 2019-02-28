@@ -6,7 +6,7 @@
 
 package cynoodle.core.discord;
 
-import cynoodle.core.api.output.Formatter;
+import cynoodle.core.api.text.Formatter;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;

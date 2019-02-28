@@ -6,8 +6,8 @@
 
 package cynoodle.core.discord;
 
-import cynoodle.core.api.input.Options;
-import cynoodle.core.api.input.Parameters;
+import cynoodle.core.api.text.Options;
+import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.ParserException;
 
 import javax.annotation.Nonnull;

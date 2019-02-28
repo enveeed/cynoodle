@@ -10,12 +10,14 @@ import cynoodle.core.discord.UEntity;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
-import cynoodle.core.mongo.fluent.FluentValues;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.Optional;
+
+import static cynoodle.core.mongo.fluent.FluentValues.fromLocalDate;
+import static cynoodle.core.mongo.fluent.FluentValues.toLocalDate;
 
 /**
  * A user profile, which contains user properties for different purposes.
@@ -77,7 +79,7 @@ public final class Profile extends UEntity {
         super.fromBson(source);
 
         this.text = source.getAt("text").asStringNullable().or(this.text);
-        this.birthday = source.getAt("birthday").asNullable(FluentValues.toLocalDate()).or(this.birthday);
+        this.birthday = source.getAt("birthday").asNullable(toLocalDate()).or(this.birthday);
         this.gender = source.getAt("gender").asNullable(Gender.fromBson()).or(this.gender);
     }
 
@@ -87,7 +89,7 @@ public final class Profile extends UEntity {
         FluentDocument data = super.toBson();
 
         data.setAt("text").asStringNullable().to(this.text);
-        data.setAt("birthday").asNullable(FluentValues.fromLocalDate()).to(this.birthday);
+        data.setAt("birthday").asNullable(fromLocalDate()).to(this.birthday);
         data.setAt("gender").asNullable(Gender.toBson()).to(this.gender);
 
         return data;

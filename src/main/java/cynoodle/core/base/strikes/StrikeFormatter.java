@@ -6,8 +6,8 @@
 
 package cynoodle.core.base.strikes;
 
-import cynoodle.core.api.output.Formatter;
-import cynoodle.core.api.output.InstantFormatter;
+import cynoodle.core.api.text.Formatter;
+import cynoodle.core.api.text.InstantFormatter;
 import cynoodle.core.discord.MFormatter;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;

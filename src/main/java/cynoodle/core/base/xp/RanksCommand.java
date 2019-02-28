@@ -10,7 +10,7 @@ import com.google.common.primitives.Longs;
 import com.mongodb.client.model.Filters;
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
-import cynoodle.core.api.input.Options;
+import cynoodle.core.api.text.Options;
 import cynoodle.core.base.command.*;
 import cynoodle.core.module.Module;
 

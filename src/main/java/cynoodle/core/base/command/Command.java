@@ -7,7 +7,7 @@
 package cynoodle.core.base.command;
 
 import com.google.common.flogger.FluentLogger;
-import cynoodle.core.api.input.Options;
+import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.ParserException;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;

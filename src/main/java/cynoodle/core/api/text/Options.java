@@ -1,8 +1,12 @@
-package cynoodle.core.api.input;
+/*
+ * Copyright (c) enveeed 2019 - All Rights Reserved.
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ */
+
+package cynoodle.core.api.text;
 
 import cynoodle.core.api.Checks;
-import cynoodle.core.api.text.Parser;
-import cynoodle.core.api.text.ParserException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

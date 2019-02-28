@@ -6,8 +6,8 @@
 
 package cynoodle.core.base.strikes;
 
-import cynoodle.core.api.input.Options;
-import cynoodle.core.api.input.Parameters;
+import cynoodle.core.api.text.Options;
+import cynoodle.core.api.text.Parameters;
 import cynoodle.core.base.command.CAliases;
 import cynoodle.core.base.command.CIdentifier;
 import cynoodle.core.base.command.Command;
