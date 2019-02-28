@@ -17,8 +17,13 @@ import java.time.format.DateTimeFormatter;
  */
 public final class InstantFormatter implements Formatter<Instant> {
 
+    public static final DateTimeFormatter DEFAULT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DATE_ONLY = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    // ===
+
     private ZoneId zone = ZoneId.systemDefault();
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private DateTimeFormatter formatter = DEFAULT;
 
     // ===
 
