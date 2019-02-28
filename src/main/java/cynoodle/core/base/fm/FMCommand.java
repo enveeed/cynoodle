@@ -6,13 +6,11 @@
 
 package cynoodle.core.base.fm;
 
-import cynoodle.core.Colors;
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.input.Options;
 import cynoodle.core.base.command.*;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
-import de.umass.lastfm.ImageSize;
 import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.Track;
 import de.umass.lastfm.User;
@@ -20,12 +18,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import javax.annotation.Nonnull;
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Optional;
 
 @CIdentifier("base:fm:fm")
@@ -55,8 +48,7 @@ public final class FMCommand extends Command {
 
         // === API REQUEST ===
 
-        // TODO getApiKey
-        PaginatedResult<Track> recent = User.getRecentTracks(username, 1, 1, null);
+        PaginatedResult<Track> recent = User.getRecentTracks(username, 1, 1, module.getAPIKey());
 
         if (recent.isEmpty()) throw new CommandException("The last.fm API did not return any result.");
 
@@ -99,82 +91,18 @@ public final class FMCommand extends Command {
 
         // === IMAGE ===
 
-        Optional<String> url = findImageLargest(track);
+        Optional<String> url = FMUtil.findImageLargest(track);
 
         if(url.isPresent()) eOut.setThumbnail(url.orElseThrow());
 
         // === COLOR ===
 
-        Optional<Color> color = findColor(track);
+        Optional<Color> color = FMUtil.findColor(track);
 
         if(color.isPresent()) eOut.setColor(color.orElseThrow());
 
         //
 
         return eOut.build();
-    }
-
-    //
-
-    @Nonnull
-    private static Optional<String> findImageLargest(@Nonnull Track track) {
-        return findImage(track, false);
-    }
-
-    @Nonnull
-    private static Optional<String> findImageSmallest(@Nonnull Track track) {
-        return findImage(track, true);
-    }
-
-    @Nonnull
-    private static Optional<String> findImage(@Nonnull Track track, boolean smallest) {
-
-        ImageSize[] sizes = new ImageSize[] {
-                ImageSize.SMALL,
-                ImageSize.MEDIUM,
-                ImageSize.LARGE,
-                ImageSize.LARGESQUARE,
-                ImageSize.HUGE,
-                ImageSize.EXTRALARGE,
-                ImageSize.MEGA,
-                ImageSize.ORIGINAL
-        };
-
-        if(smallest)
-            for (int i = 0; i < sizes.length; i++) {
-                String url = track.getImageURL(sizes[i]);
-                if(url != null && !url.isBlank()) return Optional.of(url);
-            }
-        else {
-            for (int i = sizes.length - 1; i >= 0; i--) {
-                String url = track.getImageURL(sizes[i]);
-                if(url != null && !url.isBlank()) return Optional.of(url);
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    @Nonnull
-    private static Optional<Color> findColor(@Nonnull Track track) {
-
-        Optional<String> smallestImageURL = findImage(track, true);
-
-        if(smallestImageURL.isPresent()) {
-
-            try {
-                URL url = new URL(smallestImageURL.orElseThrow());
-                BufferedImage image = ImageIO.read(url);
-
-                return Optional.of(Colors.averageByImage(image));
-
-            } catch (MalformedURLException e) {
-                throw new RuntimeException("last.fm returned bad image URL!", e);
-            } catch (IOException e) {
-                throw new RuntimeException("last.fm returned bad image data!", e);
-            }
-
-        }
-        else return Optional.empty();
     }
 }
