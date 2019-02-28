@@ -27,6 +27,8 @@ public final class Options implements Parser<Options.Result> {
     private final char char_escape;
     private final char char_block;
 
+    private final boolean ignoreUnknownOptions;
+
     // ===
 
     private final Set<Option> options;
@@ -36,12 +38,15 @@ public final class Options implements Parser<Options.Result> {
 
     // ===
 
-    private Options(char char_separator, char char_option, char char_escape, char char_block, @Nonnull Set<Option> options) {
+    private Options(char char_separator, char char_option, char char_escape, char char_block, boolean ignoreUnknownOptions,
+                    @Nonnull Set<Option> options) {
 
         this.char_separator = char_separator;
         this.char_option = char_option;
         this.char_escape = char_escape;
         this.char_block = char_block;
+
+        this.ignoreUnknownOptions = ignoreUnknownOptions;
 
         this.options = Collections.unmodifiableSet(options);
 
@@ -112,13 +117,13 @@ public final class Options implements Parser<Options.Result> {
             // toggle block (not if escaped)
             if (character == char_block && !inEscape) {
                 inBlock = !inBlock;
-                if(!last) continue; // go to next (if not last one)
+                if (!last) continue; // go to next (if not last one)
                 isEscapeOrBlockChar = true;
             }
             // set escape (not if escaped)
             if (character == char_escape && !inEscape) {
                 inEscape = true;
-                if(!last) continue; // go to next (if not last one)
+                if (!last) continue; // go to next (if not last one)
                 isEscapeOrBlockChar = true;
             }
 
@@ -139,9 +144,9 @@ public final class Options implements Parser<Options.Result> {
                         state = 1;
                     } else state = 2;
                 } else {
-                    if(!isEscapeOrBlockChar) collector.append(character);
+                    if (!isEscapeOrBlockChar) collector.append(character);
                     state = 1;
-                    if(last) drain = 1;
+                    if (last) drain = 1;
                 }
             } else if (state == 1) {
                 // parameter
@@ -160,8 +165,8 @@ public final class Options implements Parser<Options.Result> {
             } else if (state == 2) {
                 // option-char 1
                 if (character == char_separator || last) {
-                    if(last) {
-                        if(!isEscapeOrBlockChar) collector.append(character);
+                    if (last) {
+                        if (!isEscapeOrBlockChar) collector.append(character);
                         drain = 2;
                     }
                     state = 0;
@@ -174,8 +179,8 @@ public final class Options implements Parser<Options.Result> {
             } else if (state == 3) {
                 // option-char 2
                 if (character == char_separator || last) {
-                    if(last) {
-                        if(!isEscapeOrBlockChar) collector.append(character);
+                    if (last) {
+                        if (!isEscapeOrBlockChar) collector.append(character);
                         drain = 3;
                     }
                     state = 0;
@@ -228,12 +233,12 @@ public final class Options implements Parser<Options.Result> {
 
             // drain if finished
 
-            if(drain == 1) {
+            if (drain == 1) {
 
                 result.addParameter(collector.drainString());
                 state = 0;
 
-            } else if(drain == 2) {
+            } else if (drain == 2) {
 
                 char[] characters = collector.drainChars();
 
@@ -245,7 +250,9 @@ public final class Options implements Parser<Options.Result> {
                     Option option = this.options_short.get(character_short);
 
                     if (option == null)
-                        throw new ParserException("Unknown option: `" + this.char_option + character_short + "`");
+                        if (ignoreUnknownOptions) state = 0;
+                        else
+                            throw new ParserException("Unknown option: `" + this.char_option + character_short + "`");
                     else {
                         if (option.isValueRequired()) {
                             if (!last_short)
@@ -262,13 +269,15 @@ public final class Options implements Parser<Options.Result> {
                     }
                 }
 
-            } else if(drain == 3) {
+            } else if (drain == 3) {
 
                 String option_long = collector.drainString();
                 Option option = this.options_long.get(option_long);
 
                 if (option == null)
-                    throw new ParserException("Unknown option: `" + this.char_option + this.char_option + option_long + "`");
+                    if (ignoreUnknownOptions) state = 0;
+                    else
+                        throw new ParserException("Unknown option: `" + this.char_option + this.char_option + option_long + "`");
                 else {
                     if (option.isValueRequired()) {
                         value_option = option;
@@ -304,6 +313,13 @@ public final class Options implements Parser<Options.Result> {
         //
 
         return result.build();
+    }
+
+    //
+
+    @Nonnull
+    public Options.Result parse(@Nonnull Parameters parameters) throws ParserException {
+        return parse(parameters.join());
     }
 
     // ===
@@ -462,6 +478,8 @@ public final class Options implements Parser<Options.Result> {
         private char char_escape = CHAR_ESCAPE_DEFAULT;
         private char char_block = CHAR_BLOCK_DEFAULT;
 
+        private boolean ignoreUnknownOptions = false;
+
         private Set<Option> options = new HashSet<>();
 
         // ===
@@ -493,6 +511,14 @@ public final class Options implements Parser<Options.Result> {
         //
 
         @Nonnull
+        public Builder setIgnoreUnknownOptions(boolean ignoreUnknownOptions) {
+            this.ignoreUnknownOptions = ignoreUnknownOptions;
+            return this;
+        }
+
+        //
+
+        @Nonnull
         public Builder addOptions(@Nonnull Option... options) {
             this.options.addAll(Arrays.asList(options));
             return this;
@@ -507,6 +533,7 @@ public final class Options implements Parser<Options.Result> {
                     this.char_option,
                     this.char_escape,
                     this.char_block,
+                    this.ignoreUnknownOptions,
                     this.options);
         }
     }
