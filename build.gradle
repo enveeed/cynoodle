@@ -9,10 +9,8 @@ plugins {
     id 'application'
 
     id 'idea'
-
-    id 'de.fuerstenau.buildconfig' version '1.1.8'
-
-    id 'com.palantir.docker' version '0.21.0'
+    
+    id 'de.fuerstenau.buildconfig' version '1.1.8' 
 }
 
 // ======
@@ -73,7 +71,7 @@ dependencies {
 
     // APIs
 
-    implementation group: 'net.dv8tion', name:'JDA', version: '3.8.1_450' // JDA (Discord API)
+    implementation group: 'net.dv8tion', name:'JDA', version: '3.8.3_460' // JDA (Discord API)
     implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.10.1' // MongoDB Java Driver (MongoDB API)
 
     // Utilities / Libraries
