@@ -6,6 +6,7 @@
 
 package cynoodle.core.api.input;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import cynoodle.core.api.text.Parser;
@@ -69,6 +70,13 @@ public final class Parameters {
         Optional<String> opt = get(index);
         if(opt.isPresent()) return Optional.of(parser.parse(opt.orElseThrow()));
         else return Optional.empty();
+    }
+
+    // ===
+
+    @Nonnull
+    public String join() {
+        return Joiner.on(' ').join(this.parameters);
     }
 
     // ===
