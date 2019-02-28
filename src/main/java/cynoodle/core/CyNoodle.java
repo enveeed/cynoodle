@@ -59,7 +59,7 @@ public final class CyNoodle {
 
     // === INTERNALS ===
 
-    private final StartParameters parameters;
+    private final LaunchSettings launchSettings;
 
     // ======
 
@@ -86,20 +86,20 @@ public final class CyNoodle {
 
     /**
      * internal cynoodle instance constructor, only called once during initialization.
-     * @param parameters the cynoodle start parameters to use
+     * @param settings the cynoodle launch settings to use
      */
-    private CyNoodle(@Nonnull StartParameters parameters) {
+    private CyNoodle(@Nonnull LaunchSettings settings) {
         if(CyNoodle.noodle != null) throw new Error();
-        this.parameters = parameters;
+        this.launchSettings = settings;
     }
 
     // ======
 
-    public static void launch(@Nonnull StartParameters configuration) throws IllegalStateException {
+    public static void launch(@Nonnull LaunchSettings settings) throws IllegalStateException {
         if(noodle != null) throw new IllegalStateException("cynoodle was already launched.");
 
         // create the cynoodle instance
-        noodle = new CyNoodle(configuration);
+        noodle = new CyNoodle(settings);
 
         // create the root thread and start it to start cynoodle
         Thread root = new Thread(noodle::run, "root");
@@ -336,12 +336,12 @@ public final class CyNoodle {
     // ======
 
     /**
-     * Get the cyborgnoodle start parameters.
-     * @return the start parameters
+     * Get the cyborgnoodle launch settings.
+     * @return the launch settings
      */
     @Nonnull
-    public StartParameters getParameters() {
-        return parameters;
+    public LaunchSettings getLaunchSettings() {
+        return this.launchSettings;
     }
 
     // ======
@@ -396,7 +396,7 @@ public final class CyNoodle {
     // ======
 
     /**
-     * Obtain the global cyborgnoodle core instance. Must be launched via {@link #launch(StartParameters)} first.
+     * Obtain the global cyborgnoodle core instance. Must be launched via {@link #launch(LaunchSettings)} first.
      * @return the global cyborgnoodle core instance
      * @throws IllegalStateException if cyborgnoodle was not launched yet, this should never be handled
      */

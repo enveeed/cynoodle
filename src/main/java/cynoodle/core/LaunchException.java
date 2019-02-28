@@ -9,7 +9,7 @@ package cynoodle.core;
 import javax.annotation.Nonnull;
 
 /**
- * Thrown by {@link CyNoodle#launch(StartParameters)} to indicate that launching failed.
+ * Thrown by {@link CyNoodle#launch(LaunchSettings)} to indicate that launching failed.
  */
 public final class LaunchException extends Exception {
 
