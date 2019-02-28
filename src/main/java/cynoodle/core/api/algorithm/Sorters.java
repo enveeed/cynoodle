@@ -96,7 +96,7 @@ public final class Sorters {
 
                     sorted.add(element);
                 } else if (!sorted.contains(element))
-                    throw new IllegalArgumentException("There is a circular dependency on element \""+element+"\"," +
+                    throw new IllegalArgumentException("There is a circular dependency on element \""+element+"\", " +
                             "preventing correct topological sorting!");
             }
         };
