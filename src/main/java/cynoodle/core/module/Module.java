@@ -13,7 +13,8 @@ import cynoodle.core.events.EventListener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>A module in cynoodle.</p>
@@ -84,6 +85,36 @@ public abstract class Module implements EventListener {
     public final ModuleDescriptor getDescriptor() {
         return this.manager.getRegistry().getDescriptor(this.identifier)
                 .orElseThrow(IllegalStateException::new);
+    }
+
+    // ===
+
+    public boolean isSystemModule() {
+        return getDescriptor().isSystemModule();
+    }
+
+    // ===
+
+    @Nonnull
+    public final Set<ModuleIdentifier> getEffectiveDependencies() {
+
+        Set<ModuleIdentifier> explicitDependencies = getDescriptor().getDependencies();
+
+        Set<ModuleIdentifier> dependencies = new HashSet<>(explicitDependencies);
+
+        // non-system modules automatically depend on all system modules
+        if(!this.isSystemModule()) {
+
+            Set<ModuleIdentifier> systemModules = this.manager.getRegistry().all()
+                    .filter(Module::isSystemModule).map(Module::getIdentifier)
+                    .collect(Collectors.toCollection(HashSet::new));
+
+            dependencies.addAll(systemModules);
+        }
+
+        System.out.println("effective dependencies on "+getIdentifier()+": "+dependencies);
+
+        return Collections.unmodifiableSet(dependencies);
     }
 
     // ======

@@ -6,6 +6,7 @@
 
 package cynoodle.core.module;
 
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.flogger.FluentLogger;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -13,6 +14,7 @@ import cynoodle.core.api.algorithm.Sorter;
 import cynoodle.core.api.algorithm.Sorters;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,8 +34,8 @@ public final class ModuleManager {
 
     //
 
-    private final Sorter<ModuleIdentifier> sorter = Sorters.topological(identifier -> registry.get(identifier)
-            .orElseThrow().getDescriptor().getDependencies());
+    private final Sorter<ModuleIdentifier> sorter =
+            Sorters.topological(identifier -> registry.get(identifier).orElseThrow().getEffectiveDependencies());
 
     // ===
 
@@ -109,11 +111,13 @@ public final class ModuleManager {
         // try to sort the modules for stopping
         List<ModuleIdentifier> sorted;
         try {
-            sorted = this.sorter.sort(modules);
+            sorted = new ArrayList<>(this.sorter.sort(modules));
         } catch (IllegalArgumentException ex) {
             throw new IllegalStateException("Failed to determine module stop order, " +
                     "there are cycles in the registered Module dependencies!", ex);
         }
+
+        Lists.reverse(sorted);
 
         // stop the modules
         for (ModuleIdentifier identifier : sorted) {

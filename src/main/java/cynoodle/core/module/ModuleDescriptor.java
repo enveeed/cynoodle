@@ -7,6 +7,7 @@
 package cynoodle.core.module;
 
 import com.google.common.flogger.FluentLogger;
+import cynoodle.core.api.reflect.Annotations;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
@@ -179,7 +180,7 @@ public final class ModuleDescriptor {
 
         // find annotations
         MIdentifier annIdentifier = moduleClass.getDeclaredAnnotation(MIdentifier.class);
-        MDependencies annDependencies = moduleClass.getDeclaredAnnotation(MDependencies.class);
+        Set<MRequires> annsRequires = Annotations.collectOf(moduleClass, MRequires.class);
         MSystem annSystem = moduleClass.getDeclaredAnnotation(MSystem.class);
 
         // ensure required annotations
@@ -202,11 +203,9 @@ public final class ModuleDescriptor {
 
         // collect dependencies
 
-        MRequires[] annRequires = annDependencies != null ? annDependencies.value() : new MRequires[0];
-
         Set<ModuleIdentifier> dependencies = new HashSet<>();
 
-        for (MRequires require : annRequires) {
+        for (MRequires require : annsRequires) {
             try {
                 ModuleIdentifier dependencyIdentifier = ModuleIdentifier.parse(require.value());
                 dependencies.add(dependencyIdentifier);
