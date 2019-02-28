@@ -84,5 +84,17 @@ public final class Strings {
         }
     }
 
+    // === CHAIN ===
+
+    @Nonnull
+    public static String chain(@Nonnull String input, int length) {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < length; i++) out.append(input);
+        return out.toString();
+    }
+
+    public static String chain(char input, int length) {
+        return chain(String.valueOf(input), length);
+    }
 
 }
