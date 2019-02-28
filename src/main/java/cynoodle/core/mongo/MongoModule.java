@@ -45,8 +45,8 @@ public final class MongoModule extends Module {
 
         LOG.atInfo().log("Setting up MongoDB ...");
 
-        // TODO temporary: get this from config file rather than start parameters
-        ConnectionString mongoConnection = CyNoodle.get().getParameters().getMongoConnection();
+        // TODO temporary: get this from parameters rather than inline
+        ConnectionString mongoConnection = new ConnectionString("mongodb://localhost");
 
         //
 
