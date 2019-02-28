@@ -14,6 +14,7 @@ import org.bson.BsonValue;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Currency;
 import java.util.function.Function;
@@ -29,6 +30,14 @@ public final class FluentValues {
 
     public static Function<BsonValue, Instant> toInstant() {
         return x -> Instant.ofEpochMilli(x.asInt64().getValue());
+    }
+
+    public static Function<LocalDate, BsonInt64> fromLocalDate() {
+        return x -> new BsonInt64(x.toEpochDay());
+    }
+
+    public static Function<BsonValue, LocalDate> toLocalDate() {
+        return x -> LocalDate.ofEpochDay(x.asInt64().getValue());
     }
 
     public static Function<Duration, BsonInt64> fromDuration() {
