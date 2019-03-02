@@ -4,10 +4,8 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.api.input;
+package cynoodle.core.api.text;
 
-import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.ParserException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -125,7 +123,7 @@ class OptionsTest {
 
         // ===
 
-        assertThrows(ParserException.class, () -> options.parse(input));
+        assertThrows(ParsingException.class, () -> options.parse(input));
 
     }
 
@@ -148,7 +146,7 @@ class OptionsTest {
 
         // ===
 
-        assertThrows(ParserException.class, () -> options.parse(input));
+        assertThrows(ParsingException.class, () -> options.parse(input));
 
     }
 
@@ -173,7 +171,7 @@ class OptionsTest {
 
         // ===
 
-        assertThrows(ParserException.class, () -> options.parse(input));
+        assertThrows(ParsingException.class, () -> options.parse(input));
     }
 
     @Test
@@ -193,7 +191,7 @@ class OptionsTest {
 
         // ===
 
-        assertThrows(ParserException.class, () -> options.parse(input));
+        assertThrows(ParsingException.class, () -> options.parse(input));
     }
 
 }
