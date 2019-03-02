@@ -7,6 +7,7 @@
 package cynoodle.core.api;
 
 import javax.annotation.Nonnull;
+import java.util.Locale;
 
 public final class Strings {
     private Strings() {}
@@ -97,4 +98,72 @@ public final class Strings {
         return chain(String.valueOf(input), length);
     }
 
+    // === SIMILARITY ===
+
+    /**
+     * Calculates the similarity between two strings as a value between 0 and 1,
+     * using {@link #levenshteinDistance(String, String)}.
+     * @param a first string
+     * @param b second string
+     * @return similarity value, between 0 and 1
+     */
+    public static double similarity(@Nonnull String a, @Nonnull String b) {
+
+        // a should always be greater or equal
+        if (a.length() < b.length()) {
+            String longer = b;
+            b = a;
+            a = longer;
+        }
+
+        int al = a.length();
+
+        if (al == 0) return 1.0;
+
+        return (al - levenshteinDistance(a, b)) / (double) al;
+
+    }
+
+    /**
+     * Calculates the Levenshtein distance between two strings.
+     * Ideally, a should be greater or equal length than b. If
+     * this is not the case both are switched.
+     * @param a first string
+     * @param b second string
+     * @return the Levenshtein distance
+     */
+    public static int levenshteinDistance(@Nonnull String a, @Nonnull String b) {
+
+        a = a.toLowerCase(Locale.ENGLISH);
+        b = b.toLowerCase(Locale.ENGLISH);
+
+        // a should always be greater or equal
+        if (a.length() < b.length()) {
+            String longer = b;
+            b = a;
+            a = longer;
+        }
+
+        int[] costs = new int[b.length() + 1];
+        for (int i = 0; i <= a.length(); i++) {
+            int lastValue = i;
+            for (int j = 0; j <= b.length(); j++) {
+                if (i == 0)
+                    costs[j] = j;
+                else {
+                    if (j > 0) {
+                        int newValue = costs[j - 1];
+                        if (a.charAt(i - 1) != b.charAt(j - 1))
+                            newValue = Math.min(Math.min(newValue, lastValue),
+                                    costs[j]) + 1;
+                        costs[j - 1] = lastValue;
+                        lastValue = newValue;
+                    }
+                }
+            }
+            if (i > 0)
+                costs[b.length()] = lastValue;
+        }
+        return costs[b.length()];
+    }
 }
