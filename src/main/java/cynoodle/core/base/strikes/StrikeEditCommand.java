@@ -8,9 +8,12 @@ package cynoodle.core.base.strikes;
 
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
-import cynoodle.core.api.text.IntegerParser;
-import cynoodle.core.api.text.StringParser;
-import cynoodle.core.base.command.*;
+import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.base.command.CAliases;
+import cynoodle.core.base.command.CIdentifier;
+import cynoodle.core.base.command.Command;
+import cynoodle.core.base.command.CommandContext;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
@@ -18,6 +21,9 @@ import cynoodle.core.module.Module;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static cynoodle.core.base.command.CommandExceptions.missingParameter;
+import static cynoodle.core.base.command.CommandExceptions.simple;
 
 @CIdentifier("base:strikes:edit")
 @CAliases({"strikeedit","strikee","stre"})
@@ -27,18 +33,20 @@ public final class StrikeEditCommand extends Command {
     private final StrikesModule module = Module.get(StrikesModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         StrikeManager manager = module.getStrikes();
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer member = parameters.getAs(0, Members.parserOf(context))
-                .orElseThrow();
-        int index = parameters.getAs(1, IntegerParser.get())
-                .orElseThrow();
-        String selector = parameters.getAs(2, StringParser.get())
-                .orElseThrow();
+        DiscordPointer member = parameters.get(0)
+                .map(Members.parserOf(context)::parse)
+                .orElseThrow(() -> missingParameter("member"));
+        int index = parameters.get(1)
+                .map(PrimitiveParsers.parseInteger())
+                .orElseThrow(() -> missingParameter("index"));
+        String selector = parameters.get(2)
+                .orElseThrow(() -> missingParameter("selector"));
 
         //
 
@@ -48,7 +56,7 @@ public final class StrikeEditCommand extends Command {
                 .collect(Collectors.toList());
 
         if(index < 0 || index >= strikes.size())
-            throw new CommandException("There is no strike at index `" + index + "`.");
+            throw simple("There is no strike at index `" + index + "`.");
 
         Strike strike = strikes.get(index);
 
@@ -58,8 +66,8 @@ public final class StrikeEditCommand extends Command {
 
         if(selector.equalsIgnoreCase("reason")) {
 
-            String reason = parameters.getAs(3, StringParser.get())
-                    .orElseThrow();
+            String reason = parameters.get(3)
+                    .orElseThrow(() -> missingParameter("reason"));
 
             strike.setReason(reason);
             strike.persist();
@@ -68,8 +76,9 @@ public final class StrikeEditCommand extends Command {
         }
         else if(selector.equalsIgnoreCase("decay")) {
 
-            Decay decay = parameters.getAs(3, DecayParser.get())
-                    .orElseThrow();
+            Decay decay = parameters.get(3)
+                    .map(DecayParser.get()::parse)
+                    .orElseThrow(() -> missingParameter("decay"));
 
             strike.setDecay(decay);
             strike.persist();
@@ -79,12 +88,12 @@ public final class StrikeEditCommand extends Command {
         }
         else if(selector.equalsIgnoreCase("time")) {
             // TODO edit timestamp
-            throw new CommandException("TODO");
+            throw simple("TODO");
 
         }
         else {
             // TODO throw useful exception
-            throw new CommandException("TODO");
+            throw simple("TODO");
         }
 
         //

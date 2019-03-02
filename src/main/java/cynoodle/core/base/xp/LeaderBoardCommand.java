@@ -12,6 +12,7 @@ import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.IntegerParser;
 import cynoodle.core.base.command.*;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.discord.Members;
@@ -23,6 +24,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import static cynoodle.core.base.command.CommandExceptions.*;
+
 @CIdentifier("base:xp:lb")
 @CAliases({"leaderboard","lb","toplist","tl","levels","lvls"})
 public final class LeaderBoardCommand extends Command {
@@ -31,7 +34,7 @@ public final class LeaderBoardCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
         GEntityManager<XPSettings> settingsManager = module.getSettingsManager();
@@ -41,17 +44,17 @@ public final class LeaderBoardCommand extends Command {
 
         //
 
-        int from = parameters.getAs(0, IntegerParser.get()).orElse(1);
-        int to = parameters.getAs(1, IntegerParser.get()).orElse((from - 1) + 25);
+        int from = parameters.get(0).map(IntegerParser.get()::parse).orElse(1);
+        int to = parameters.get(1).map(IntegerParser.get()::parse).orElse((from - 1) + 25);
 
         //
 
         if(to <= from) {
-            throw new CommandException("The maximum rank you entered can not be smaller or equal to the minimum rank.");
+            throw simple("The maximum rank you entered can not be smaller or equal to the minimum rank.");
         }
 
         if((to - from) + 1 > 30) {
-            throw new CommandException("You can't view more than `30` ranks at a time.");
+            throw simple("You can't view more than `30` ranks at a time.");
         }
 
         //
@@ -72,7 +75,7 @@ public final class LeaderBoardCommand extends Command {
         List<LeaderBoard.Entry> entries = board.sub(from - 1, to - 1);
 
         if(entries.size() == 0)
-            throw new CommandException("There is not enough data in the range from minimum rank `#"
+            throw simple("There is not enough data in the range from minimum rank `#"
                     +from+"` to maximum rank `#"+to+"`!");
 
         StringBuilder out = new StringBuilder();

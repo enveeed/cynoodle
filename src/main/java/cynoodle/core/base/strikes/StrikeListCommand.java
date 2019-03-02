@@ -12,6 +12,7 @@ import cynoodle.core.base.command.CAliases;
 import cynoodle.core.base.command.CIdentifier;
 import cynoodle.core.base.command.Command;
 import cynoodle.core.base.command.CommandContext;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.MFormatter;
 import cynoodle.core.discord.Members;
@@ -45,14 +46,15 @@ public final class StrikeListCommand extends Command {
     // ===
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         Parameters parameters = input.getParameters();
 
         boolean displayAll = input.hasOption(OPT_ALL);
 
-        DiscordPointer member = parameters.getAs(0, Members.parserOf(context))
-                .orElse(DiscordPointer.to(context.getUser()));
+        DiscordPointer member = parameters.get(0)
+                .map(Members.parserOf(context)::parse)
+                .orElse(context.getUserPointer());
 
         // ===
 

@@ -11,11 +11,14 @@ import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.LongParser;
 import cynoodle.core.base.command.*;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
+
+import static cynoodle.core.base.command.CommandExceptions.*;
 
 @CIdentifier("base:xp:add")
 @CAliases({"xp+","x+","addxp","xpadd","addx"})
@@ -25,28 +28,30 @@ public final class XPAddCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer member = parameters.getAs(0, Members.parserOf(context))
-                .orElseThrow();
-        long value = parameters.getAs(1, LongParser.get())
-                .orElseThrow();
+        DiscordPointer member = parameters.get(0)
+                .map(Members.parserOf(context)::parse)
+                .orElseThrow(() -> missingParameter("member"));
+        long value = parameters.get(1)
+                .map(LongParser.get()::parse)
+                .orElseThrow(() -> missingParameter("value"));
 
         // ===
 
         User user = member.asUser()
-                .orElseThrow(() -> new CommandException("There is no User for the given Member!"));
+                .orElseThrow(() -> simple("There is no User for the given Member!"));
 
         XP xp = xpManager.firstOrCreate(XP.filterMember(DiscordPointer.to(context.getGuild()), member));
 
         // validation
 
-        if(user.isBot()) throw new CommandException("Bots can not have XP.");
-        if(value <= 0) throw new CommandException("You can not add a negative or zero amount of XP!");
+        if(user.isBot()) throw simple("Bots can not have XP.");
+        if(value <= 0) throw simple("You can not add a negative or zero amount of XP!");
 
         xp.add(value);
         xp.persist();

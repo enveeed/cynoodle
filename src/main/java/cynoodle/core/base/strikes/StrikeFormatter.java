@@ -6,8 +6,7 @@
 
 package cynoodle.core.base.strikes;
 
-import cynoodle.core.api.text.Formatter;
-import cynoodle.core.api.text.InstantFormatter;
+import cynoodle.core.api.text.TemporalFormatter;
 import cynoodle.core.discord.MFormatter;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
@@ -17,14 +16,13 @@ import javax.annotation.Nonnull;
 /**
  * Formatter for {@link Strike Strikes}.
  */
-public final class StrikeFormatter implements Formatter<Strike> {
+public final class StrikeFormatter {
 
     // TODO mode option to specify detail level of strike output
 
     private final StrikesModule module = Module.get(StrikesModule.class);
 
     @Nonnull
-    @Override
     public String format(@Nonnull Strike strike) {
 
         StringBuilder out = new StringBuilder();
@@ -37,7 +35,7 @@ public final class StrikeFormatter implements Formatter<Strike> {
         out.append(" ").append(strike.getReason()).append("\n\n");
 
         out.append("`")
-                .append(InstantFormatter.create().format(strike.getTimestamp()))
+                .append(TemporalFormatter.ofDefault().format(strike.getTimestamp()))
                 .append("`");
 
         if(strike.isDecayable()) {
@@ -45,7 +43,7 @@ public final class StrikeFormatter implements Formatter<Strike> {
             if(strike.isDecayed()) out.append("Decayed at ");
             else out.append("Decays at ");
             out.append("`")
-                    .append(InstantFormatter.create().format(strike.getDecayAt().orElseThrow()))
+                    .append(TemporalFormatter.ofDefault().format(strike.getDecayAt().orElseThrow()))
                     .append("`");
         }
         else out.append(" | Not decayable");

@@ -11,11 +11,14 @@ import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.LongParser;
 import cynoodle.core.base.command.*;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
+
+import static cynoodle.core.base.command.CommandExceptions.*;
 
 @CIdentifier("base:xp:transfer")
 @CAliases({"xpt","xt","transferxp","xptrans","transx"})
@@ -25,37 +28,40 @@ public final class XPTransferCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer memberFrom = parameters.getAs(0, Members.parserOf(context))
-                .orElseThrow();
-        DiscordPointer memberTo = parameters.getAs(1, Members.parserOf(context))
-                .orElseThrow();
-        long value = parameters.getAs(2, LongParser.get())
-                .orElseThrow();
+        DiscordPointer memberFrom = parameters.get(0)
+                .map(Members.parserOf(context)::parse)
+                .orElseThrow(() -> missingParameter("member from"));
+        DiscordPointer memberTo = parameters.get(1)
+                .map(Members.parserOf(context)::parse)
+                .orElseThrow(() -> missingParameter("member to"));
+        long value = parameters.get(2)
+                .map(LongParser.get()::parse)
+                .orElseThrow(() -> missingParameter("value"));
 
         // ===
 
         User userFrom = memberFrom.asUser()
-                .orElseThrow(() -> new CommandException("There is no User for the 'from' Member!"));
+                .orElseThrow(() -> simple("There is no User for the 'from' Member!"));
 
         User userTo = memberTo.asUser()
-                .orElseThrow(() -> new CommandException("There is no User for the 'to' Member!"));
+                .orElseThrow(() -> simple("There is no User for the 'to' Member!"));
 
         XP xpFrom = xpManager.first(XP.filterMember(DiscordPointer.to(context.getGuild()), memberFrom))
-                .orElseThrow(() -> new CommandException("There is no XP for the 'from' Member!"));
+                .orElseThrow(() -> simple("There is no XP for the 'from' Member!"));
 
         XP xpTo = xpManager.firstOrCreate(XP.filterMember(DiscordPointer.to(context.getGuild()), memberTo));
 
         // validation
 
-        if(userFrom.isBot() || userTo.isBot()) throw new CommandException("Bots can not have XP.");
-        if(value <= 0) throw new CommandException("You can not transfer a negative or zero amount of XP!");
-        if(value > xpFrom.get()) throw new CommandException("You can not transfer more XP than the source Member has!");
+        if(userFrom.isBot() || userTo.isBot()) throw simple("Bots can not have XP.");
+        if(value <= 0) throw simple("You can not transfer a negative or zero amount of XP!");
+        if(value > xpFrom.get()) throw simple("You can not transfer more XP than the source Member has!");
 
         xpFrom.remove(value);
         xpTo.add(value);

@@ -8,12 +8,16 @@ package cynoodle.core.base.command;
 
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.ParserException;
+import cynoodle.core.api.text.ParsingException;
+import cynoodle.core.base.localization.Localization;
+import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.localization.LocalizationModule;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.time.Clock;
 
@@ -35,18 +39,18 @@ public abstract class Command {
     /**
      * A flag for the command to provide additional debug information
      */
-    public static final Options.Option OPTION_DEBUG = Options.newFlagOption("debug", '#');
+    private static final Options.Option OPT_DEBUG = Options.newFlagOption("debug", '#');
 
     /**
      * A flag for the command to localize the output format
      */
-    public static final Options.Option OPTION_LOCALIZE = Options.newFlagOption("localize",'l');
+    private static final Options.Option OPT_LOCALIZE = Options.newFlagOption("localize",'l');
 
     // ===
 
     protected final Options.Builder options = Options.newBuilder()
-            .addOptions(OPTION_DEBUG)
-            .addOptions(OPTION_LOCALIZE);
+            .addOptions(OPT_DEBUG)
+            .addOptions(OPT_LOCALIZE);
 
     // ===
 
@@ -86,13 +90,17 @@ public abstract class Command {
 
     // ===
 
+    /**
+     * Execute this command with the given context.
+     * @param context the context.
+     */
     final void execute(@Nonnull CommandContext context) {
 
         // require the properties for this command on this guild
         CommandProperties properties = module.getProperties()
                 .firstOrCreate(DiscordPointer.to(context.getGuild()), this.getIdentifier());
 
-        // ===
+        // === PERMISSIONS ===
 
         // TODO permissions
 
@@ -102,23 +110,36 @@ public abstract class Command {
 
         Options options = this.options.build();
 
-        Options.Result result;
+        Options.Result input;
 
         try {
+
             // parse the input
-            result = options.parse(context.getRawInput());
-        } catch (ParserException e) {
+            input = options.parse(context.getRawInput());
+
+        } catch (ParsingException e) {
 
             // report command options parser input error
-
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setColor(new Color(0xFFCC4D));
-            embed.setDescription("**⚠️ \u200B Failed to parse command parameters!**\n\n" + e.getMessage());
-
-            context.getChannel().sendMessage(embed.build()).queue();
+            handleException(context, null, e);
 
             return;
         }
+
+        // === LOCALIZATION ===
+
+        LocalizationContext local;
+
+        if(input.hasOption(OPT_LOCALIZE)) {
+
+            // acquire the localization for the user
+            LocalizationModule module = Module.get(LocalizationModule.class);
+
+            Localization localization = module.getLocalizationManager()
+                    .firstOrCreate(context.getUserPointer());
+
+            local = LocalizationContext.of(localization);
+        }
+        else local = LocalizationContext.ofDefault();
 
         // === RUN ===
 
@@ -126,76 +147,89 @@ public abstract class Command {
 
         try {
             // run the command
-            this.run(context, result);
+            this.run(context, local, input);
         } catch (Exception e) {
-            handleException(context, result, e);
+            handleException(context, input, e);
         }
 
         long tEnd = Clock.systemUTC().millis();
 
-        if(result.hasOption(OPTION_DEBUG))
+        if(input.hasOption(OPT_DEBUG))
             context.getChannel().sendMessage("t: `" + (tEnd - tStart) + " ms`").queue();
     }
 
-    // ===
+    //
 
     /**
      * Run the command.
      * This method may be called concurrently by multiple threads at the same time.
      * @param context the command context
+     * @param local the localization context
      * @param input the command input
      * @throws Exception if the execution completed with an exception, will be handled
-     * by {@link #handleException(CommandContext, Options.Result, Exception)}.
      */
-    protected abstract void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception;
+    protected abstract void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input)
+            throws Exception;
 
     // ===
 
-    /**
-     * Handle an exception that was thrown by {@link #run(CommandContext, Options.Result)},
-     * by outputting and reporting it.
-     * @param context the command context
-     * @param input the command input
-     * @param exception the exception that was thrown
-     */
-    private void handleException(@Nonnull CommandContext context, @Nonnull Options.Result input, @Nonnull Exception exception) {
+    private void handleException(@Nonnull CommandContext context, @Nullable Options.Result input, @Nonnull Exception thrown) {
 
-        if(exception instanceof CommandException) {
+        CommandException exception;
 
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setColor(new Color(0xFFCC4D));
-            embed.setDescription("**⚠️ \u200B Command error!**\n\n" + exception.getMessage());
+        //
 
-            context.getChannel().sendMessage(embed.build()).queue();
+        if(thrown instanceof CommandException) {
 
-            return;
+            // directly thrown, handle it directly
+            exception = (CommandException) thrown;
+
+        } else if(thrown instanceof ParsingException) {
+
+            // parsing error
+            exception = CommandExceptions.parsingFailed((ParsingException) thrown);
+
+        } else {
+
+            // create a new exception for internal error
+            // and report the unexpected error
+
+            exception = CommandExceptions.internalError();
+
+            LOG.atSevere().withCause(thrown)
+                    .log("Unexpected internal error while executing %s (input: %s)", this.getIdentifier(), input);
         }
 
-        if(exception instanceof ParserException) {
-
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setColor(new Color(0xFFCC4D));
-            embed.setDescription("**⚠️ \u200B Failed to parse input!**\n\n" + exception.getMessage());
-
-            context.getChannel().sendMessage(embed.build()).queue();
-
-            return;
-        }
-
-        // TODO other expected exception types
-
-        // exception is nothing expected, must be reported and handled.
+        //
 
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setColor(new Color(0xDD2E44));
-        embed.setDescription("**❌ \u200B Unexpected internal error!**\n\n" +
-                "This was probably not your fault. Please try again later.");
+
+        String title    = exception.getTitle();
+        String message  = exception.getMessage();
+        String icon     = exception.getIcon();
+        Color color     = exception.getColor();
+
+        StringBuilder content = new StringBuilder();
+
+        if(icon != null) content.append(icon).append(" \u200b ");
+        if(title != null) content.append("**").append(title).append("**\n\n");
+        if(message != null) content.append(message).append("\n\n");
+
+        if(exception.hasFlag(CommandException.Flag.DISPLAY_USAGE)) {
+            // TODO append usage
+        }
+
+        // TODO more flags
+
+        if(content.length() == 0) content.append("Unknown error.");
+
+        embed.setDescription(content.toString());
+
+        if(color != null) embed.setColor(color);
+
+        //
 
         context.getChannel().sendMessage(embed.build()).queue();
-
-        LOG.atWarning().withCause(exception)
-                .log("Encountered unexpected internal error while executing " +
-                        "command %s with parameters %s!", this.getIdentifier(), input);
 
     }
 

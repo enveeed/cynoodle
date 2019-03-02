@@ -6,42 +6,59 @@
 
 package cynoodle.core.base.command;
 
+import cynoodle.core.api.Strings;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
-import org.eclipse.collections.api.map.ImmutableMap;
-import org.eclipse.collections.impl.factory.Maps;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Contains immutable mappings for a guilds commands,
- * collected from the {@link CommandProperties}.
+ * Immutable mappings of command aliases to command identifiers.
  */
-public final class CommandMapper {
+public final class CommandMappings {
 
-    private final ImmutableMap<String, String> mappings;
+    private final Map<String, String> mappings;
 
     // ===
 
-    private CommandMapper(@Nonnull Map<String, String> mappings) {
-        this.mappings = Maps.immutable.ofAll(mappings);
+    private CommandMappings(@Nonnull Map<String, String> mappings) {
+        this.mappings = Collections.unmodifiableMap(mappings);
     }
 
     // ===
 
+    /**
+     * Find a command identifier using the input as a command alias,
+     * must match exactly.
+     * @param input the input / alias
+     * @return the command identifier if found, otherwise empty
+     */
     @Nonnull
     public Optional<String> find(@Nonnull String input) {
         return Optional.ofNullable(this.mappings.get(input));
     }
 
+    /**
+     * Find a set of similar command aliases, using the given input alias.
+     * May include an exact match.
+     * @param input the input
+     * @param limit the limit of the results
+     * @return a set containing similar aliases
+     */
+    @Nonnull
+    public Set<String> findSimilar(@Nonnull String input, int limit) {
+        return this.mappings.keySet().stream()
+                .filter(test -> Strings.similarity(input, test) >= 0.5d)
+                .limit(limit)
+                .collect(Collectors.toSet());
+    }
+
     // ===
 
     @Nonnull
-    public static CommandMapper collect(@Nonnull DiscordPointer guild) {
+    public static CommandMappings collect(@Nonnull DiscordPointer guild) {
 
         CommandModule module = Module.get(CommandModule.class);
 
@@ -69,6 +86,6 @@ public final class CommandMapper {
 
         }
 
-        return new CommandMapper(mappings);
+        return new CommandMappings(mappings);
     }
 }

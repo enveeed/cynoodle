@@ -7,7 +7,8 @@
 package cynoodle.core.base.command;
 
 import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.ParserException;
+import cynoodle.core.api.text.ParsingException;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.base.xp.Rank;
 import cynoodle.core.base.xp.RankManager;
 import cynoodle.core.base.xp.XPModule;
@@ -39,14 +40,14 @@ public final class TestCommand extends Command {
     }
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         System.out.println("TestCommand executed: " + context.getRawInput());
 
         if(input.hasOption(OPT_SEND))
             context.getChannel().sendMessage("received by: " + context.getMessage().getAuthor().getName()).queue();
         else if(input.hasOption(OPT_THROW_PEX))
-            throw new ParserException("This is a test ParserException.");
+            throw new ParsingException("This is a test ParsingException.");
         else if(input.hasOption(OPT_THROW_EX))
             throw new Exception("This is a unexpected Exception.");
         else if(input.hasOption(OPT_RESPOND)) {

@@ -9,6 +9,7 @@ package cynoodle.core.base.fm;
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.base.command.*;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
 import de.umass.lastfm.PaginatedResult;
@@ -21,6 +22,8 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Optional;
 
+import static cynoodle.core.base.command.CommandExceptions.*;
+
 @CIdentifier("base:fm:fm")
 @CAliases({"fm","fmi","fminfo"})
 public final class FMCommand extends Command {
@@ -31,7 +34,7 @@ public final class FMCommand extends Command {
     // ===
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         UEntityManager<FM> fmManager = module.getFMManager();
 
@@ -42,7 +45,7 @@ public final class FMCommand extends Command {
         //
 
         String username = fm.getUsername()
-                .orElseThrow(() -> new CommandException("No username defined."));
+                .orElseThrow(() -> simple("No username defined."));
 
         FMFormat format = fm.getPreferredFormat();
 
@@ -50,11 +53,11 @@ public final class FMCommand extends Command {
 
         PaginatedResult<Track> recent = User.getRecentTracks(username, 1, 1, module.getAPIKey());
 
-        if (recent.isEmpty()) throw new CommandException("The last.fm API did not return any result.");
+        if (recent.isEmpty()) throw simple("The last.fm API did not return any result.");
 
         Optional<Track> trackResult = recent.getPageResults().stream().findFirst();
 
-        Track track = trackResult.orElseThrow(() -> new CommandException("The last.fm API did not return any track."));
+        Track track = trackResult.orElseThrow(() -> simple("The last.fm API did not return any track."));
 
         // === DISPLAY ===
 

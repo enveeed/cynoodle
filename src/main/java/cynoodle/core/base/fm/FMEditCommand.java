@@ -8,13 +8,19 @@ package cynoodle.core.base.fm;
 
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
-import cynoodle.core.api.text.BooleanParser;
-import cynoodle.core.api.text.StringParser;
-import cynoodle.core.base.command.*;
+import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.base.command.CAliases;
+import cynoodle.core.base.command.CIdentifier;
+import cynoodle.core.base.command.Command;
+import cynoodle.core.base.command.CommandContext;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
+
+import static cynoodle.core.base.command.CommandExceptions.missingParameter;
+import static cynoodle.core.base.command.CommandExceptions.simple;
 
 @CIdentifier("base:fm:edit")
 @CAliases({"fmedit","fme"})
@@ -39,7 +45,7 @@ public final class FMEditCommand extends Command {
     //
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         UEntityManager<FM> fmManager = module.getFMManager();
 
@@ -51,8 +57,8 @@ public final class FMEditCommand extends Command {
 
         boolean reset = input.hasOption(OPT_RESET);
 
-        String selector = parameters.getAs(0, StringParser.get())
-                .orElseThrow();
+        String selector = parameters.get(0)
+                .orElseThrow(() -> missingParameter("selector"));
 
         //
 
@@ -63,8 +69,8 @@ public final class FMEditCommand extends Command {
                 context.getChannel().sendMessage("**|** last.fm username was reset.").queue();
             }
             else {
-                String username = parameters.getAs(1, StringParser.get())
-                        .orElseThrow(() -> new CommandException("last.fm username must be given!"));
+                String username = parameters.get(1)
+                        .orElseThrow(() -> missingParameter("username"));
 
                 fm.setUsername(username);
 
@@ -77,7 +83,7 @@ public final class FMEditCommand extends Command {
         }
         else if(selector.equals("format")) {
 
-            throw new CommandException("TODO");
+            throw simple("TODO"); // TODO implementation
 
         }
         else if(selector.equals("profile")) {
@@ -87,8 +93,9 @@ public final class FMEditCommand extends Command {
                 context.getChannel().sendMessage("**|** last.fm profile connection was reset.").queue();
             }
             else {
-                boolean profileEnabled = parameters.getAs(1, BooleanParser.get())
-                        .orElseThrow();
+                boolean profileEnabled = parameters.get(1)
+                        .map(PrimitiveParsers.parseBoolean())
+                        .orElseThrow(() -> missingParameter("on / off"));
 
                 fm.setProfileEnabled(profileEnabled);
 
@@ -102,6 +109,6 @@ public final class FMEditCommand extends Command {
 
             return;
         }
-        else throw new CommandException(); // TODO exception
+        else throw simple("TODO"); // TODO exception
     }
 }

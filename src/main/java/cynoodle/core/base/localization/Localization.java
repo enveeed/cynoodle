@@ -16,6 +16,7 @@ import cynoodle.core.mongo.fluent.FluentDocument;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Currency;
 import java.util.Optional;
 
@@ -28,10 +29,10 @@ import static cynoodle.core.mongo.fluent.FluentValues.*;
 public final class Localization extends UEntity {
     private Localization() {}
 
-    public static final ZoneId DEF_TIMEZONE = ZoneId.of("Z"); // UTC
-    public static final Currency DEF_CURRENCY = Currency.getInstance("EUR");
-    public static final TemperatureUnit DEF_TEMPERATURE_UNIT = TemperatureUnit.CELSIUS;
-    public static final MassUnit DEF_MASS_UNIT = MassUnit.KILOGRAM;
+    static final ZoneId              DEF_TIMEZONE            = ZoneOffset.UTC;
+    static final Currency            DEF_CURRENCY            = Currency.getInstance("EUR");
+    static final TemperatureUnit     DEF_TEMPERATURE_UNIT    = TemperatureUnit.CELSIUS;
+    static final MassUnit            DEF_MASS_UNIT           = MassUnit.KILOGRAM;
 
     // ===
 

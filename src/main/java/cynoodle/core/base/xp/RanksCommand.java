@@ -12,11 +12,14 @@ import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.base.command.*;
+import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static cynoodle.core.base.command.CommandExceptions.*;
 
 @CIdentifier("base:xp:ranks")
 @CAliases("ranks")
@@ -42,7 +45,7 @@ public final class RanksCommand extends Command {
     //
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         RankManager rankManager = module.getRankManager();
 
@@ -54,7 +57,7 @@ public final class RanksCommand extends Command {
                 .sorted((o1, o2) -> Longs.compare(o1.getLevel(), o2.getLevel()))
                 .collect(Collectors.toList());
 
-        if(ranks.isEmpty()) throw new CommandException("There are no Ranks.");
+        if(ranks.isEmpty()) throw simple("There are no Ranks.");
 
         //
 

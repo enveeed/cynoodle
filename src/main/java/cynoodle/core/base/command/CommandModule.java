@@ -9,18 +9,17 @@ package cynoodle.core.base.command;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.discord.DiscordEvent;
-import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
+import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings("UnstableApiUsage")
 @MIdentifier("base:command")
+@MRequires("base:localization")
 public final class CommandModule extends Module {
     private CommandModule() {}
 
@@ -42,8 +41,7 @@ public final class CommandModule extends Module {
 
     private CommandPool pool;
 
-    // TODO replace with GCache when implemented
-    final Map<DiscordPointer, CommandMapper> mappers = new HashMap<>();
+    private CommandMappingsManager mappingsManager;
 
     // ===
 
@@ -57,7 +55,7 @@ public final class CommandModule extends Module {
         this.handler = new CommandHandler();
         this.pool = new CommandPool();
 
-        // TODO test only
+        this.mappingsManager = new CommandMappingsManager();
 
         this.registry.register(TestCommand.class);
 
@@ -105,6 +103,13 @@ public final class CommandModule extends Module {
     @Nonnull
     CommandPool getPool() {
         return this.pool;
+    }
+
+    // ===
+
+    @Nonnull
+    public CommandMappingsManager getMappingsManager() {
+        return this.mappingsManager;
     }
 
     // ===

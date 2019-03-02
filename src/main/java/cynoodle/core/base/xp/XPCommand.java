@@ -7,16 +7,25 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
-import cynoodle.core.api.Progress;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.ProgressFormatter;
-import cynoodle.core.base.command.*;
-import cynoodle.core.discord.*;
+import cynoodle.core.base.command.CAliases;
+import cynoodle.core.base.command.CIdentifier;
+import cynoodle.core.base.command.Command;
+import cynoodle.core.base.command.CommandContext;
+import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.discord.DiscordPointer;
+import cynoodle.core.discord.GEntityManager;
+import cynoodle.core.discord.MEntityManager;
+import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+
+import static cynoodle.core.base.command.CommandExceptions.internalError;
+import static cynoodle.core.base.command.CommandExceptions.simple;
 
 @CIdentifier("base:xp:xp")
 @CAliases({"xp", "rank", "r"})
@@ -26,7 +35,7 @@ public final class XPCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
         GEntityManager<XPSettings> settingsManager = module.getSettingsManager();
@@ -34,16 +43,17 @@ public final class XPCommand extends Command {
 
         Parameters parameters = input.getParameters();
 
-        DiscordPointer member = parameters.getAs(0, Members.parserOf(context))
+        DiscordPointer member = parameters.get(0)
+                .map(Members.parserOf(context)::parse)
                 .orElse(DiscordPointer.to(context.getUser()));
 
         // ===
 
         XP xp = xpManager.first(XP.filterMember(DiscordPointer.to(context.getGuild()), member))
-                .orElseThrow(() -> new CommandException("There is no XP for this Member!"));
+                .orElseThrow(() -> simple("There is no XP for this Member!"));
 
         XPSettings settings = settingsManager.first(XP.filterGuild(context.getGuild()))
-                .orElseThrow(() -> new Exception("XP Settings are missing!"));
+                .orElseThrow(() -> internalError());
 
         // === XP DATA ===
 
@@ -62,8 +72,8 @@ public final class XPCommand extends Command {
         long level_next_xp_of = xp_current - level_current_xp;
         long level_next_xp_left = level_next_xp_step - level_next_xp_of;
 
-        Progress level_next_progress = Progress.of(level_next_xp_of, level_next_xp_step);
-        double level_next_percent = ((double) level_next_xp_of / level_next_xp_step) * 100d;
+        double level_next_fraction = (double) level_next_xp_of / level_next_xp_step;
+        double level_next_percent = level_next_fraction * 100d;
 
         // === RANK ===
 
@@ -95,7 +105,7 @@ public final class XPCommand extends Command {
                 Members.formatAt(context.getGuildPointer()).format(member),
                 Numbers.format(xp_current),
                 Numbers.format(level_current),
-                ProgressFormatter.create().setLength(20).format(level_next_progress),
+                ProgressFormatter.create().setLength(20).format(level_next_fraction),
                 Numbers.format(level_next_percent, 0),
                 Numbers.format(level_next_xp_left),
                 level_next_rank_out,

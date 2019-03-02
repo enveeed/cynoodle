@@ -55,7 +55,6 @@ public final class CommandPool {
             new ThreadPoolExecutor(DEF_CORE_POOL_SIZE, DEF_MAX_POOL_SIZE, DEF_KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS,
                     this.queue, this.threadFactory);
 
-
     // ===
 
     public void setCorePoolSize(int size) {

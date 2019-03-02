@@ -7,19 +7,18 @@
 package cynoodle.core.base.strikes;
 
 import cynoodle.core.api.text.DurationParser;
-import cynoodle.core.api.text.Parser;
-import cynoodle.core.api.text.ParserException;
+import cynoodle.core.api.text.ParsingException;
 
 import javax.annotation.Nonnull;
 
-public final class DecayParser implements Parser<Decay> {
+public final class DecayParser {
 
     private final static DecayParser instance = new DecayParser();
 
     // ===
 
-    @Override
-    public Decay parse(@Nonnull String input) throws ParserException {
+    @Nonnull
+    public Decay parse(@Nonnull String input) throws ParsingException {
         if(input.equalsIgnoreCase("never")) return Decay.never();
         else return Decay.of(DurationParser.get().parse(input));
     }

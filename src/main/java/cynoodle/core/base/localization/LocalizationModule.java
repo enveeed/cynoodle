@@ -6,12 +6,39 @@
 
 package cynoodle.core.base.localization;
 
+import cynoodle.core.discord.UEntityManager;
+import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
-import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
 
+import javax.annotation.Nonnull;
+
 @MIdentifier("base:localization")
-@MRequires("base:command")
 public final class LocalizationModule extends Module {
     private LocalizationModule() {}
+
+    private static final EntityType<Localization> TYPE_LOCALIZATION = EntityType.of(Localization.class);
+
+    private UEntityManager<Localization> localizationManager;
+
+    // ===
+
+    @Override
+    protected void start() {
+        super.start();
+
+        this.localizationManager = new UEntityManager<>(TYPE_LOCALIZATION);
+    }
+
+    @Override
+    protected void shutdown() {
+        super.shutdown();
+    }
+
+    // ===
+
+    @Nonnull
+    public UEntityManager<Localization> getLocalizationManager() {
+        return this.localizationManager;
+    }
 }

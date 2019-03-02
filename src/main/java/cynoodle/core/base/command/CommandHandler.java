@@ -6,14 +6,18 @@
 
 package cynoodle.core.base.command;
 
+import com.google.common.base.Joiner;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Analyzes potential command messages and starts appropriate command threads for commands.
@@ -29,18 +33,17 @@ public final class CommandHandler {
 
     private final CommandModule module = Module.get(CommandModule.class);
 
-    private final CommandRegistry registry = module.getRegistry();
-
     // ===
 
     public void handle(@Nonnull GuildMessageReceivedEvent event) {
 
-        Guild   guild   = event.getGuild();
-        Message message = event.getMessage();
+        Guild guild         = event.getGuild();
+        TextChannel channel = event.getChannel();
+        Message message     = event.getMessage();
 
-        String  content = message.getContentRaw();
+        String content      = message.getContentRaw();
 
-        // ===
+        // === SETTINGS ===
 
         // acquire the guild settings
         CommandSettings settings = this.module.getSettings().firstOrCreate(guild);
@@ -48,7 +51,7 @@ public final class CommandHandler {
         String                      prefix  = settings.getPrefix();
         CommandSettings.NSCPolicy   nsc     = settings.getNSCPolicy();
 
-        // ===
+        // === PRE-PARSING ===
 
         if(!content.startsWith(prefix)) return; // not a command, ignore
 
@@ -64,34 +67,37 @@ public final class CommandHandler {
 
         if(rawCommand.isBlank()) return; // not a command, ignore
 
-        // ===
+        // === INPUT ===
 
         String rawInput = content.substring(rawCommand.length() + prefix.length());
 
-        // ===
+        // === MAPPINGS ===
 
         DiscordPointer guildPointer = DiscordPointer.to(guild);
 
-        // TODO improve, this is horribly unsafe
-        if(!module.mappers.containsKey(guildPointer)) {
-            event.getChannel()
-                    .sendMessage("**|** Collecting mappings, this may take a second or two ...").queue();
-            module.mappers.put(guildPointer, CommandMapper.collect(guildPointer));
+        Optional<CommandMappings> mappingsResult = this.module.getMappingsManager().get(guildPointer);
+
+        CommandMappings mappings;
+
+        if(mappingsResult.isEmpty()) {
+            channel.sendMessage("**|** Collecting mappings, this may take a while ...").queue();
+            mappings = this.module.getMappingsManager().generate(guildPointer);
         }
+        else mappings = mappingsResult.orElseThrow();
 
-        CommandMapper mapper = module.mappers.get(guildPointer);
+        // === LOOKUP ===
 
-        Optional<Command> result = mapper.find(rawCommand)
-                .flatMap(identifier -> module.getRegistry().get(identifier));
+        Optional<String> result = mappings.find(rawCommand);
+
+        //
 
         if(result.isPresent()) {
 
-            // there was a command for the input
-            System.out.printf("command: %s\n", rawCommand + " with " + rawInput);
+            Optional<Command> commandResult = this.module.getRegistry().get(result.orElseThrow());
 
-            Command command = result.orElseThrow();
+            Command command = commandResult.orElseThrow(() ->
+                            new IllegalStateException("Mapping contained non-existent command: " + result.orElseThrow()));
 
-            // construct the context for this execution
             CommandContext context = new CommandContext(event, rawCommand, rawInput);
 
             // submit into the pool
@@ -99,22 +105,38 @@ public final class CommandHandler {
 
         } else {
 
-            // there is no command for the input
-            System.out.printf("no such command: %s\n", rawCommand);
-
+            // ignore
             if(nsc == CommandSettings.NSCPolicy.IGNORE) return;
 
             else if(nsc == CommandSettings.NSCPolicy.REPORT) {
 
-                // TODO send report message
+                // report only
+
+                StringBuilder out = new StringBuilder();
+
+                out.append("**|** No such command: `").append(prefix).append(rawCommand).append("`");
+
+                event.getChannel().sendMessage(out.toString()).queue();
 
             }
 
             else if(nsc == CommandSettings.NSCPolicy.REPORT_DETAILED) {
 
-                // TODO send report detailed message
+                // report with a list of similar commands
+
+                StringBuilder out = new StringBuilder();
+
+                out.append("**|** **No such command** `").append(prefix).append(rawCommand).append("`");
+
+                Set<String> similar = mappings.findSimilar(rawCommand, 5)
+                        .stream().map(s -> "`" + prefix + s + "`").collect(Collectors.toSet());
+
+                if(similar.size() > 0) out.append("\n**|** Similar commands: ").append(Joiner.on(" ").join(similar));
+
+                event.getChannel().sendMessage(out.toString()).queue();
 
             }
+
         }
     }
 }
