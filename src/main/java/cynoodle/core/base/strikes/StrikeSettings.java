@@ -13,45 +13,25 @@ import cynoodle.core.mongo.fluent.FluentDocument;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 @EIdentifier("base:strikes:settings")
 public final class StrikeSettings extends GEntity {
     private StrikeSettings() {}
 
     /**
-     * The default setting for if a new strike should decay
+     * The default strike decay setting.
      */
-    private boolean default_decay_enabled = true;
-
-    /**
-     * The default setting for the time in which a new strike should decay, if decay is enabled
-     */
-    private Duration default_decay_duration = Duration.of(100, ChronoUnit.DAYS);
+    private Decay default_decay = Decay.of(Duration.ofDays(100));
 
     // === DEFAULT STRIKE PROPERTIES ===
 
-    public boolean isDefaultDecayEnabled() {
-        return this.default_decay_enabled;
-    }
-
-    public void setDefaultDecayEnabled(boolean default_decay_enabled) {
-        this.default_decay_enabled = default_decay_enabled;
-    }
-
     @Nonnull
-    public Duration getDefaultDecayDuration() {
-        return this.default_decay_duration;
+    public Decay getDefaultDecay() {
+        return this.default_decay;
     }
 
-    public void setDefaultDecayDuration(@Nonnull Duration default_decay_duration) {
-        this.default_decay_duration = default_decay_duration;
-    }
-
-    @Nonnull
-    public Decay getEffectiveDefaultDecay() {
-        if(isDefaultDecayEnabled()) return Decay.of(getDefaultDecayDuration());
-        else return Decay.never();
+    public void setDefaultDecay(@Nonnull Decay default_decay) {
+        this.default_decay = default_decay;
     }
 
     // ===
@@ -60,8 +40,7 @@ public final class StrikeSettings extends GEntity {
     public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
         super.fromBson(source);
 
-        this.default_decay_enabled = source.getAt("default_decay_enabled").asBoolean().or(this.default_decay_enabled);
-        this.default_decay_duration = source.getAt("default_decay_duration").asLong().map(Duration::ofMillis).or(this.default_decay_duration);
+        this.default_decay = source.getAt("default_decay").as(Decay.fromBson()).or(this.default_decay);
 
     }
 
@@ -70,8 +49,7 @@ public final class StrikeSettings extends GEntity {
     public FluentDocument toBson() throws BsonDataException {
         FluentDocument data = super.toBson();
 
-        data.setAt("default_decay_enabled").asBoolean().to(this.default_decay_enabled);
-        data.setAt("default_decay_duration").asLong().map(Duration::toMillis).to(this.default_decay_duration);
+        data.setAt("default_decay").as(Decay.toBson()).to(this.default_decay);
 
         return data;
     }

@@ -41,7 +41,7 @@ public final class StrikeAddCommand extends Command {
                 .orElseThrow(() -> missingParameter("reason"));
         Decay decay             = parameters.get(2)
                 .map(DecayParser.get()::parse)
-                .orElse(settings.getEffectiveDefaultDecay());
+                .orElse(settings.getDefaultDecay());
         Instant timestamp       = Instant.now(); // TODO timestamp from parameters
 
         //
