@@ -8,7 +8,7 @@ package cynoodle.core.discord;
 
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
-import cynoodle.core.api.text.ParserException;
+import cynoodle.core.api.text.ParsingException;
 
 import javax.annotation.Nonnull;
 
@@ -42,7 +42,7 @@ public final class DiscordParameters {
     // ===
 
     @Nonnull
-    public static DiscordParameters parse(@Nonnull Parameters input) throws ParserException {
+    public static DiscordParameters parse(@Nonnull Parameters input) throws ParsingException {
 
         Options options = Options.newBuilder()
                 .addOptions(OPT_TOKEN)

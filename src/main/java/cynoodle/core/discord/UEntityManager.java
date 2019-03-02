@@ -7,7 +7,7 @@
 package cynoodle.core.discord;
 
 import com.mongodb.client.model.Filters;
-import cynoodle.core.Snowflake;
+import cynoodle.core.api.Snowflake;
 import cynoodle.core.entities.EntityManager;
 import cynoodle.core.entities.EntityType;
 import net.dv8tion.jda.core.entities.User;

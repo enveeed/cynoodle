@@ -15,7 +15,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
 import cynoodle.core.CyNoodle;
-import cynoodle.core.Snowflake;
+import cynoodle.core.api.Snowflake;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.MongoModule;

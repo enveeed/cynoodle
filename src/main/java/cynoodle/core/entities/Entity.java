@@ -6,6 +6,7 @@
 
 package cynoodle.core.entities;
 
+import cynoodle.core.api.Snowflake;
 import cynoodle.core.mongo.Bsonable;
 
 import javax.annotation.Nonnull;
@@ -45,7 +46,7 @@ public abstract class Entity implements Bsonable {
     /**
      * Get the creation time of this Entity.
      * @return an Instant of the creation time of this Entity
-     * @see cynoodle.core.Snowflake
+     * @see Snowflake
      * @see cynoodle.core.CyNoodle#CYNOODLE_EPOCH
      */
     @Nonnull

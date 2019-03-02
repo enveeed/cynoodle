@@ -6,7 +6,6 @@
 
 package cynoodle.core.discord;
 
-import cynoodle.core.api.text.Formatter;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -17,7 +16,7 @@ import javax.annotation.Nonnull;
 /**
  * Formatter for {@link Member} names.
  */
-public final class MFormatter implements Formatter<DiscordPointer> {
+public final class MFormatter {
 
     private final DiscordModule module = Module.get(DiscordModule.class);
 
@@ -34,7 +33,6 @@ public final class MFormatter implements Formatter<DiscordPointer> {
     // ===
 
     @Nonnull
-    @Override
     public String format(@Nonnull DiscordPointer input) {
         if(mode == Mode.ID) return formatID(input);
         else if(mode == Mode.USER_FULL) return formatUserFull(input);
