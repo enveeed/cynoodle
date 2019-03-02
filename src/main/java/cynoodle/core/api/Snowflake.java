@@ -4,7 +4,7 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core;
+package cynoodle.core.api;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;

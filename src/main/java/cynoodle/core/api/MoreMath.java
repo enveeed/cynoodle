@@ -7,11 +7,7 @@
 package cynoodle.core.api;
 
 public final class MoreMath {
-    private MoreMath() {
-        throw new UnsupportedOperationException();
-    }
-
-    //
+    private MoreMath() {}
 
     // The sum of the first m integers: 0 -> 0; 1,2,3,...
     public static long sumFirstIntegers(long m) {
