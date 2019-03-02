@@ -13,7 +13,10 @@ import cynoodle.core.events.EventListener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -89,12 +92,23 @@ public abstract class Module implements EventListener {
 
     // ===
 
-    public boolean isSystemModule() {
+    /**
+     * Check if this Module is a System Module.
+     * @return true if it is, false if not
+     * @see ModuleDescriptor#isSystemModule()
+     */
+    public final boolean isSystemModule() {
         return getDescriptor().isSystemModule();
     }
 
     // ===
 
+    /**
+     * Get a set of all effective module dependencies this Module has.
+     * This is all declared dependencies and, if this is not a System Module itself, all
+     * System Modules.
+     * @return a set of effective dependency Module identifiers.
+     */
     @Nonnull
     public final Set<ModuleIdentifier> getEffectiveDependencies() {
 
@@ -126,7 +140,7 @@ public abstract class Module implements EventListener {
     // TODO document exceptions
     @OverridingMethodsMustInvokeSuper
     protected void start() {
-        LOG.atInfo().log("Starting " + ANSIColors.CYAN + "%s" + ANSIColors.RESET, this.identifier);
+        LOG.atInfo().log("Starting " + ANSIColors.colored("%s", ANSIColors.CYAN), this.identifier);
     }
 
     /**
@@ -136,7 +150,7 @@ public abstract class Module implements EventListener {
     // TODO document exceptions
     @OverridingMethodsMustInvokeSuper
     protected void shutdown() {
-        LOG.atInfo().log("Shutting down " + ANSIColors.CYAN + "%s" + ANSIColors.RESET, this.identifier);
+        LOG.atInfo().log("Shutting down " + ANSIColors.colored("%s", ANSIColors.CYAN), this.identifier);
     }
 
     // ======
