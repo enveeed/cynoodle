@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * An options parser similar to GNU getopt.
  * Supports short options, long options, options with values, block-based and character-based escaping.
  */
-public final class Options implements Parser<Options.Result> {
+public final class Options {
 
     private final static char CHAR_SEPARATOR_DEFAULT = ' ';
     private final static char CHAR_OPTION_DEFAULT = '-';
@@ -89,8 +89,14 @@ public final class Options implements Parser<Options.Result> {
 
     // ===
 
-    @Override
-    public Result parse(@Nonnull String input) throws ParserException {
+    /**
+     * Parse the given input string to a result using these options.
+     * @param input the input string
+     * @return the parsing result
+     * @throws ParsingException if there were any issues with the input format while parsing
+     */
+    @Nonnull
+    public Result parse(@Nonnull String input) throws ParsingException {
 
         ResultBuilder result = new ResultBuilder();
 
@@ -256,11 +262,11 @@ public final class Options implements Parser<Options.Result> {
                     if (option == null)
                         if (ignoreUnknownOptions) state = 0;
                         else
-                            throw new ParserException("Unknown option: `" + this.char_option + character_short + "`");
+                            throw new ParsingException("Unknown option: `" + this.char_option + character_short + "`");
                     else {
                         if (option.isValueRequired()) {
                             if (!last_short)
-                                throw new ParserException("Options which require values must be the last element " +
+                                throw new ParsingException("Options which require values must be the last element " +
                                         "in a option listing, if used in the short form: `" + this.char_option + character_short + "`");
                             else {
                                 value_option = option;
@@ -281,7 +287,7 @@ public final class Options implements Parser<Options.Result> {
                 if (option == null)
                     if (ignoreUnknownOptions) state = 0;
                     else
-                        throw new ParserException("Unknown option: `" + this.char_option + this.char_option + option_long + "`");
+                        throw new ParsingException("Unknown option: `" + this.char_option + this.char_option + option_long + "`");
                 else {
                     if (option.isValueRequired()) {
                         value_option = option;
@@ -310,7 +316,7 @@ public final class Options implements Parser<Options.Result> {
             // if this was the last character
             // that means that the value was missing
             if (value_option != null && (state != 6 || last))
-                throw new ParserException("Option requires value but there was no value given: `"
+                throw new ParsingException("Option requires value but there was no value given: `"
                         + this.char_option + this.char_option + value_option.getLong() + "`");
         }
 
@@ -322,7 +328,7 @@ public final class Options implements Parser<Options.Result> {
     //
 
     @Nonnull
-    public Options.Result parse(@Nonnull Parameters parameters) throws ParserException {
+    public Options.Result parse(@Nonnull Parameters parameters) throws ParsingException {
         return parse(parameters.join());
     }
 
@@ -609,6 +615,17 @@ public final class Options implements Parser<Options.Result> {
                 throw new IllegalArgumentException("Option was not given!");
 
             else return this.values.get(option);
+        }
+
+        // ===
+
+        @Override
+        public String toString() {
+            return "Result{" +
+                    "parameters=" + parameters +
+                    ", options=" + options +
+                    ", values=" + values +
+                    '}';
         }
     }
 

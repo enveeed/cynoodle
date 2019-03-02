@@ -11,18 +11,17 @@ import javax.annotation.Nonnull;
 /**
  * Simple parser for integers.
  */
-public final class IntegerParser implements Parser<Integer> {
+public final class IntegerParser {
 
     private final static IntegerParser instance = new IntegerParser();
 
     // ===
 
-    @Override
-    public Integer parse(@Nonnull String input) throws ParserException {
+    public int parse(@Nonnull String input) throws ParsingException {
         try {
             return Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            throw new ParserException("Illegal integer number (32-bit number): `" + input + "`", e);
+            throw new ParsingException("Illegal integer number (32-bit number): `" + input + "`", e);
         }
     }
 

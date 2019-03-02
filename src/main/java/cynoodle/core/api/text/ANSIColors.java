@@ -6,6 +6,11 @@
 
 package cynoodle.core.api.text;
 
+import javax.annotation.Nonnull;
+
+/**
+ * Static utility for ANSI color and formatting codes.
+ */
 public final class ANSIColors {
     private ANSIColors() {}
 
@@ -32,4 +37,17 @@ public final class ANSIColors {
 
     public static final String BOLD = "\u001B[1m";
     public static final String UNDERLINE = "\u001B[4m";
+
+    // ===
+
+    /**
+     * Wraps the given text with the color code and the reset code
+     * @param text the text
+     * @param color the color code
+     * @return the wrapped text
+     */
+    @Nonnull
+    public static String colored(@Nonnull String text, @Nonnull String color) {
+        return color + text + RESET;
+    }
 }

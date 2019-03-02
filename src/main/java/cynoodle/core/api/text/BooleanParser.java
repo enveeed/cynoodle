@@ -11,24 +11,23 @@ import javax.annotation.Nonnull;
 /**
  * Parser for {@link Boolean Booleans}.
  */
-public final class BooleanParser implements Parser<Boolean> {
+public final class BooleanParser {
 
     private static final BooleanParser instance = new BooleanParser();
 
     // ===
 
     private static final String[] VALUES_TRUE
-            = new String[]{"true","1","yes","y","on"};
+            = new String[]{"true","1","yes","y","on","enable","enabled"};
     private static final String[] VALUES_FALSE
-            = new String[]{"false","0","no","n","off"};
+            = new String[]{"false","0","no","n","off","disable","disabled"};
 
     // ===
 
-    @Override
-    public Boolean parse(@Nonnull String input) throws ParserException {
+    public boolean parse(@Nonnull String input) throws ParsingException {
         for (String val : VALUES_TRUE) if(input.equalsIgnoreCase(val)) return true;
         for (String val : VALUES_FALSE) if(input.equalsIgnoreCase(val)) return false;
-        throw new ParserException("Not a valid boolean value: `" + input + "`.");
+        throw new ParsingException("Not a valid boolean value: `" + input + "`.");
     }
 
     // ===

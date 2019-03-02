@@ -48,25 +48,23 @@ public final class Parameters {
 
     // ===
 
+    /**
+     * Check if these parameters contain a parameter at the given index.
+     * @param index the index, starting with zero
+     * @return true if there is a parameter, false if otherwise
+     */
     public boolean has(int index) {
         return index >= 0 && index < this.parameters.length;
     }
 
-    // ===
-
+    /**
+     * Get a parameter at the given index.
+     * @param index the index
+     * @return an optional containing the parameter if present, otherwise empty
+     */
     @Nonnull
     public Optional<String> get(int index) {
         if(has(index)) return Optional.of(this.parameters[index]);
-        else return Optional.empty();
-    }
-
-    // ===
-
-    @Nonnull
-    public <T> Optional<T> getAs(int index, @Nonnull Parser<T> parser) throws ParserException {
-        // re-wrap the optional because functional map() cannot handle checked exceptions.
-        Optional<String> opt = get(index);
-        if(opt.isPresent()) return Optional.of(parser.parse(opt.orElseThrow()));
         else return Optional.empty();
     }
 

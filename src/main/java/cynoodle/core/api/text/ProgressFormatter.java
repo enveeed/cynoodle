@@ -6,14 +6,12 @@
 
 package cynoodle.core.api.text;
 
-import cynoodle.core.api.Progress;
-
 import javax.annotation.Nonnull;
 
 /**
- * Formatter for {@link Progress Progresses}.
+ * Formatter for progress bars.
  */
-public final class ProgressFormatter implements Formatter<Progress> {
+public final class ProgressFormatter {
 
     private long length = 20;
 
@@ -24,10 +22,12 @@ public final class ProgressFormatter implements Formatter<Progress> {
     // ===
 
     @Nonnull
-    @Override
-    public String format(@Nonnull Progress input) {
+    public String format(double fraction) throws IllegalArgumentException {
 
-        double threshold = input.get() * length;
+        if(fraction < 0) throw new IllegalArgumentException("Progress fraction cannot be less than zero!");
+        if(fraction > 1) throw new IllegalArgumentException("Progress fraction cannot be greater than one!");
+
+        double threshold = fraction * length;
 
         StringBuilder out = new StringBuilder();
 

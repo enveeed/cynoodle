@@ -11,18 +11,17 @@ import javax.annotation.Nonnull;
 /**
  * Simple parser for doubles.
  */
-public final class DoubleParser implements Parser<Double> {
+public final class DoubleParser {
 
     private final static DoubleParser instance = new DoubleParser();
 
     // ===
 
-    @Override
-    public Double parse(@Nonnull String input) throws ParserException {
+    public double parse(@Nonnull String input) throws ParsingException {
         try {
             return Double.parseDouble(input);
         } catch (NumberFormatException e) {
-            throw new ParserException("Illegal decimal number: `" + input + "`", e);
+            throw new ParsingException("Illegal decimal number: `" + input + "`", e);
         }
     }
 

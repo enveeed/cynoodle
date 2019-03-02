@@ -11,18 +11,17 @@ import javax.annotation.Nonnull;
 /**
  * Simple parser for longs.
  */
-public final class LongParser implements Parser<Long> {
+public final class LongParser {
 
     private final static LongParser instance = new LongParser();
 
     // ===
 
-    @Override
-    public Long parse(@Nonnull String input) throws ParserException {
+    public long parse(@Nonnull String input) throws ParsingException {
         try {
             return Long.parseLong(input);
         } catch (NumberFormatException e) {
-            throw new ParserException("Illegal integer number (64-bit number): `" + input + "`", e);
+            throw new ParsingException("Illegal integer number (64-bit number): `" + input + "`", e);
         }
     }
 
