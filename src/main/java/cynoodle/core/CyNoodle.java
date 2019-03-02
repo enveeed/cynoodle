@@ -8,17 +8,17 @@ package cynoodle.core;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.flogger.FluentLogger;
-import com.mongodb.client.MongoClient;
+import cynoodle.core.api.Snowflake;
 import cynoodle.core.base.TestModule;
 import cynoodle.core.base.command.CommandModule;
 import cynoodle.core.base.fm.FMModule;
-import cynoodle.core.base.xp.XPModule;
+import cynoodle.core.base.localization.LocalizationModule;
 import cynoodle.core.base.strikes.StrikesModule;
+import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.ModuleClassException;
 import cynoodle.core.module.ModuleManager;
 import cynoodle.core.mongo.MongoModule;
-import net.dv8tion.jda.bot.sharding.ShardManager;
 import sun.misc.Signal;
 
 import javax.annotation.Nonnull;
@@ -70,17 +70,7 @@ public final class CyNoodle {
 
     // ======
 
-    private ShardManager discord;
-    private MongoClient mongo;
-
-    //
-
     private Snowflake snowflake;
-
-    //
-
-    private Scheduler scheduler;
-    private Console console;
 
     // ======
 
@@ -309,7 +299,7 @@ public final class CyNoodle {
         // TODO
 
         this.modules.register(CommandModule.class);
-
+        this.modules.register(LocalizationModule.class);
         this.modules.register(StrikesModule.class);
         this.modules.register(XPModule.class);
         this.modules.register(FMModule.class);
@@ -378,20 +368,6 @@ public final class CyNoodle {
     public Snowflake getSnowflake() {
         return this.snowflake;
     }
-
-    // ======
-
-    @Nonnull
-    public Scheduler getScheduler() {
-        return scheduler;
-    }
-
-    @Nonnull
-    public Console getConsole() {
-        return console;
-    }
-
-    // ======
 
     // ======
 
