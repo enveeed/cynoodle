@@ -154,4 +154,15 @@ public final class Strike extends MEntity implements Comparable<Strike> {
     public int compareTo(@Nonnull Strike o) {
         return this.getTimestamp().compareTo(o.getTimestamp());
     }
+
+    // ===
+
+    /**
+     * Create a new {@link StrikeFormatter}.
+     * @return a new StrikeFormatter
+     */
+    @Nonnull
+    public static StrikeFormatter format() {
+        return new StrikeFormatter();
+    }
 }
