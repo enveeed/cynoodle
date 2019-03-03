@@ -13,7 +13,7 @@ import java.util.function.DoubleUnaryOperator;
 /**
  * A unit of temperature.
  */
-public final class TemperatureUnit extends Unit<TemperatureUnit> {
+public final class TemperatureUnit extends BaseUnit<TemperatureUnit> {
 
     public static final TemperatureUnit KELVIN =
             new TemperatureUnit("kelvin", "K", "Kelvin",
@@ -35,9 +35,16 @@ public final class TemperatureUnit extends Unit<TemperatureUnit> {
 
     private TemperatureUnit(String identifier, String symbol, String name,
                             DoubleUnaryOperator toKelvin, DoubleUnaryOperator fromKelvin) {
-        super(Quantity.TEMPERATURE, identifier, symbol, name);
+        super(identifier, symbol, name);
         this.toKelvin = toKelvin;
         this.fromKelvin = fromKelvin;
+    }
+
+    // ===
+
+    @Override
+    public Quantity quantity() {
+        return Quantity.TEMPERATURE;
     }
 
     // ===

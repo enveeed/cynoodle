@@ -13,7 +13,7 @@ import java.util.function.DoubleUnaryOperator;
 /**
  * A unit of mass.
  */
-public final class MassUnit extends Unit<MassUnit> {
+public final class MassUnit extends BaseUnit<MassUnit> {
 
     public static final MassUnit KILOGRAM =
             new MassUnit("kilogram", "kg", "Kilogram",
@@ -50,11 +50,18 @@ public final class MassUnit extends Unit<MassUnit> {
 
     // ===
 
-    private MassUnit(String identifier, String symbol, String name,
-                     DoubleUnaryOperator toKilogram, DoubleUnaryOperator fromKilogram) {
-        super(Quantity.MASS, identifier, symbol, name);
+    public MassUnit(String identifier, String symbol, String name,
+                    DoubleUnaryOperator toKilogram, DoubleUnaryOperator fromKilogram) {
+        super(identifier, symbol, name);
         this.toKilogram = toKilogram;
         this.fromKilogram = fromKilogram;
+    }
+
+    // ===
+
+    @Override
+    public Quantity quantity() {
+        return Quantity.MASS;
     }
 
     // ===

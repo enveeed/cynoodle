@@ -10,43 +10,22 @@ import javax.annotation.Nonnull;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * A unit of a specific quantity. (internal)
+ * A unit of a specific quantity.
  * @param <U> the unit type itself.
  */
-abstract class Unit<U extends Unit<U>> {
-
-    private final Quantity quantity;
-    private final String identifier;
-
-    private final String symbol;
-    private final String name;
-
-    //
-
-    Unit(Quantity quantity, String identifier, String symbol, String name) {
-        this.quantity = quantity;
-        this.identifier = identifier;
-        this.symbol = symbol;
-        this.name = name;
-    }
-
-    //
+interface Unit<U extends Unit<U>> {
 
     /**
      * Get the quantity of this Unit.
      * @return the unit quantity
      */
-    public Quantity getQuantity() {
-        return quantity;
-    }
+    Quantity quantity();
 
     /**
      * Get the unique identifier of this Unit.
      * @return the unit identifier
      */
-    public String getIdentifier() {
-        return identifier;
-    }
+    String identifier();
 
     //
 
@@ -54,16 +33,24 @@ abstract class Unit<U extends Unit<U>> {
      * Get the symbol of this Unit.
      * @return the unit symbol
      */
-    public String getSymbol() {
-        return this.symbol;
-    }
+    String symbol();
 
     /**
      * Get the name of this Unit.
      * @return the unit name
      */
-    public String getName() {
-        return this.name;
+    String name();
+
+    // ===
+
+    /**
+     * Format a value of this unit.
+     * @param value the value
+     * @return a formatted string for a value of this unit.
+     */
+    @Nonnull
+    default String format(double value) {
+        return value + " " + this.symbol();
     }
 
     // ===
@@ -73,5 +60,5 @@ abstract class Unit<U extends Unit<U>> {
      * @param other the other unit
      * @return a converter function.
      */
-    public abstract DoubleUnaryOperator to(@Nonnull U other);
+    DoubleUnaryOperator to(@Nonnull U other);
 }

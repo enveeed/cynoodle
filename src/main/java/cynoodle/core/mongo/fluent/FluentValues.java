@@ -69,7 +69,7 @@ public final class FluentValues {
     // === UNITS OF MEASUREMENT ===
 
     public static Function<TemperatureUnit, BsonString> fromTemperatureUnit() {
-        return x -> new BsonString(x.getIdentifier());
+        return x -> new BsonString(x.identifier());
     }
 
     public static Function<BsonValue, TemperatureUnit> toTemperatureUnit() {
@@ -77,7 +77,7 @@ public final class FluentValues {
     }
 
     public static Function<MassUnit, BsonString> fromMassUnit() {
-        return x -> new BsonString(x.getIdentifier());
+        return x -> new BsonString(x.identifier());
     }
 
     public static Function<BsonValue, MassUnit> toMassUnit() {
