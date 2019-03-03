@@ -63,6 +63,12 @@ public final class LocalizationContext {
 
     // ===
 
+    /**
+     * Create a localization context using the given localization preferences.
+     * If the preferences do not contain a value for a parameter, the default will be used instead.
+     * @param localization the localization preferences
+     * @return the localization context
+     */
     @Nonnull
     public static LocalizationContext of(@Nonnull Localization localization) {
         return new LocalizationContext(
@@ -73,6 +79,10 @@ public final class LocalizationContext {
         );
     }
 
+    /**
+     * Create a localization context using only default values.
+     * @return the localization context
+     */
     @Nonnull
     public static LocalizationContext ofDefault() {
         return new LocalizationContext(
