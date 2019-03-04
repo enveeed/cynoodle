@@ -9,11 +9,15 @@ package cynoodle.core.base.command;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.ParsingException;
 import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.profile.Gender;
+import cynoodle.core.base.profile.Profile;
+import cynoodle.core.base.profile.ProfileModule;
 import cynoodle.core.base.xp.Rank;
 import cynoodle.core.base.xp.RankManager;
 import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import javax.annotation.Nonnull;
 
@@ -27,6 +31,8 @@ public final class TestCommand extends Command {
     private static final Options.Option OPT_THROW_EX = Options.newFlagOption("throw-ex", '3');
     private static final Options.Option OPT_RESPOND = Options.newValueOption("respond", '4');
     private static final Options.Option OPT_SETUP = Options.newFlagOption("setup", 's');
+    private static final Options.Option OPT_P = Options.newFlagOption("p", 'p');
+    private static final Options.Option OPT_G = Options.newFlagOption("g", 'g');
 
     @Override
     protected void onInit() {
@@ -35,7 +41,9 @@ public final class TestCommand extends Command {
                 OPT_THROW_PEX,
                 OPT_THROW_EX,
                 OPT_RESPOND,
-                OPT_SETUP
+                OPT_SETUP,
+                OPT_P,
+                OPT_G
         );
     }
 
@@ -75,6 +83,26 @@ public final class TestCommand extends Command {
 
             context.getChannel().sendMessage("Test data was created!").queue();
 
+        } else if(input.hasOption(OPT_P)) {
+
+            ProfileModule module = Module.get(ProfileModule.class);
+
+            Profile profile = module.getProfileManager().firstOrCreate(context.getUser());
+
+            MessageEmbed embed = profile.createEmbed(context.getGuildPointer());
+
+            context.getChannel().sendMessage(embed).queue();
+
+        } else if (input.hasOption(OPT_G)) {
+
+            ProfileModule module = Module.get(ProfileModule.class);
+
+            Profile profile = module.getProfileManager().firstOrCreate(context.getUser());
+
+            profile.setGender(Gender.male());
+            profile.persist();
+
+            context.getChannel().sendMessage("done").queue();
         }
     }
 }

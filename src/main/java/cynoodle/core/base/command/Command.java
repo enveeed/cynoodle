@@ -158,7 +158,7 @@ public abstract class Command {
             context.getChannel().sendMessage("t: `" + (tEnd - tStart) + " ms`").queue();
     }
 
-    //
+    // ===
 
     /**
      * Run the command.
@@ -168,7 +168,9 @@ public abstract class Command {
      * @param input the command input
      * @throws Exception if the execution completed with an exception, will be handled
      */
-    protected abstract void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input)
+    protected abstract void run(@Nonnull CommandContext context,
+                                @Nonnull LocalizationContext local,
+                                @Nonnull Options.Result input)
             throws Exception;
 
     // ===
