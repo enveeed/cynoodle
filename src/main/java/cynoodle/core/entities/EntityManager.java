@@ -150,6 +150,13 @@ public class EntityManager<E extends Entity> {
     // ===
 
     @Nonnull
+    public final EntityReference<E> reference(long id) {
+        return new EntityReference<>(this, id);
+    }
+
+    // ===
+
+    @Nonnull
     @SuppressWarnings("UnstableApiUsage")
     public final LongStream streamIDs(@Nonnull Bson filter) throws EntityIOException {
 
