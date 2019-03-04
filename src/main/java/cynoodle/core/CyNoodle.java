@@ -13,6 +13,7 @@ import cynoodle.core.base.TestModule;
 import cynoodle.core.base.command.CommandModule;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.localization.LocalizationModule;
+import cynoodle.core.base.profile.ProfileModule;
 import cynoodle.core.base.strikes.StrikesModule;
 import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordModule;
@@ -303,6 +304,7 @@ public final class CyNoodle {
         this.modules.register(StrikesModule.class);
         this.modules.register(XPModule.class);
         this.modules.register(FMModule.class);
+        this.modules.register(ProfileModule.class);
 
 
         this.modules.register(TestModule.class); //TODO test only
