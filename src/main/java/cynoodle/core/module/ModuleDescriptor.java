@@ -158,10 +158,10 @@ public final class ModuleDescriptor {
 
         // ensure class and constructor properties
 
-        if(!Modifier.isFinal(moduleClass.getModifiers())) throw new ModuleClassException("Module class is not final!");
+        if(!Modifier.isFinal(moduleClass.getModifiers())) throw new ModuleClassException("Module class is not final: " + moduleClass);
 
         if(moduleClass.getDeclaredConstructors().length != 1)
-            throw new ModuleClassException("Module class requires exactly one constructor!");
+            throw new ModuleClassException("Module class requires exactly one constructor: " + moduleClass);
 
         try {
 
@@ -170,10 +170,10 @@ public final class ModuleDescriptor {
 
             // check if the constructor is private
             if(!Modifier.isPrivate(constructor.getModifiers()))
-                throw new ModuleClassException("Module class constructor is not private!");
+                throw new ModuleClassException("Module class constructor is not private: " + moduleClass);
 
         } catch (NoSuchMethodException e) {
-            throw new ModuleClassException("Module class does not contain a no-argument constructor!", e);
+            throw new ModuleClassException("Module class does not contain a no-argument constructor: " + moduleClass, e);
         }
 
         // ======
@@ -184,7 +184,7 @@ public final class ModuleDescriptor {
         MSystem annSystem = moduleClass.getDeclaredAnnotation(MSystem.class);
 
         // ensure required annotations
-        if(annIdentifier == null) throw new ModuleClassException("Module class is missing @MIdentifier annotation!");
+        if(annIdentifier == null) throw new ModuleClassException("Module class is missing @MIdentifier annotation: " + moduleClass);
 
         // ======
 
@@ -194,7 +194,7 @@ public final class ModuleDescriptor {
         try {
             identifier = ModuleIdentifier.parse(annIdentifier.value());
         } catch (IllegalArgumentException ex) {
-            throw new ModuleClassException("Could not generate identifier for module class!", ex);
+            throw new ModuleClassException("Could not generate identifier for module class: " + moduleClass, ex);
         }
 
         builder.setIdentifier(identifier);
