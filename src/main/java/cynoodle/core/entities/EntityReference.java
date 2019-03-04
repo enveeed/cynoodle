@@ -6,8 +6,12 @@
 
 package cynoodle.core.entities;
 
+import org.bson.BsonInt64;
+import org.bson.BsonValue;
+
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Immutable reference to any Entity with a snowflake ID.
@@ -53,5 +57,17 @@ public final class EntityReference<E extends Entity> {
     @Nonnull
     public Optional<E> get() {
         return this.manager.get(id);
+    }
+
+    // ===
+
+    @Nonnull
+    public static <E extends Entity> Function<EntityReference<E>, BsonValue> toBson() {
+        return ref -> new BsonInt64(ref.getId());
+    }
+
+    @Nonnull
+    public static <E extends Entity> Function<BsonValue, EntityReference<E>> fromBson(@Nonnull EntityManager<E> manager) {
+        return value -> manager.reference(value.asInt64().getValue());
     }
 }

@@ -98,7 +98,19 @@ public abstract class Entity implements Bsonable {
         return getType().getIdentifier();
     }
 
-    //
+    // ===
+
+    @Nonnull
+    public final EntityReference<?> reference() {
+        return getManager().reference(this.id);
+    }
+
+    @Nonnull
+    public final <E extends Entity> EntityReference<E> reference(@Nonnull Class<E> entityClass) {
+        return getManager(entityClass).reference(this.id);
+    }
+
+    // ===
 
     @Override
     public String toString() {
