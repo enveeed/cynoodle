@@ -9,7 +9,6 @@ package cynoodle.core;
 import com.google.common.eventbus.EventBus;
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.Snowflake;
-import cynoodle.core.base.TestModule;
 import cynoodle.core.base.command.CommandModule;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.localization.LocalizationModule;
@@ -297,29 +296,29 @@ public final class CyNoodle {
 
     // ===
 
-    // TODO temp
+    /**
+     * Register all system modules (module group "<code>system</code>").
+     */
+    // TODO temporary
     private void registerSystemModules() throws ModuleClassException {
-        this.modules.register(MongoModule.class);
-        this.modules.register(DiscordModule.class);
+
+        this.modules.register(MongoModule.class);           // base:mongo
+        this.modules.register(DiscordModule.class);         // base:discord
+
     }
 
     /**
-     * Register all base modules (module group "<code>base</code>")
+     * Register all base modules (module group "<code>base</code>").
      */
-    // TODO temp
+    // TODO temporary
     private void registerBaseModules() throws ModuleClassException {
 
-        // TODO
-
-        this.modules.register(CommandModule.class);
-        this.modules.register(LocalizationModule.class);
-        this.modules.register(StrikesModule.class);
-        this.modules.register(XPModule.class);
-        this.modules.register(FMModule.class);
-        this.modules.register(ProfileModule.class);
-
-
-        this.modules.register(TestModule.class); //TODO test only
+        this.modules.register(CommandModule.class);         // base:command
+        this.modules.register(LocalizationModule.class);    // base:localization
+        this.modules.register(StrikesModule.class);         // base:strikes
+        this.modules.register(XPModule.class);              // base:xp
+        this.modules.register(FMModule.class);              // base:fm
+        this.modules.register(ProfileModule.class);         // base:profile
     }
 
     // ===
