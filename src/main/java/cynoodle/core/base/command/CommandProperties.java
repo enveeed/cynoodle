@@ -7,17 +7,24 @@
 package cynoodle.core.base.command;
 
 import com.mongodb.client.model.Filters;
+import cynoodle.core.base.permission.Permission;
+import cynoodle.core.base.permission.PermissionModule;
 import cynoodle.core.discord.GEntity;
+import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.entities.EIndex;
+import cynoodle.core.entities.EntityReference;
+import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentArray;
 import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +36,9 @@ import java.util.stream.Collectors;
 public final class CommandProperties extends GEntity {
     private CommandProperties() {}
 
+    private final GEntityManager<Permission> permissions = Module.get(PermissionModule.class)
+            .getPermissionManager();
+
     // ===
 
     /**
@@ -39,9 +49,9 @@ public final class CommandProperties extends GEntity {
     // ===
 
     /**
-     * The permission ID for the command
+     * The permission for the command
      */
-    private long permission = -1L;
+    private EntityReference<Permission> permission = null;
 
     /**
      * All alias strings which are mapped to the command
@@ -64,12 +74,13 @@ public final class CommandProperties extends GEntity {
 
     //
 
-    public long getPermission() {
-        return this.permission;
+    @Nonnull
+    public Optional<Permission> getPermission() {
+        return this.permission == null ? Optional.empty() : this.permission.get();
     }
 
-    public void setPermission(long permission) {
-        this.permission = permission;
+    public void setPermission(@Nullable Permission permission) {
+        this.permission = permission == null ? null : permission.reference(Permission.class);
     }
 
     @Nonnull
@@ -95,7 +106,8 @@ public final class CommandProperties extends GEntity {
         super.fromBson(source);
 
         this.identifier = source.getAt("identifier").asString().value();
-        this.permission = source.getAt("permission").asLong().or(-1L);
+        this.permission = source.getAt("permission")
+                .asNullable(EntityReference.fromBson(this.permissions)).or(this.permission);
         this.aliases = source.getAt("aliases").asArray().or(FluentArray.wrapNew())
                 .collect().asString().toSetOr(this.aliases);
 
@@ -107,7 +119,7 @@ public final class CommandProperties extends GEntity {
         FluentDocument data = super.toBson();
 
         data.setAt("identifier").asString().to(this.identifier);
-        data.setAt("permission").asLong().to(this.permission);
+        data.setAt("permission").asNullable(EntityReference.<Permission>toBson()).to(this.permission);
         data.setAt("aliases").asArray()
                 .to(FluentArray.wrapNew().insert().asString().atEnd(this.aliases));
 

@@ -91,4 +91,27 @@ public final class CommandExceptions {
                 .withColor(COLOR_SEVERE)
                 .build();
     }
+
+    // === PERMISSIONS ===
+
+    @Nonnull
+    public static CommandException permissionUndefined() {
+        return CommandException.builder()
+                .withTitle("Permission Error")
+                .withMessage("There is no permission set for this command.")
+                .withIcon(ICON_PERMISSION)
+                .withColor(COLOR_SEVERE)
+                .build();
+    }
+
+    @Nonnull
+    public static CommandException permissionInsufficient(@Nonnull cynoodle.core.base.permission.Permission permission) {
+        return CommandException.builder()
+                .withTitle("Insufficient Permissions")
+                .withMessage(permission.getMessageError().isPresent() ?
+                        permission.getMessageError().orElseThrow() : "Sorry, I can't let you do that.")
+                .withIcon(ICON_PERMISSION)
+                .withColor(COLOR_SEVERE)
+                .build();
+    }
 }

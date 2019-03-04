@@ -12,6 +12,7 @@ import cynoodle.core.api.Snowflake;
 import cynoodle.core.base.command.CommandModule;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.localization.LocalizationModule;
+import cynoodle.core.base.permission.PermissionModule;
 import cynoodle.core.base.profile.ProfileModule;
 import cynoodle.core.base.strikes.StrikesModule;
 import cynoodle.core.base.xp.XPModule;
@@ -319,6 +320,7 @@ public final class CyNoodle {
         this.modules.register(XPModule.class);              // base:xp
         this.modules.register(FMModule.class);              // base:fm
         this.modules.register(ProfileModule.class);         // base:profile
+        this.modules.register(PermissionModule.class);      // base:permission
     }
 
     // ===

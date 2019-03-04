@@ -12,6 +12,7 @@ import cynoodle.core.api.text.ParsingException;
 import cynoodle.core.base.localization.Localization;
 import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.base.localization.LocalizationModule;
+import cynoodle.core.base.permission.Permission;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -20,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.time.Clock;
+import java.util.Optional;
 
 public abstract class Command {
     protected Command() {}
@@ -102,9 +104,26 @@ public abstract class Command {
 
         // === PERMISSIONS ===
 
-        // TODO permissions
+        // fail if no permission is set, to avoid new commands being exploited
 
-        long permission = properties.getPermission();
+        Optional<Permission> permissionResult = properties.getPermission();
+
+        Permission permission;
+
+        if(permissionResult.isEmpty()) {
+            handleException(context, null, CommandExceptions.permissionUndefined());
+            return;
+        }
+        else permission = permissionResult.orElseThrow();
+
+        // check if permission is met
+
+        boolean passedPermissions = permission.check(context.getUserPointer());
+
+        if(!passedPermissions) {
+            handleException(context, null, CommandExceptions.permissionInsufficient(permission));
+            return;
+        }
 
         // === OPTIONS ===
 
