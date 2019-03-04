@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
- * Entity which holds a User.
+ * Entity or Embed which holds a User.
  * @see UEntity
  */
 public interface UHolder {

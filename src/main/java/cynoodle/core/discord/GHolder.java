@@ -11,8 +11,9 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
- * Entity which holds a Guild.
+ * Entity or Embed which holds a Guild.
  * @see GEntity
+ * @see GEmbed
  */
 public interface GHolder {
 

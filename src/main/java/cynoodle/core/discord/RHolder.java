@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
- * An Entity which holds a Role.
+ * An Entity or Embed which holds a Role.
  */
 public interface RHolder {
 
