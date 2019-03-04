@@ -14,6 +14,7 @@ import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
+import cynoodle.core.entities.embed.EmbedType;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
@@ -30,6 +31,10 @@ public final class XPModule extends Module {
     private final static EntityType<XP> TYPE_XP = EntityType.of(XP.class);
     private final static EntityType<Rank> TYPE_RANK = EntityType.of(Rank.class);
     private final static EntityType<XPSettings> TYPE_SETTINGS = EntityType.of(XPSettings.class);
+
+    // TODO
+    private final static EmbedType<XPCondition> TYPE_CONDITION_XP = EmbedType.of(XPCondition.class, "base:xp:xp");
+    // private final static EmbedType<LevelCondition> TYPE_CONDITION_LEVEL = EmbedType.of(LevelCondition.class, "base:xp:level");
 
     private final XPFormula formula = new StandardXPFormula(); // TODO configurable
 
