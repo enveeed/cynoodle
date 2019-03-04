@@ -7,8 +7,8 @@
 package cynoodle.core.discord;
 
 import com.google.common.flogger.FluentLogger;
+import cynoodle.core.Configuration;
 import cynoodle.core.CyNoodle;
-import cynoodle.core.api.text.ParsingException;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MSystem;
 import cynoodle.core.module.Module;
@@ -62,17 +62,10 @@ public final class DiscordModule extends Module {
 
         LOG.atFine().log("Loading configuration ...");
 
-        DiscordParameters parameters;
+        Configuration.Section section = CyNoodle.get().getConfiguration().get("discord")
+                .orElseThrow(() -> new RuntimeException("Discord configuration is missing! (section 'discord')"));
 
-        try {
-            parameters = DiscordParameters.parse(CyNoodle.get().getLaunchSettings().getParameters());
-        } catch (ParsingException e) {
-            throw new RuntimeException("Failed to parse parameters required for Discord!", e);
-        }
-
-        // TODO unify DiscordParameters and DiscordConfiguration
-        this.configuration = DiscordConfiguration.newBuilder()
-                .setToken(parameters.getToken()).build();
+        this.configuration = DiscordConfiguration.parse(section);
 
         // === SETUP ==
 

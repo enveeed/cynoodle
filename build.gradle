@@ -46,6 +46,7 @@ buildConfig {
 repositories {
     mavenCentral()
     jcenter()
+    maven { url 'https://jitpack.io' } // JitPack.io
 }
 
 // ======
@@ -83,6 +84,10 @@ dependencies {
 
     implementation 'org.eclipse.collections:eclipse-collections:9.2.0'
     implementation 'org.eclipse.collections:eclipse-collections-api:9.2.0'
+
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.8' // Jackson JSON API
+
+    implementation group: 'com.github.jillesvangurp', name: 'jsonj', version: 'v2.56' // JsonJ fluent JSON API
     
     // base:fm
 

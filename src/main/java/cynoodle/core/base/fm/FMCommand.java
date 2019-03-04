@@ -51,7 +51,7 @@ public final class FMCommand extends Command {
 
         // === API REQUEST ===
 
-        PaginatedResult<Track> recent = User.getRecentTracks(username, 1, 1, module.getAPIKey());
+        PaginatedResult<Track> recent = User.getRecentTracks(username, 1, 1, module.getConfiguration().getAPIKey());
 
         if (recent.isEmpty()) throw simple("The last.fm API did not return any result.");
 

@@ -23,6 +23,8 @@ import cynoodle.core.mongo.MongoModule;
 import sun.misc.Signal;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -63,6 +65,8 @@ public final class CyNoodle {
     private final LaunchSettings launchSettings;
 
     // ======
+
+    private Configuration configuration;
 
     private final ModuleManager modules = new ModuleManager();
 
@@ -154,6 +158,14 @@ public final class CyNoodle {
     private void start() throws StartException {
 
         LOG.atInfo().log("Starting cynoodle %s ...", BuildConfig.VERSION);
+
+        // === CONFIGURATION ===
+
+        try {
+            this.configuration = Configuration.read(Paths.get("./config.json"));
+        } catch (IOException e) {
+            throw new StartException(e);
+        }
 
         // ===
 
@@ -365,6 +377,11 @@ public final class CyNoodle {
     }
 
     // ======
+
+    @Nonnull
+    public Configuration getConfiguration() {
+        return this.configuration;
+    }
 
     @Nonnull
     public Snowflake getSnowflake() {

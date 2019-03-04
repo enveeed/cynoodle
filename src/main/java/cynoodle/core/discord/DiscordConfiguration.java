@@ -6,6 +6,8 @@
 
 package cynoodle.core.discord;
 
+import com.github.jsonj.JsonObject;
+import cynoodle.core.Configuration;
 import cynoodle.core.api.Checks;
 
 import javax.annotation.Nonnull;
@@ -13,7 +15,6 @@ import javax.annotation.Nonnull;
 /**
  * Immutable configuration for Discord ({@link DiscordModule}).
  */
-// TODO parse from JSON
 public final class DiscordConfiguration {
 
     private final String token;
@@ -33,13 +34,6 @@ public final class DiscordConfiguration {
 
     // ===
 
-    @Nonnull
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    // ===
-
     public static class Builder {
 
         private String token;
@@ -51,7 +45,7 @@ public final class DiscordConfiguration {
         // ===
 
         @Nonnull
-        public Builder setToken(String token) {
+        public Builder setToken(@Nonnull String token) {
             this.token = token;
             return this;
         }
@@ -60,10 +54,32 @@ public final class DiscordConfiguration {
 
         @Nonnull
         public DiscordConfiguration build() {
-
             Checks.notNull(token, "token");
-
             return new DiscordConfiguration(this);
         }
+    }
+
+    @Nonnull
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    // ===
+
+    @Nonnull
+    public static DiscordConfiguration parse(@Nonnull Configuration.Section section) {
+
+        JsonObject json = section.get();
+
+        String token = json.maybeGetString("token")
+                .orElseThrow(() -> new IllegalArgumentException("Discord configuration did not include token!"));
+
+        //
+
+        Builder builder = newBuilder();
+
+        builder.setToken(token);
+
+        return builder.build();
     }
 }
