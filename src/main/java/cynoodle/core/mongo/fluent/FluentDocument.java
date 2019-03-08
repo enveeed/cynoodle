@@ -7,12 +7,14 @@
 package cynoodle.core.mongo.fluent;
 
 import org.bson.*;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 
-public final class FluentDocument implements FluentValue {
+public final class FluentDocument implements FluentValue, Iterable<String> {
 
     private final BsonDocument document;
 
@@ -54,6 +56,14 @@ public final class FluentDocument implements FluentValue {
 
     public int size() {
         return this.document.size();
+    }
+
+    // ===
+
+    @NotNull
+    @Override
+    public Iterator<String> iterator() {
+        return this.document.keySet().iterator();
     }
 
     // ===
