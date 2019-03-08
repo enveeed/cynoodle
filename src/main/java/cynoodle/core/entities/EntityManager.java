@@ -138,6 +138,9 @@ public class EntityManager<E extends Entity> {
             else return Optional.empty(); // entity does not exist
         }
 
+
+        // TODO his.update(id) is very much not required usually,
+        //  replace this with a change stream in the future to avoid useless calls to the DB
         // update the cached entity before returning it
         this.update(id);
 
