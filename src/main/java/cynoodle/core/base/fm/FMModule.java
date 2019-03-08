@@ -13,11 +13,16 @@ import cynoodle.core.base.command.CommandRegistry;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
+import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <code>base:fm</code>
+ */
 @MIdentifier("base:fm")
+@MRequires("base:command")
 public final class FMModule extends Module {
     private FMModule() {}
 

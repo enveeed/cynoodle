@@ -16,6 +16,9 @@ import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <code>base:strikes</code>
+ */
 @MIdentifier("base:strikes")
 @MRequires("base:command")
 public final class StrikesModule extends Module {

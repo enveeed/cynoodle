@@ -19,8 +19,8 @@ import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
-import static cynoodle.core.base.command.CommandExceptions.missingParameter;
-import static cynoodle.core.base.command.CommandExceptions.simple;
+import static cynoodle.core.base.command.CommandErrors.missingParameter;
+import static cynoodle.core.base.command.CommandErrors.simple;
 
 @CIdentifier("base:fm:edit")
 @CAliases({"fmedit","fme"})

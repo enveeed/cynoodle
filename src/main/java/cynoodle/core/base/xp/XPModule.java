@@ -9,12 +9,15 @@ package cynoodle.core.base.xp;
 import com.google.common.eventbus.Subscribe;
 import cynoodle.core.base.command.CommandModule;
 import cynoodle.core.base.command.CommandRegistry;
+import cynoodle.core.base.condition.Condition;
+import cynoodle.core.base.condition.ConditionModule;
 import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.entities.embed.EmbedType;
+import cynoodle.core.entities.embed.EmbedTypeRegistry;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
@@ -23,18 +26,24 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * <code>base:xp</code>
+ */
 @MIdentifier("base:xp")
 @MRequires("base:command")
+@MRequires("base:condition")
 public final class XPModule extends Module {
     private XPModule() {}
+
+    // ===
 
     private final static EntityType<XP> TYPE_XP = EntityType.of(XP.class);
     private final static EntityType<Rank> TYPE_RANK = EntityType.of(Rank.class);
     private final static EntityType<XPSettings> TYPE_SETTINGS = EntityType.of(XPSettings.class);
 
-    // TODO
-    private final static EmbedType<XPCondition> TYPE_CONDITION_XP = EmbedType.of(XPCondition.class, "base:xp:xp");
-    // private final static EmbedType<LevelCondition> TYPE_CONDITION_LEVEL = EmbedType.of(LevelCondition.class, "base:xp:level");
+    public final static EmbedType<XPCondition> TYPE_CONDITION_XP = EmbedType.of("base:xp:xp", XPCondition.class);
+
+    // ===
 
     private final XPFormula formula = new StandardXPFormula(); // TODO configurable
 
@@ -61,6 +70,8 @@ public final class XPModule extends Module {
 
         leaderBoardManager = new LeaderBoardManager();
 
+        //
+
         CommandRegistry registry = Module.get(CommandModule.class).getRegistry();
 
         registry.register(XPCommand.class);
@@ -69,6 +80,12 @@ public final class XPModule extends Module {
         registry.register(XPTransferCommand.class);
         registry.register(LeaderBoardCommand.class);
         registry.register(RanksCommand.class);
+
+        //
+
+        EmbedTypeRegistry<Condition> types = Module.get(ConditionModule.class).getConditionTypes();
+
+        types.register(TYPE_CONDITION_XP);
 
         //
 

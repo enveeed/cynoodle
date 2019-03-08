@@ -65,7 +65,7 @@ public final class CommandMappings {
         Map<String, String> mappings = new HashMap<>();
 
         CommandRegistry registry = module.getRegistry();
-        CommandPropertiesManager properties = module.getProperties();
+        CommandSettings.PropertiesStore properties = module.getSettings().firstOrCreate(guild).getProperties();
 
         for (Command command : registry.all()) {
 
@@ -74,8 +74,7 @@ public final class CommandMappings {
 
             //
 
-            CommandProperties commandProperties = properties.firstOrCreate(guild,
-                    CommandProperties.filterIdentifier(identifier), p -> p.create(descriptor));
+            CommandSettings.Properties commandProperties = properties.findOrCreate(identifier);
 
             //
 

@@ -10,15 +10,18 @@ import cynoodle.core.api.Numbers;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.LongParser;
-import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.command.CAliases;
+import cynoodle.core.base.command.CIdentifier;
+import cynoodle.core.base.command.Command;
+import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
 
-import static cynoodle.core.base.command.CommandExceptions.*;
+import static cynoodle.core.base.command.CommandErrors.*;
 
 @CIdentifier("base:xp:add")
 @CAliases({"xp+","x+","addxp","xpadd","addx"})

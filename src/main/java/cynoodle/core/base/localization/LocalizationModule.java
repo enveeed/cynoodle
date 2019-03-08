@@ -13,6 +13,9 @@ import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <code>base:localization</code>
+ */
 @MIdentifier("base:localization")
 public final class LocalizationModule extends Module {
     private LocalizationModule() {}

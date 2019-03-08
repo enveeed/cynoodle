@@ -7,10 +7,7 @@
 package cynoodle.core.base.command;
 
 import cynoodle.core.discord.DiscordPointer;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
@@ -37,21 +34,37 @@ public final class CommandContext {
 
     // === DATA ===
 
+    /**
+     * Get the message which caused this command.
+     * @return the message
+     */
     @Nonnull
     public Message getMessage() {
         return this.event.getMessage();
     }
 
+    /**
+     * Get the user which causes this command.
+     * @return the user
+     */
     @Nonnull
     public User getUser() {
         return this.event.getAuthor();
     }
 
+    /**
+     * Get the channel this command happened in.
+     * @return the channel
+     */
     @Nonnull
     public TextChannel getChannel() {
         return this.event.getChannel();
     }
 
+    /**
+     * Get the guild this command happened in.
+     * @return the guild
+     */
     @Nonnull
     public Guild getGuild() {
         return this.event.getGuild();
@@ -59,21 +72,37 @@ public final class CommandContext {
 
     // === POINTERS ==
 
+    /**
+     * Get the message which causes this command, as a pointer.
+     * @return a pointer to the message
+     */
     @Nonnull
     public DiscordPointer getMessagePointer() {
         return DiscordPointer.to(getMessage());
     }
 
+    /**
+     * Get the user which causes this command, as a pointer.
+     * @return a pointer to the user
+     */
     @Nonnull
     public DiscordPointer getUserPointer() {
         return DiscordPointer.to(getUser());
     }
 
+    /**
+     * Get the channel in which the command happened, as a pointer.
+     * @return a pointer to the channel
+     */
     @Nonnull
     public DiscordPointer getChannelPointer() {
         return DiscordPointer.to(getChannel());
     }
 
+    /**
+     * Get the guild in which the command happened, as a pointer.
+     * @return a pointer to the guild
+     */
     @Nonnull
     public DiscordPointer getGuildPointer() {
         return DiscordPointer.to(getGuild());
@@ -81,6 +110,10 @@ public final class CommandContext {
 
     // === EVENT ===
 
+    /**
+     * Get the event which caused the command.
+     * @return the event
+     */
     @Nonnull
     public GuildMessageReceivedEvent getEvent() {
         return this.event;
@@ -88,13 +121,50 @@ public final class CommandContext {
 
     // === INTERNALS ===
 
+    /**
+     * Get the raw command string from pre-parsing, that is
+     * the command alias without the prefix or further input.
+     * @return the raw command
+     */
     @Nonnull
     String getRawCommand() {
         return this.rawCommand;
     }
 
+    /**
+     * Get the raw command input string from pre-parsing, that is
+     * the content of the command without the prefix or the alias,
+     * may be empty.
+     * @return the raw input
+     */
     @Nonnull
     String getRawInput() {
         return this.rawInput;
+    }
+
+    // === UTILITY ===
+
+    /**
+     * Queue a message for reply in the channel of this context.
+     * @param message the message
+     */
+    public void queueReply(@Nonnull Message message) {
+        this.getChannel().sendMessage(message).queue();
+    }
+
+    /**
+     * Queue a message for reply in the channel of this context.
+     * @param message the message
+     */
+    public void queueReply(@Nonnull String message) {
+        this.getChannel().sendMessage(message).queue();
+    }
+
+    /**
+     * Queue an embed for reply in the channel of this context.
+     * @param embed the embed
+     */
+    public void queueReply(@Nonnull MessageEmbed embed) {
+        this.getChannel().sendMessage(embed).queue();
     }
 }

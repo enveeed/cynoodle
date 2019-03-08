@@ -24,8 +24,8 @@ import cynoodle.core.module.Module;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandExceptions.internalError;
-import static cynoodle.core.base.command.CommandExceptions.simple;
+import static cynoodle.core.base.command.CommandErrors.internalError;
+import static cynoodle.core.base.command.CommandErrors.simple;
 
 @CIdentifier("base:xp:xp")
 @CAliases({"xp", "rank", "r"})

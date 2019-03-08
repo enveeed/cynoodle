@@ -13,13 +13,9 @@ import cynoodle.core.base.localization.Localization;
 import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.base.localization.LocalizationModule;
 import cynoodle.core.base.permission.Permission;
-import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.EmbedBuilder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
 import java.time.Clock;
 import java.util.Optional;
 
@@ -34,22 +30,23 @@ public abstract class Command {
 
     private CommandDescriptor descriptor;
 
-    // ===
-
-    // options available for all commands
+    // === DEFAULT OPTIONS ==
 
     /**
-     * A flag for the command to provide additional debug information
+     * A flag for the command to provide additional debug information.
      */
     private static final Options.Option OPT_DEBUG = Options.newFlagOption("debug", '#');
 
     /**
-     * A flag for the command to localize the output format
+     * A flag for the command to localize the output format.
      */
     private static final Options.Option OPT_LOCALIZE = Options.newFlagOption("localize",'l');
 
     // ===
 
+    /**
+     * Options builder for the command options.
+     */
     protected final Options.Builder options = Options.newBuilder()
             .addOptions(OPT_DEBUG)
             .addOptions(OPT_LOCALIZE);
@@ -98,9 +95,9 @@ public abstract class Command {
      */
     final void execute(@Nonnull CommandContext context) {
 
-        // require the properties for this command on this guild
-        CommandProperties properties = module.getProperties()
-                .firstOrCreate(DiscordPointer.to(context.getGuild()), this.getIdentifier());
+        // require the settings for this guild
+        CommandSettings.Properties properties = module.getSettings().firstOrCreate(context.getGuildPointer())
+                .getProperties().findOrCreate(this.getIdentifier());
 
         // === PERMISSIONS ===
 
@@ -111,7 +108,7 @@ public abstract class Command {
         Permission permission;
 
         if(permissionResult.isEmpty()) {
-            handleException(context, null, CommandExceptions.permissionUndefined());
+            context.queueReply(CommandErrors.permissionUndefined().asEmbed());
             return;
         }
         else permission = permissionResult.orElseThrow();
@@ -121,7 +118,7 @@ public abstract class Command {
         boolean passedPermissions = permission.check(context.getUserPointer());
 
         if(!passedPermissions) {
-            handleException(context, null, CommandExceptions.permissionInsufficient(permission));
+            context.queueReply(CommandErrors.permissionInsufficient(permission).asEmbed());
             return;
         }
 
@@ -137,10 +134,7 @@ public abstract class Command {
             input = options.parse(context.getRawInput());
 
         } catch (ParsingException e) {
-
-            // report command options parser input error
-            handleException(context, null, e);
-
+            context.queueReply(CommandErrors.parsingFailed(e).asEmbed());
             return;
         }
 
@@ -168,7 +162,10 @@ public abstract class Command {
             // run the command
             this.run(context, local, input);
         } catch (Exception e) {
-            handleException(context, input, e);
+
+            LOG.atSevere().withCause(e).log("Internal error at %s with %s!", this.getIdentifier(), input);
+
+            context.queueReply(CommandErrors.internalError().asEmbed());
         }
 
         long tEnd = Clock.systemUTC().millis();
@@ -191,67 +188,5 @@ public abstract class Command {
                                 @Nonnull LocalizationContext local,
                                 @Nonnull Options.Result input)
             throws Exception;
-
-    // ===
-
-    private void handleException(@Nonnull CommandContext context, @Nullable Options.Result input, @Nonnull Exception thrown) {
-
-        CommandException exception;
-
-        //
-
-        if(thrown instanceof CommandException) {
-
-            // directly thrown, handle it directly
-            exception = (CommandException) thrown;
-
-        } else if(thrown instanceof ParsingException) {
-
-            // parsing error
-            exception = CommandExceptions.parsingFailed((ParsingException) thrown);
-
-        } else {
-
-            // create a new exception for internal error
-            // and report the unexpected error
-
-            exception = CommandExceptions.internalError();
-
-            LOG.atSevere().withCause(thrown)
-                    .log("Unexpected internal error while executing %s (input: %s)", this.getIdentifier(), input);
-        }
-
-        //
-
-        EmbedBuilder embed = new EmbedBuilder();
-
-        String title    = exception.getTitle();
-        String message  = exception.getMessage();
-        String icon     = exception.getIcon();
-        Color color     = exception.getColor();
-
-        StringBuilder content = new StringBuilder();
-
-        if(icon != null) content.append(icon).append(" \u200b ");
-        if(title != null) content.append("**").append(title).append("**\n\n");
-        if(message != null) content.append(message).append("\n\n");
-
-        if(exception.hasFlag(CommandException.Flag.DISPLAY_USAGE)) {
-            // TODO append usage
-        }
-
-        // TODO more flags
-
-        if(content.length() == 0) content.append("Unknown error.");
-
-        embed.setDescription(content.toString());
-
-        if(color != null) embed.setColor(color);
-
-        //
-
-        context.getChannel().sendMessage(embed.build()).queue();
-
-    }
 
 }

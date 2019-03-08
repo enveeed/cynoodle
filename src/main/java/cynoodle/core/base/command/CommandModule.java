@@ -17,6 +17,9 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <code>base:command</code>
+ */
 @SuppressWarnings("UnstableApiUsage")
 @MIdentifier("base:command")
 @MRequires("base:localization")
@@ -28,15 +31,14 @@ public final class CommandModule extends Module {
 
     // ===
 
-    final static EntityType<CommandSettings> TYPE_SETTINGS = EntityType.of(CommandSettings.class);
-    final static EntityType<CommandProperties> TYPE_PROPERTIES = EntityType.of(CommandProperties.class);
+    final static EntityType<CommandSettings> TYPE_SETTINGS
+            = EntityType.of(CommandSettings.class);
 
     //
 
     private final CommandRegistry registry = new CommandRegistry();
 
     private CommandSettingsManager settings;
-    private CommandPropertiesManager properties;
 
     private CommandHandler handler;
 
@@ -51,19 +53,15 @@ public final class CommandModule extends Module {
         super.start();
 
         this.settings = new CommandSettingsManager();
-        this.properties = new CommandPropertiesManager();
 
         this.handler = new CommandHandler();
         this.pool = new CommandPool();
 
         this.mappingsManager = new CommandMappingsManager();
 
-        this.registry.register(TestCommand.class);
-
         //
 
         this.settings.ensureIndexes();
-        this.properties.ensureIndexes();
     }
 
     @Override
@@ -87,11 +85,6 @@ public final class CommandModule extends Module {
     @Nonnull
     public CommandSettingsManager getSettings() {
         return this.settings;
-    }
-
-    @Nonnull
-    public CommandPropertiesManager getProperties() {
-        return this.properties;
     }
 
     // ===

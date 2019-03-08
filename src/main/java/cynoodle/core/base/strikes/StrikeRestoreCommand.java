@@ -9,8 +9,11 @@ package cynoodle.core.base.strikes;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.IntegerParser;
-import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.command.CAliases;
+import cynoodle.core.base.command.CIdentifier;
+import cynoodle.core.base.command.Command;
+import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
@@ -19,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static cynoodle.core.base.command.CommandExceptions.*;
+import static cynoodle.core.base.command.CommandErrors.*;
 
 @CIdentifier("base:strikes:restore")
 @CAliases({"strikerestore","strikere","strre","strre"})

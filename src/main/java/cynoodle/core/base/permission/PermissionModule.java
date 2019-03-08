@@ -9,11 +9,16 @@ package cynoodle.core.base.permission;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
+import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <code>base:permission</code>
+ */
 @MIdentifier("base:permission")
+@MRequires("base:condition")
 public final class PermissionModule extends Module {
     private PermissionModule() {}
 

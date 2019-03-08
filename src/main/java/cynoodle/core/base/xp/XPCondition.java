@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.xp;
 
-import cynoodle.core.base.permission.Condition;
+import cynoodle.core.base.condition.Condition;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
@@ -43,9 +43,9 @@ public final class XPCondition extends Condition {
     // ===
 
     @Override
-    public boolean check(@Nonnull DiscordPointer user) {
+    public boolean check(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user) {
 
-        Optional<XP> xpResult = module.getXPManager().first(XP.filterMember(requireGuild(), user));
+        Optional<XP> xpResult = module.getXPManager().first(XP.filterMember(guild, user));
 
         if(xpResult.isEmpty()) return false;
         else return xpResult.orElseThrow().get() >= this.xp;

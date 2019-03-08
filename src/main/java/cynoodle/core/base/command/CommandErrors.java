@@ -10,16 +10,15 @@ import cynoodle.core.api.text.ParsingException;
 import net.dv8tion.jda.core.Permission;
 
 import javax.annotation.Nonnull;
-
 import java.awt.*;
 
-import static cynoodle.core.base.command.CommandException.Flag.DISPLAY_USAGE;
+import static cynoodle.core.base.command.CommandError.Flag.DISPLAY_USAGE;
 
 /**
- * Static suppliers for different common {@link CommandException CommandExceptions}.
+ * Static suppliers for different common {@link CommandError CommandErrors}.
  */
-public final class CommandExceptions {
-    private CommandExceptions() {}
+public final class CommandErrors {
+    private CommandErrors() {}
 
     private static final String ICON_EXTERNAL = "⚠️";
     private static final String ICON_INTERNAL = "❌";
@@ -31,8 +30,8 @@ public final class CommandExceptions {
     // === GENERAL ===
 
     @Nonnull
-    public static CommandException simple(@Nonnull String message) {
-        return CommandException.builder()
+    public static CommandError simple(@Nonnull String message) {
+        return CommandError.builder()
                 .withTitle("Command Error")
                 .withMessage(message)
                 .withIcon(ICON_EXTERNAL)
@@ -43,12 +42,12 @@ public final class CommandExceptions {
     // === INPUT ===
 
     @Nonnull
-    public static CommandException parsingFailed(@Nonnull ParsingException exception) {
+    public static CommandError parsingFailed(@Nonnull ParsingException exception) {
 
         String message = exception.getMessage();
         if(message == null) message = "Failed to parse input!";
 
-        return CommandException.builder()
+        return CommandError.builder()
                 .withTitle("Parsing Failed")
                 .withMessage(message)
                 .withIcon(ICON_EXTERNAL)
@@ -58,8 +57,8 @@ public final class CommandExceptions {
     }
 
     @Nonnull
-    public static CommandException missingParameter(@Nonnull String name) {
-        return CommandException.builder()
+    public static CommandError missingParameter(@Nonnull String name) {
+        return CommandError.builder()
                 .withTitle("Invalid Input")
                 .withMessage("Missing parameter `" + name + "`!")
                 .withIcon(ICON_EXTERNAL)
@@ -71,8 +70,8 @@ public final class CommandExceptions {
     // === DISCORD ===
 
     @Nonnull
-    public static CommandException insufficientDiscordPermissions(@Nonnull Permission permission) {
-        return CommandException.builder()
+    public static CommandError insufficientDiscordPermissions(@Nonnull Permission permission) {
+        return CommandError.builder()
                 .withTitle("Insufficient Discord Permissions")
                 .withMessage("The bot account misses permission \"" + permission.getName()+"\"!")
                 .withIcon(ICON_EXTERNAL)
@@ -83,8 +82,8 @@ public final class CommandExceptions {
     // === INTERNAL ===
 
     @Nonnull
-    public static CommandException internalError() {
-        return CommandException.builder()
+    public static CommandError internalError() {
+        return CommandError.builder()
                 .withTitle("Unexpected Internal Error")
                 .withMessage("This was probably not your fault, please try again later.")
                 .withIcon(ICON_INTERNAL)
@@ -95,8 +94,8 @@ public final class CommandExceptions {
     // === PERMISSIONS ===
 
     @Nonnull
-    public static CommandException permissionUndefined() {
-        return CommandException.builder()
+    public static CommandError permissionUndefined() {
+        return CommandError.builder()
                 .withTitle("Permission Error")
                 .withMessage("There is no permission set for this command.")
                 .withIcon(ICON_PERMISSION)
@@ -105,8 +104,8 @@ public final class CommandExceptions {
     }
 
     @Nonnull
-    public static CommandException permissionInsufficient(@Nonnull cynoodle.core.base.permission.Permission permission) {
-        return CommandException.builder()
+    public static CommandError permissionInsufficient(@Nonnull cynoodle.core.base.permission.Permission permission) {
+        return CommandError.builder()
                 .withTitle("Insufficient Permissions")
                 .withMessage(permission.getMessageError().isPresent() ?
                         permission.getMessageError().orElseThrow() : "Sorry, I can't let you do that.")

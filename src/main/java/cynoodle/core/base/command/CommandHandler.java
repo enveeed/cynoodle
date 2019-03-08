@@ -49,7 +49,7 @@ public final class CommandHandler {
         CommandSettings settings = this.module.getSettings().firstOrCreate(guild);
 
         String                      prefix  = settings.getPrefix();
-        CommandSettings.NSCPolicy   nsc     = settings.getNSCPolicy();
+        CommandNSCPolicy   nsc     = settings.getNSCPolicy();
 
         // === PRE-PARSING ===
 
@@ -106,9 +106,9 @@ public final class CommandHandler {
         } else {
 
             // ignore
-            if(nsc == CommandSettings.NSCPolicy.IGNORE) return;
+            if(nsc == CommandNSCPolicy.IGNORE) return;
 
-            else if(nsc == CommandSettings.NSCPolicy.REPORT) {
+            else if(nsc == CommandNSCPolicy.REPORT) {
 
                 // report only
 
@@ -120,7 +120,7 @@ public final class CommandHandler {
 
             }
 
-            else if(nsc == CommandSettings.NSCPolicy.REPORT_DETAILED) {
+            else if(nsc == CommandNSCPolicy.REPORT_DETAILED) {
 
                 // report with a list of similar commands
 

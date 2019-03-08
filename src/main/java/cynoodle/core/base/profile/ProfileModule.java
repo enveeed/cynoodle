@@ -16,6 +16,9 @@ import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <code>base:profile</code>
+ */
 @MIdentifier("base:profile")
 @MRequires("base:command")
 public final class ProfileModule extends Module {

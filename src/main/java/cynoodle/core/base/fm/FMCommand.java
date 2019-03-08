@@ -8,8 +8,11 @@ package cynoodle.core.base.fm;
 
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
-import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.command.CAliases;
+import cynoodle.core.base.command.CIdentifier;
+import cynoodle.core.base.command.Command;
+import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
 import de.umass.lastfm.PaginatedResult;
@@ -22,7 +25,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandExceptions.*;
+import static cynoodle.core.base.command.CommandErrors.*;
 
 @CIdentifier("base:fm:fm")
 @CAliases({"fm","fmi","fminfo"})

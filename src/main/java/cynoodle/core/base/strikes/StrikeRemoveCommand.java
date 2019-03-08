@@ -22,8 +22,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static cynoodle.core.base.command.CommandExceptions.missingParameter;
-import static cynoodle.core.base.command.CommandExceptions.simple;
+import static cynoodle.core.base.command.CommandErrors.missingParameter;
+import static cynoodle.core.base.command.CommandErrors.simple;
 
 @CIdentifier("base:strikes:remove")
 @CAliases({"strikeremove","strike-","str-","strr"})

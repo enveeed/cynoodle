@@ -11,8 +11,11 @@ import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.IntegerParser;
-import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.command.CAliases;
+import cynoodle.core.base.command.CIdentifier;
+import cynoodle.core.base.command.Command;
+import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.discord.Members;
@@ -24,7 +27,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandExceptions.*;
+import static cynoodle.core.base.command.CommandErrors.*;
 
 @CIdentifier("base:xp:lb")
 @CAliases({"leaderboard","lb","toplist","tl","levels","lvls"})
