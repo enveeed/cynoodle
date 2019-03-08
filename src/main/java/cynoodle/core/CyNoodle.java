@@ -10,6 +10,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.Snowflake;
 import cynoodle.core.base.command.CommandModule;
+import cynoodle.core.base.condition.ConditionModule;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.localization.LocalizationModule;
 import cynoodle.core.base.permission.PermissionModule;
@@ -141,6 +142,7 @@ public final class CyNoodle {
             LOG.atSevere()
                     .withCause(ex)
                     .log("Unexpected exception in root thread: %s", ex.getMessage());
+            ex.printStackTrace();
             status = 1;
         }
 
@@ -321,6 +323,7 @@ public final class CyNoodle {
         this.modules.register(FMModule.class);              // base:fm
         this.modules.register(ProfileModule.class);         // base:profile
         this.modules.register(PermissionModule.class);      // base:permission
+        this.modules.register(ConditionModule.class);       // base:condition
     }
 
     // ===
