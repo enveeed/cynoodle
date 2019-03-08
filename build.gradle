@@ -30,7 +30,7 @@ final def gitHash = getGitHash.call()
 
 // ======
 
-version "2019.0.0-PR-$gitHash"
+version "2019.0.0-beta-$gitHash"
 group "cynoodle"
 
 // ======
@@ -97,5 +97,10 @@ dependencies {
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2' // JUnit API
     testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2' // JUnit Engine
-
+    
+    // Logging aggregator
+    
+    implementation files("./tlibs/carambola-core-2019.0.0-beta.jar")
+    implementation files("./tlibs/carambola-flogger-2019.0.0-beta.jar")
+    implementation files("./tlibs/carambola-slf4j-2019.0.0-beta.jar")
 }

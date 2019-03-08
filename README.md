@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/version-2019.0.0--PR-blue.svg?style=flat-square)
+![version](https://img.shields.io/badge/version-2019.0.0--beta-blue.svg?style=flat-square)
 ![java-version](https://img.shields.io/badge/java-11-yellowgreen.svg?style=flat-square)
 
 # cynoodle-core
