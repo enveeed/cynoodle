@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
  */
 @MIdentifier("base:profile")
 @MRequires("base:command")
+@MRequires("base:localization")
+@MRequires("base:fm")
 public final class ProfileModule extends Module {
     private ProfileModule() {}
 
