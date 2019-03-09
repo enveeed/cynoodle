@@ -25,6 +25,10 @@ public final class ConditionModule extends Module {
     @Override
     protected void start() {
         super.start();
+
+        //
+
+        this.registry.register(AndCondition.class);
     }
 
     @Override
