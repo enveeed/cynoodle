@@ -7,16 +7,16 @@
 package cynoodle.core.base.condition;
 
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.entities.embed.Embed;
+import cynoodle.core.entities.embed.Embeddable;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
 /**
- * A Condition is a functional {@link Embed} which checks
+ * A Condition is a functional {@link Embeddable} which checks
  * if a guild member matches an implementation dependent condition.
  */
-public abstract class Condition extends Embed {
+public abstract class Condition extends Embeddable {
 
     // ===
 

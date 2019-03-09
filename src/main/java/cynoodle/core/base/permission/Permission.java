@@ -11,7 +11,7 @@ import cynoodle.core.base.condition.ConditionModule;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
-import cynoodle.core.entities.embed.EmbedTypeRegistry;
+import cynoodle.core.entities.embed.EmbeddableTypeRegistry;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
@@ -28,7 +28,7 @@ import java.util.Optional;
 public final class Permission extends GEntity {
     private Permission() {}
 
-    private final EmbedTypeRegistry<Condition> conditions
+    private final EmbeddableTypeRegistry<Condition> conditions
             = Module.get(ConditionModule.class).getConditionTypes();
 
     // ===

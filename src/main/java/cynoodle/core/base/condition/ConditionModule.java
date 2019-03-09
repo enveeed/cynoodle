@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.condition;
 
-import cynoodle.core.entities.embed.EmbedTypeRegistry;
+import cynoodle.core.entities.embed.EmbeddableTypeRegistry;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.Module;
 
@@ -21,7 +21,7 @@ public final class ConditionModule extends Module {
 
     // ===
 
-    private EmbedTypeRegistry<Condition> conditionTypeRegistry = new EmbedTypeRegistry<>();
+    private EmbeddableTypeRegistry<Condition> conditionTypeRegistry = new EmbeddableTypeRegistry<>();
 
     // ===
 
@@ -38,7 +38,7 @@ public final class ConditionModule extends Module {
     // ===
 
     @Nonnull
-    public EmbedTypeRegistry<Condition> getConditionTypes() {
+    public EmbeddableTypeRegistry<Condition> getConditionTypes() {
         return this.conditionTypeRegistry;
     }
 }

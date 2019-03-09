@@ -16,8 +16,8 @@ import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
-import cynoodle.core.entities.embed.EmbedType;
-import cynoodle.core.entities.embed.EmbedTypeRegistry;
+import cynoodle.core.entities.embed.EmbeddableType;
+import cynoodle.core.entities.embed.EmbeddableTypeRegistry;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
@@ -41,7 +41,7 @@ public final class XPModule extends Module {
     private final static EntityType<Rank> TYPE_RANK = EntityType.of(Rank.class);
     private final static EntityType<XPSettings> TYPE_SETTINGS = EntityType.of(XPSettings.class);
 
-    public final static EmbedType<XPCondition> TYPE_CONDITION_XP = EmbedType.of("base:xp:xp", XPCondition.class);
+    public final static EmbeddableType<XPCondition> TYPE_CONDITION_XP = EmbeddableType.of("base:xp:xp", XPCondition.class);
 
     // ===
 
@@ -83,7 +83,7 @@ public final class XPModule extends Module {
 
         //
 
-        EmbedTypeRegistry<Condition> types = Module.get(ConditionModule.class).getConditionTypes();
+        EmbeddableTypeRegistry<Condition> types = Module.get(ConditionModule.class).getConditionTypes();
 
         types.register(TYPE_CONDITION_XP);
 
