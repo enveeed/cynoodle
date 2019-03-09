@@ -28,7 +28,9 @@ public final class ConditionModule extends Module {
 
         //
 
-        this.registry.register(LogicCondition.class);
+        this.registry.register(BiLogicCondition.class);
+        this.registry.register(SetLogicCondition.class);
+        this.registry.register(NotLogicCondition.class);
     }
 
     @Override

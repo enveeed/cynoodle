@@ -12,6 +12,7 @@ import cynoodle.core.mongo.Bsonable;
 import cynoodle.core.mongo.fluent.FluentDocument;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class Condition implements Bsonable {
     protected Condition() {}
@@ -50,6 +51,15 @@ public abstract class Condition implements Bsonable {
      */
     public abstract boolean test(@Nonnull DiscordPointer guild,
                                  @Nonnull DiscordPointer user);
+
+    // ===
+
+    static boolean testSafe(@Nullable Condition condition,
+                            @Nonnull DiscordPointer guild,
+                            @Nonnull DiscordPointer user) {
+        if(condition == null) return false;
+        else return condition.test(guild, user);
+    }
 
     // ===
 

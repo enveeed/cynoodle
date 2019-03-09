@@ -18,9 +18,9 @@ import java.util.Optional;
 /**
  * Condition for two-input logic operations.
  */
-@ConditionIdentifier("base:condition:logic")
-public final class LogicCondition extends Condition {
-    private LogicCondition() {}
+@ConditionIdentifier("base:condition:logic_bi")
+public final class BiLogicCondition extends Condition {
+    private BiLogicCondition() {}
 
     private final ConditionRegistry registry = Module.get(ConditionModule.class).getRegistry();
 
@@ -86,13 +86,6 @@ public final class LogicCondition extends Condition {
     }
 
     //
-
-    private static boolean testSafe(@Nullable Condition condition,
-                                    @Nonnull DiscordPointer guild,
-                                    @Nonnull DiscordPointer user) {
-        if(condition == null) return false;
-        else return condition.test(guild, user);
-    }
 
     // ===
 

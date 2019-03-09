@@ -102,7 +102,7 @@ public final class CyNoodle {
         Carambola carambola = Carambola.get();
         CarambolaConfiguration configuration = carambola.getConfiguration();
 
-        configuration.setMinimumLevel(Level.FINER.intValue());
+        configuration.setMinimumLevel(Level.INFO.intValue() - 1);
 
         // create the cynoodle instance
         noodle = new CyNoodle(settings);
