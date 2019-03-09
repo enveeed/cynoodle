@@ -39,9 +39,9 @@ public final class StrikeAddCommand extends Command {
 
         DiscordPointer member   = parameters.get(0)
                 .map(Members.parserOf(context)::parse)
-                .orElseThrow(() -> missingParameter("member"));
+                .orElseThrow(() -> missingParameter(this, "member"));
         String reason           = parameters.get(1)
-                .orElseThrow(() -> missingParameter("reason"));
+                .orElseThrow(() -> missingParameter(this, "reason"));
         Decay decay             = parameters.get(2)
                 .map(DecayParser.get()::parse)
                 .orElse(settings.getDefaultDecay());

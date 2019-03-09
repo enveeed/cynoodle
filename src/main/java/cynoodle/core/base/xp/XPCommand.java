@@ -50,10 +50,10 @@ public final class XPCommand extends Command {
         // ===
 
         XP xp = xpManager.first(XP.filterMember(DiscordPointer.to(context.getGuild()), member))
-                .orElseThrow(() -> simple("There is no XP for this Member!"));
+                .orElseThrow(() -> simple(this, "There is no XP for this Member!"));
 
         XPSettings settings = settingsManager.first(XP.filterGuild(context.getGuild()))
-                .orElseThrow(() -> internalError());
+                .orElseThrow(() -> internalError(this));
 
         // === XP DATA ===
 

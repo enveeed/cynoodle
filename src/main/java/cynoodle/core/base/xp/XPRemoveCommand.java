@@ -39,24 +39,24 @@ public final class XPRemoveCommand extends Command {
 
         DiscordPointer member = parameters.get(0)
                 .map(Members.parserOf(context)::parse)
-                .orElseThrow(() -> missingParameter("member"));
+                .orElseThrow(() -> missingParameter(this, "member"));
         long value = parameters.get(1)
                 .map(LongParser.get()::parse)
-                .orElseThrow(() -> missingParameter("value"));
+                .orElseThrow(() -> missingParameter(this, "value"));
 
         // ===
 
         User user = member.asUser()
-                .orElseThrow(() -> simple("There is no User for the given Member!"));
+                .orElseThrow(() -> simple(this, "There is no User for the given Member!"));
 
         XP xp = xpManager.first(XP.filterMember(DiscordPointer.to(context.getGuild()), member))
-                .orElseThrow(() -> simple("There is no XP for this Member!"));
+                .orElseThrow(() -> simple(this, "There is no XP for this Member!"));
 
         // validation
 
-        if(user.isBot()) throw simple("Bots can not have XP.");
-        if(value <= 0) throw simple("You can not remove a negative or zero amount of XP!");
-        if(value > xp.get()) throw simple("You can not remove more XP than the Member has!");
+        if(user.isBot()) throw simple(this, "Bots can not have XP.");
+        if(value <= 0) throw simple(this, "You can not remove a negative or zero amount of XP!");
+        if(value > xp.get()) throw simple(this, "You can not remove more XP than the Member has!");
 
         xp.remove(value);
         xp.persist();

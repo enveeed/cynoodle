@@ -41,7 +41,7 @@ public final class StrikeRemoveCommand extends Command {
 
         DiscordPointer member = parameters.get(0)
                 .map(Members.parserOf(context)::parse)
-                .orElseThrow(() -> missingParameter("member"));
+                .orElseThrow(() -> missingParameter(this,"member"));
         int index = parameters.get(1)
                 .map(IntegerParser.get()::parse)
                 .orElseThrow();
@@ -54,7 +54,7 @@ public final class StrikeRemoveCommand extends Command {
                 .collect(Collectors.toList());
 
         if(index < 0 || index >= strikes.size())
-            throw simple("There is no strike at index `" + index + "`.");
+            throw simple(this, "There is no strike at index `" + index + "`.");
 
         //
 

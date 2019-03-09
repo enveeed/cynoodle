@@ -16,9 +16,14 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 /**
- * A detailed error for command execution.
+ * A detailed, exceptional error for command execution.
  */
 public final class CommandError extends Exception {
+
+    /**
+     * The command which caused this error.
+     */
+    private final Command command;
 
     /**
      * The title, a short text indicating what the issue is about.
@@ -48,6 +53,8 @@ public final class CommandError extends Exception {
     // ===
 
     private CommandError(@Nonnull Builder builder) {
+        this.command    = builder.command;
+
         this.title      = builder.title;
         this.message    = builder.message;
         this.icon       = builder.icon;
@@ -62,6 +69,7 @@ public final class CommandError extends Exception {
         return this.title;
     }
 
+    // NOTE: This overrides Exception.getMessage()
     @Nullable
     public String getMessage() {
         return this.message;
@@ -119,25 +127,18 @@ public final class CommandError extends Exception {
         return embed.build();
     }
 
-    /**
-     * Create a CommandException which wraps this error.
-     * @return a wrapping command exception.
-     */
-    @Nonnull
-    public CommandException asException() {
-        return new CommandException(this);
-    }
-
     // ===
 
     @Nonnull
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(@Nonnull Command command) {
+        return new Builder(command);
     }
 
     // ===
 
     public static class Builder {
+
+        private Command command;
 
         private String title = null;
         private String message = null;
@@ -148,7 +149,9 @@ public final class CommandError extends Exception {
 
         // ===
 
-        private Builder() {}
+        private Builder(@Nonnull Command command) {
+            this.command = command;
+        }
 
         // ===
 

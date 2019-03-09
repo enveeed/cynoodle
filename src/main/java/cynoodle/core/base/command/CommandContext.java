@@ -167,4 +167,14 @@ public final class CommandContext {
     public void queueReply(@Nonnull MessageEmbed embed) {
         this.getChannel().sendMessage(embed).queue();
     }
+
+    //
+
+    /**
+     * Queue an error embed for reply in the channel of this context.
+     * @param error the error
+     */
+    public void queueError(@Nonnull CommandError error) {
+        queueReply(error.asEmbed());
+    }
 }

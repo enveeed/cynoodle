@@ -60,7 +60,7 @@ public final class RanksCommand extends Command {
                 .sorted((o1, o2) -> Longs.compare(o1.getLevel(), o2.getLevel()))
                 .collect(Collectors.toList());
 
-        if(ranks.isEmpty()) throw simple("There are no Ranks.");
+        if(ranks.isEmpty()) throw simple(this, "There are no Ranks.");
 
         //
 

@@ -58,7 +58,7 @@ public final class FMEditCommand extends Command {
         boolean reset = input.hasOption(OPT_RESET);
 
         String selector = parameters.get(0)
-                .orElseThrow(() -> missingParameter("selector"));
+                .orElseThrow(() -> missingParameter(this, "selector"));
 
         //
 
@@ -70,7 +70,7 @@ public final class FMEditCommand extends Command {
             }
             else {
                 String username = parameters.get(1)
-                        .orElseThrow(() -> missingParameter("username"));
+                        .orElseThrow(() -> missingParameter(this, "username"));
 
                 fm.setUsername(username);
 
@@ -83,7 +83,7 @@ public final class FMEditCommand extends Command {
         }
         else if(selector.equals("format")) {
 
-            throw simple("TODO"); // TODO implementation
+            throw simple(this, "TODO"); // TODO implementation
 
         }
         else if(selector.equals("profile")) {
@@ -95,7 +95,7 @@ public final class FMEditCommand extends Command {
             else {
                 boolean profileEnabled = parameters.get(1)
                         .map(PrimitiveParsers.parseBoolean())
-                        .orElseThrow(() -> missingParameter("on / off"));
+                        .orElseThrow(() -> missingParameter(this, "on / off"));
 
                 fm.setProfileEnabled(profileEnabled);
 
@@ -109,6 +109,6 @@ public final class FMEditCommand extends Command {
 
             return;
         }
-        else throw simple("TODO"); // TODO exception
+        else throw simple(this, "TODO"); // TODO exception
     }
 }

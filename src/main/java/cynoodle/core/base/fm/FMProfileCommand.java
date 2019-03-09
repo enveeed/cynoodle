@@ -36,10 +36,10 @@ public final class FMProfileCommand extends Command {
         FM fm = fmManager.firstOrCreate(context.getUser());
 
         String username = fm.getUsername()
-                .orElseThrow(() -> simple("No username defined."));
+                .orElseThrow(() -> simple(this, "No username defined."));
 
         //
 
-        throw simple("This command is not available yet.");
+        throw simple(this, "This command is not available yet.");
     }
 }

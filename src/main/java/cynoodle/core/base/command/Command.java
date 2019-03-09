@@ -108,7 +108,7 @@ public abstract class Command {
         Permission permission;
 
         if(permissionResult.isEmpty()) {
-            context.queueReply(CommandErrors.permissionUndefined().asEmbed());
+            context.queueError(CommandErrors.permissionUndefined(this));
             return;
         }
         else permission = permissionResult.orElseThrow();
@@ -118,7 +118,7 @@ public abstract class Command {
         boolean passedPermissions = permission.check(context.getUserPointer());
 
         if(!passedPermissions) {
-            context.queueReply(CommandErrors.permissionInsufficient(permission).asEmbed());
+            context.queueError(CommandErrors.permissionInsufficient(this, permission));
             return;
         }
 
@@ -134,7 +134,7 @@ public abstract class Command {
             input = options.parse(context.getRawInput());
 
         } catch (ParsingException e) {
-            context.queueReply(CommandErrors.parsingFailed(e).asEmbed());
+            context.queueError(CommandErrors.parsingFailed(this, e));
             return;
         }
 
@@ -165,7 +165,7 @@ public abstract class Command {
 
             LOG.atSevere().withCause(e).log("Internal error at %s with %s!", this.getIdentifier(), input);
 
-            context.queueReply(CommandErrors.internalError().asEmbed());
+            context.queueError(CommandErrors.internalError(this));
         }
 
         long tEnd = Clock.systemUTC().millis();
@@ -182,7 +182,7 @@ public abstract class Command {
      * @param context the command context
      * @param local the localization context
      * @param input the command input
-     * @throws Exception if the execution completed with an exception, will be handled
+     * @throws Exception if the execution completed with a exception, will be handled
      */
     protected abstract void run(@Nonnull CommandContext context,
                                 @Nonnull LocalizationContext local,

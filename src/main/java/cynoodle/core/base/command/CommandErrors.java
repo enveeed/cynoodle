@@ -30,8 +30,8 @@ public final class CommandErrors {
     // === GENERAL ===
 
     @Nonnull
-    public static CommandError simple(@Nonnull String message) {
-        return CommandError.builder()
+    public static CommandError simple(@Nonnull Command command, @Nonnull String message) {
+        return CommandError.builder(command)
                 .withTitle("Command Error")
                 .withMessage(message)
                 .withIcon(ICON_EXTERNAL)
@@ -42,12 +42,12 @@ public final class CommandErrors {
     // === INPUT ===
 
     @Nonnull
-    public static CommandError parsingFailed(@Nonnull ParsingException exception) {
+    public static CommandError parsingFailed(@Nonnull Command command, @Nonnull ParsingException exception) {
 
         String message = exception.getMessage();
         if(message == null) message = "Failed to parse input!";
 
-        return CommandError.builder()
+        return CommandError.builder(command)
                 .withTitle("Parsing Failed")
                 .withMessage(message)
                 .withIcon(ICON_EXTERNAL)
@@ -57,8 +57,8 @@ public final class CommandErrors {
     }
 
     @Nonnull
-    public static CommandError missingParameter(@Nonnull String name) {
-        return CommandError.builder()
+    public static CommandError missingParameter(@Nonnull Command command, @Nonnull String name) {
+        return CommandError.builder(command)
                 .withTitle("Invalid Input")
                 .withMessage("Missing parameter `" + name + "`!")
                 .withIcon(ICON_EXTERNAL)
@@ -70,8 +70,8 @@ public final class CommandErrors {
     // === DISCORD ===
 
     @Nonnull
-    public static CommandError insufficientDiscordPermissions(@Nonnull Permission permission) {
-        return CommandError.builder()
+    public static CommandError insufficientDiscordPermissions(@Nonnull Command command, @Nonnull Permission permission) {
+        return CommandError.builder(command)
                 .withTitle("Insufficient Discord Permissions")
                 .withMessage("The bot account misses permission \"" + permission.getName()+"\"!")
                 .withIcon(ICON_EXTERNAL)
@@ -82,8 +82,8 @@ public final class CommandErrors {
     // === INTERNAL ===
 
     @Nonnull
-    public static CommandError internalError() {
-        return CommandError.builder()
+    public static CommandError internalError(@Nonnull Command command) {
+        return CommandError.builder(command)
                 .withTitle("Unexpected Internal Error")
                 .withMessage("This was probably not your fault, please try again later.")
                 .withIcon(ICON_INTERNAL)
@@ -94,8 +94,8 @@ public final class CommandErrors {
     // === PERMISSIONS ===
 
     @Nonnull
-    public static CommandError permissionUndefined() {
-        return CommandError.builder()
+    public static CommandError permissionUndefined(@Nonnull Command command) {
+        return CommandError.builder(command)
                 .withTitle("Permission Error")
                 .withMessage("There is no permission set for this command.")
                 .withIcon(ICON_PERMISSION)
@@ -104,8 +104,8 @@ public final class CommandErrors {
     }
 
     @Nonnull
-    public static CommandError permissionInsufficient(@Nonnull cynoodle.core.base.permission.Permission permission) {
-        return CommandError.builder()
+    public static CommandError permissionInsufficient(@Nonnull Command command, @Nonnull cynoodle.core.base.permission.Permission permission) {
+        return CommandError.builder(command)
                 .withTitle("Insufficient Permissions")
                 .withMessage(permission.getMessageError().isPresent() ?
                         permission.getMessageError().orElseThrow() : "Sorry, I can't let you do that.")

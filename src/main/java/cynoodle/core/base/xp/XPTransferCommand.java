@@ -39,32 +39,32 @@ public final class XPTransferCommand extends Command {
 
         DiscordPointer memberFrom = parameters.get(0)
                 .map(Members.parserOf(context)::parse)
-                .orElseThrow(() -> missingParameter("member from"));
+                .orElseThrow(() -> missingParameter(this, "member from"));
         DiscordPointer memberTo = parameters.get(1)
                 .map(Members.parserOf(context)::parse)
-                .orElseThrow(() -> missingParameter("member to"));
+                .orElseThrow(() -> missingParameter(this, "member to"));
         long value = parameters.get(2)
                 .map(LongParser.get()::parse)
-                .orElseThrow(() -> missingParameter("value"));
+                .orElseThrow(() -> missingParameter(this, "value"));
 
         // ===
 
         User userFrom = memberFrom.asUser()
-                .orElseThrow(() -> simple("There is no User for the 'from' Member!"));
+                .orElseThrow(() -> simple(this, "There is no User for the 'from' Member!"));
 
         User userTo = memberTo.asUser()
-                .orElseThrow(() -> simple("There is no User for the 'to' Member!"));
+                .orElseThrow(() -> simple(this, "There is no User for the 'to' Member!"));
 
         XP xpFrom = xpManager.first(XP.filterMember(DiscordPointer.to(context.getGuild()), memberFrom))
-                .orElseThrow(() -> simple("There is no XP for the 'from' Member!"));
+                .orElseThrow(() -> simple(this, "There is no XP for the 'from' Member!"));
 
         XP xpTo = xpManager.firstOrCreate(XP.filterMember(DiscordPointer.to(context.getGuild()), memberTo));
 
         // validation
 
-        if(userFrom.isBot() || userTo.isBot()) throw simple("Bots can not have XP.");
-        if(value <= 0) throw simple("You can not transfer a negative or zero amount of XP!");
-        if(value > xpFrom.get()) throw simple("You can not transfer more XP than the source Member has!");
+        if(userFrom.isBot() || userTo.isBot()) throw simple(this, "Bots can not have XP.");
+        if(value <= 0) throw simple(this, "You can not transfer a negative or zero amount of XP!");
+        if(value > xpFrom.get()) throw simple(this, "You can not transfer more XP than the source Member has!");
 
         xpFrom.remove(value);
         xpTo.add(value);

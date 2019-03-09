@@ -39,22 +39,22 @@ public final class XPAddCommand extends Command {
 
         DiscordPointer member = parameters.get(0)
                 .map(Members.parserOf(context)::parse)
-                .orElseThrow(() -> missingParameter("member"));
+                .orElseThrow(() -> missingParameter(this, "member"));
         long value = parameters.get(1)
                 .map(LongParser.get()::parse)
-                .orElseThrow(() -> missingParameter("value"));
+                .orElseThrow(() -> missingParameter(this, "value"));
 
         // ===
 
         User user = member.asUser()
-                .orElseThrow(() -> simple("There is no User for the given Member!"));
+                .orElseThrow(() -> simple(this, "There is no User for the given Member!"));
 
         XP xp = xpManager.firstOrCreate(XP.filterMember(DiscordPointer.to(context.getGuild()), member));
 
         // validation
 
-        if(user.isBot()) throw simple("Bots can not have XP.");
-        if(value <= 0) throw simple("You can not add a negative or zero amount of XP!");
+        if(user.isBot()) throw simple(this, "Bots can not have XP.");
+        if(value <= 0) throw simple(this, "You can not add a negative or zero amount of XP!");
 
         xp.add(value);
         xp.persist();

@@ -41,12 +41,12 @@ public final class StrikeEditCommand extends Command {
 
         DiscordPointer member = parameters.get(0)
                 .map(Members.parserOf(context)::parse)
-                .orElseThrow(() -> missingParameter("member"));
+                .orElseThrow(() -> missingParameter(this, "member"));
         int index = parameters.get(1)
                 .map(PrimitiveParsers.parseInteger())
-                .orElseThrow(() -> missingParameter("index"));
+                .orElseThrow(() -> missingParameter(this, "index"));
         String selector = parameters.get(2)
-                .orElseThrow(() -> missingParameter("selector"));
+                .orElseThrow(() -> missingParameter(this, "selector"));
 
         //
 
@@ -56,7 +56,7 @@ public final class StrikeEditCommand extends Command {
                 .collect(Collectors.toList());
 
         if(index < 0 || index >= strikes.size())
-            throw simple("There is no strike at index `" + index + "`.");
+            throw simple(this, "There is no strike at index `" + index + "`.");
 
         Strike strike = strikes.get(index);
 
@@ -67,7 +67,7 @@ public final class StrikeEditCommand extends Command {
         if(selector.equalsIgnoreCase("reason")) {
 
             String reason = parameters.get(3)
-                    .orElseThrow(() -> missingParameter("reason"));
+                    .orElseThrow(() -> missingParameter(this, "reason"));
 
             strike.setReason(reason);
             strike.persist();
@@ -78,7 +78,7 @@ public final class StrikeEditCommand extends Command {
 
             Decay decay = parameters.get(3)
                     .map(DecayParser.get()::parse)
-                    .orElseThrow(() -> missingParameter("decay"));
+                    .orElseThrow(() -> missingParameter(this,"decay"));
 
             strike.setDecay(decay);
             strike.persist();
@@ -88,12 +88,12 @@ public final class StrikeEditCommand extends Command {
         }
         else if(selector.equalsIgnoreCase("time")) {
             // TODO edit timestamp
-            throw simple("TODO");
+            throw simple(this,"TODO");
 
         }
         else {
             // TODO throw useful exception
-            throw simple("TODO");
+            throw simple(this, "TODO");
         }
 
         //

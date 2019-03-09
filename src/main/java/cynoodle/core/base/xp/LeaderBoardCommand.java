@@ -53,11 +53,11 @@ public final class LeaderBoardCommand extends Command {
         //
 
         if(to <= from) {
-            throw simple("The maximum rank you entered can not be smaller or equal to the minimum rank.");
+            throw simple(this, "The maximum rank you entered can not be smaller or equal to the minimum rank.");
         }
 
         if((to - from) + 1 > 30) {
-            throw simple("You can't view more than `30` ranks at a time.");
+            throw simple(this, "You can't view more than `30` ranks at a time.");
         }
 
         //
@@ -78,7 +78,7 @@ public final class LeaderBoardCommand extends Command {
         List<LeaderBoard.Entry> entries = board.sub(from - 1, to - 1);
 
         if(entries.size() == 0)
-            throw simple("There is not enough data in the range from minimum rank `#"
+            throw simple(this, "There is not enough data in the range from minimum rank `#"
                     +from+"` to maximum rank `#"+to+"`!");
 
         StringBuilder out = new StringBuilder();
