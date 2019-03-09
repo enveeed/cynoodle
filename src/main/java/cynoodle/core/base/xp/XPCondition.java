@@ -7,6 +7,7 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.base.condition.Condition;
+import cynoodle.core.base.condition.ConditionIdentifier;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
@@ -18,6 +19,7 @@ import java.util.Optional;
 /**
  * A condition which requires a minimum amount of XP.
  */
+@ConditionIdentifier("base:xp:xp")
 public final class XPCondition extends Condition {
     private XPCondition() {}
 
@@ -43,7 +45,7 @@ public final class XPCondition extends Condition {
     // ===
 
     @Override
-    public boolean check(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user) {
+    public boolean test(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user) {
 
         Optional<XP> xpResult = module.getXPManager().first(XP.filterMember(guild, user));
 

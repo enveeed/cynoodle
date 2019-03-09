@@ -9,15 +9,13 @@ package cynoodle.core.base.xp;
 import com.google.common.eventbus.Subscribe;
 import cynoodle.core.base.command.CommandModule;
 import cynoodle.core.base.command.CommandRegistry;
-import cynoodle.core.base.condition.Condition;
 import cynoodle.core.base.condition.ConditionModule;
+import cynoodle.core.base.condition.ConditionRegistry;
 import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
-import cynoodle.core.entities.embed.EmbeddableType;
-import cynoodle.core.entities.embed.EmbeddableTypeRegistry;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
@@ -40,8 +38,6 @@ public final class XPModule extends Module {
     private final static EntityType<XP> TYPE_XP = EntityType.of(XP.class);
     private final static EntityType<Rank> TYPE_RANK = EntityType.of(Rank.class);
     private final static EntityType<XPSettings> TYPE_SETTINGS = EntityType.of(XPSettings.class);
-
-    public final static EmbeddableType<XPCondition> TYPE_CONDITION_XP = EmbeddableType.of("base:xp:xp", XPCondition.class);
 
     // ===
 
@@ -83,9 +79,9 @@ public final class XPModule extends Module {
 
         //
 
-        EmbeddableTypeRegistry<Condition> types = Module.get(ConditionModule.class).getConditionTypes();
+        ConditionRegistry conditionRegistry = Module.get(ConditionModule.class).getRegistry();
 
-        types.register(TYPE_CONDITION_XP);
+        conditionRegistry.register(XPCondition.class);
 
         //
 

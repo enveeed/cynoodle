@@ -8,10 +8,10 @@ package cynoodle.core.base.permission;
 
 import cynoodle.core.base.condition.Condition;
 import cynoodle.core.base.condition.ConditionModule;
+import cynoodle.core.base.condition.ConditionRegistry;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
-import cynoodle.core.entities.embed.EmbeddableTypeRegistry;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
@@ -28,8 +28,8 @@ import java.util.Optional;
 public final class Permission extends GEntity {
     private Permission() {}
 
-    private final EmbeddableTypeRegistry<Condition> conditions
-            = Module.get(ConditionModule.class).getConditionTypes();
+    private final ConditionRegistry conditions
+            = Module.get(ConditionModule.class).getRegistry();
 
     // ===
 
@@ -105,11 +105,11 @@ public final class Permission extends GEntity {
      * @param user the user
      * @return true if met, false if not or no condition was set
      */
-    public boolean check(@Nonnull DiscordPointer user) {
+    public boolean test(@Nonnull DiscordPointer user) {
 
         Optional<Condition> condition = getCondition();
 
-        if(condition.isPresent()) return condition.orElseThrow().check(requireGuild(), user);
+        if(condition.isPresent()) return condition.orElseThrow().test(requireGuild(), user);
         else return false;
     }
 

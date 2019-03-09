@@ -115,7 +115,7 @@ public abstract class Command {
 
         // check if permission is met
 
-        boolean passedPermissions = permission.check(context.getUserPointer());
+        boolean passedPermissions = permission.test(context.getUserPointer());
 
         if(!passedPermissions) {
             context.queueError(CommandErrors.permissionInsufficient(this, permission));
