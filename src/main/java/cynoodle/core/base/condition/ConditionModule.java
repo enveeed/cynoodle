@@ -28,7 +28,7 @@ public final class ConditionModule extends Module {
 
         //
 
-        this.registry.register(AndCondition.class);
+        this.registry.register(LogicCondition.class);
     }
 
     @Override
