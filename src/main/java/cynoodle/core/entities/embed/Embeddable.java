@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
  * An Embed, a typed persistent data object which can be embedded into an {@link Entity}.
  * New embed instances must be created via {@link EmbeddableType}.
  */
+// TODO replace this with a more free and simple design, also @see condition
 public abstract class Embeddable implements Bsonable {
 
     static final String KEY_TYPE = "type";
