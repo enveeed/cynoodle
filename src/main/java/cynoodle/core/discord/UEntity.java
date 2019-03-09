@@ -69,6 +69,13 @@ public abstract class UEntity extends Entity implements UHolder {
         return filterUser(to(user));
     }
 
+    // ===
+
+    @Override
+    public String toString() {
+        return "UEntity(U:" + this.user + ")";
+    }
+
     // == DATA ==
 
     @Override

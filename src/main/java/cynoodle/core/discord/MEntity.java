@@ -127,6 +127,14 @@ public abstract class MEntity extends Entity implements GHolder, UHolder {
         return filterMember(to(member.getGuild()), to(member.getUser()));
     }
 
+    // ===
+
+    @Override
+    public String toString() {
+        return "MEntity(G:" + this.guild + ", U:" + this.user + ")";
+    }
+
+
     // === DATA ===
 
     @Override

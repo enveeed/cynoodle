@@ -69,6 +69,13 @@ public abstract class GEntity extends Entity implements GHolder {
         return filterGuild(to(guild));
     }
 
+    // ===
+
+    @Override
+    public String toString() {
+        return "GEntity(G:" + this.guild + ")";
+    }
+
     // === DATA ===
 
     @Override

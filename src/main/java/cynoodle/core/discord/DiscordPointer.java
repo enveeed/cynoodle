@@ -68,6 +68,13 @@ public final class DiscordPointer {
     // ===
 
     @Override
+    public String toString() {
+        return Long.toString(this.id);
+    }
+
+    // ===
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
