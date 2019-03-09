@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.xp;
 
+import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.Checks;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.MEntity;
@@ -32,6 +33,10 @@ import java.util.stream.Collectors;
 public final class XP extends MEntity implements Comparable<XP> {
     private XP() {}
 
+    private final static FluentLogger LOG = FluentLogger.forEnclosingClass();
+
+    // ===
+
     private final XPModule module = Module.get(XPModule.class);
 
     // ===
@@ -45,6 +50,8 @@ public final class XP extends MEntity implements Comparable<XP> {
 
         long previous = this.xp.getAndUpdate(x -> x + value);
 
+        LOG.atFiner().log("Updated XP for %s:%s %s + %s -> %s", requireGuild(), requireUser(), previous, value, get());
+
         this.handleModification(previous, this.xp.get());
     }
 
@@ -56,6 +63,8 @@ public final class XP extends MEntity implements Comparable<XP> {
             if (next < 0L) next = 0L;
             return next;
         });
+
+        LOG.atFiner().log("Updated XP for %s:%s %s - %s -> %s", requireGuild(), requireUser(), previous, value, get());
 
         this.handleModification(previous, this.xp.get());
     }
