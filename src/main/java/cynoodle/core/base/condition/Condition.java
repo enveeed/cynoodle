@@ -7,33 +7,61 @@
 package cynoodle.core.base.condition;
 
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.entities.embed.Embeddable;
+import cynoodle.core.mongo.BsonDataException;
+import cynoodle.core.mongo.Bsonable;
+import cynoodle.core.mongo.fluent.FluentDocument;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
 
-/**
- * A Condition is a functional {@link Embeddable} which checks
- * if a guild member matches an implementation dependent condition.
- */
-public abstract class Condition extends Embeddable {
+public abstract class Condition implements Bsonable {
+    protected Condition() {}
+
+    static final String KEY_TYPE = "type";
+
+    // ===
+
+    private ConditionType type;
+
+    // ===
+
+    final void init(@Nonnull ConditionType type) {
+        this.type = type;
+    }
+
+    // ===
+
+    @Nonnull
+    public ConditionType getType() {
+        return this.type;
+    }
+
+    @Nonnull
+    public String getTypeIdentifier() {
+        return this.type.getIdentifier();
+    }
 
     // ===
 
     /**
-     * Check if the given user meets this condition.
+     * Test if the given user meets this condition.
      * @param guild the guild
      * @param user the user
      * @return true if the condition is met, otherwise false
      */
-    public abstract boolean check(@Nonnull DiscordPointer guild,
-                                  @Nonnull DiscordPointer user);
+    public abstract boolean test(@Nonnull DiscordPointer guild,
+                                 @Nonnull DiscordPointer user);
 
     // ===
 
-    public final boolean checkAll(@Nonnull DiscordPointer guild,
-                                  @Nonnull Collection<DiscordPointer> users) {
-        for (DiscordPointer user : users) if(!check(guild, user)) return false;
-        return true;
+    @Nonnull
+    @Override
+    public FluentDocument toBson() throws BsonDataException {
+        FluentDocument data = FluentDocument.wrapNew();
+
+        // store the type identifier so it is known what type it is on disk
+        data.setAt(KEY_TYPE).asString().to(this.type.getIdentifier());
+
+        return data;
     }
+
 }
