@@ -32,6 +32,8 @@ import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -75,6 +77,11 @@ public final class Profile extends UEntity {
      * Image URL for the profile image.
      */
     private String image = null;
+
+    /**
+     * URL to a linked personal website.
+     */
+    private String website = null;
 
     //
 
@@ -131,6 +138,15 @@ public final class Profile extends UEntity {
         this.image = image;
     }
 
+    @Nonnull
+    public Optional<String> getWebsite() {
+        return Optional.ofNullable(website);
+    }
+
+    public void setWebsite(@Nullable String website) {
+        this.website = website;
+    }
+
     //
 
     @Nonnull
@@ -171,6 +187,7 @@ public final class Profile extends UEntity {
         this.birthday = source.getAt("birthday").asNullable(toLocalDate()).or(this.birthday);
         this.gender = source.getAt("gender").asNullable(Gender.fromBson()).or(this.gender);
         this.image = source.getAt("image").asStringNullable().or(this.image);
+        this.website = source.getAt("website").asStringNullable().or(this.website);
 
         this.linkedInstagram = source.getAt("linked_instagram").asStringNullable().or(this.linkedInstagram);
         this.linkedSnapchat = source.getAt("linked_snapchat").asStringNullable().or(this.linkedSnapchat);
@@ -186,6 +203,7 @@ public final class Profile extends UEntity {
         data.setAt("birthday").asNullable(fromLocalDate()).to(this.birthday);
         data.setAt("gender").asNullable(Gender.toBson()).to(this.gender);
         data.setAt("image").asStringNullable().to(this.image);
+        data.setAt("website").asStringNullable().to(this.website);
 
         data.setAt("linked_instagram").asStringNullable().to(this.linkedInstagram);
         data.setAt("linked_snapchat").asStringNullable().to(this.linkedSnapchat);
@@ -249,6 +267,27 @@ public final class Profile extends UEntity {
 
             descOut.append(Strings.ZERO_WIDTH_WHITESPACE + "\n").append(text);
         }
+
+        Optional<String> websiteResult = this.getWebsite();
+        if(websiteResult.isPresent()) {
+
+            String website = websiteResult.orElseThrow();
+
+            URI uri;
+            try {
+                uri = new URI(website);
+            } catch (URISyntaxException e) {
+                // TODO report invalid website
+                throw new IllegalStateException(e);
+            }
+
+            String host = uri.getHost();
+
+            descOut.append("\n\n")
+                    .append("[").append(host).append("](").append(uri.toString()).append(")");
+        }
+
+        //
 
         StringBuilder personalOut = new StringBuilder();
 
