@@ -94,21 +94,10 @@ public final class CommandErrors {
     // === PERMISSIONS ===
 
     @Nonnull
-    public static CommandError permissionUndefined(@Nonnull Command command) {
-        return CommandError.builder(command)
-                .withTitle("Permission Error")
-                .withMessage("There is no permission set for this command.")
-                .withIcon(ICON_PERMISSION)
-                .withColor(COLOR_SEVERE)
-                .build();
-    }
-
-    @Nonnull
-    public static CommandError permissionInsufficient(@Nonnull Command command, @Nonnull cynoodle.core.base.permission.Permission permission) {
+    public static CommandError permissionInsufficient(@Nonnull Command command) {
         return CommandError.builder(command)
                 .withTitle("Insufficient Permissions")
-                .withMessage(permission.getMessageError().isPresent() ?
-                        permission.getMessageError().orElseThrow() : "Sorry, I can't let you do that.")
+                .withMessage("I'm afraid I can't do that, Dave.")
                 .withIcon(ICON_PERMISSION)
                 .withColor(COLOR_SEVERE)
                 .build();

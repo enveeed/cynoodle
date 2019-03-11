@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 @SuppressWarnings("UnstableApiUsage")
 @MIdentifier("base:command")
 @MRequires("base:localization")
-@MRequires("base:permission")
+@MRequires("base:ac")
 public final class CommandModule extends Module {
     private CommandModule() {}
 

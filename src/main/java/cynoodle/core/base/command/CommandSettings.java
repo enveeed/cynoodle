@@ -7,12 +7,8 @@
 package cynoodle.core.base.command;
 
 import cynoodle.core.api.Checks;
-import cynoodle.core.base.permission.Permission;
-import cynoodle.core.base.permission.PermissionModule;
 import cynoodle.core.discord.GEntity;
-import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.entities.EIdentifier;
-import cynoodle.core.entities.EntityReference;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.Bsonable;
@@ -22,7 +18,6 @@ import org.bson.BsonArray;
 import org.bson.BsonValue;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -93,10 +88,6 @@ public final class CommandSettings extends GEntity {
      */
     public final class Properties implements Bsonable {
 
-        private final GEntityManager<Permission> permissionsManager = Module.get(PermissionModule.class).getPermissionManager();
-
-        // ===
-
         private Properties() {}
 
         private Properties(@Nonnull String identifier) {
@@ -109,11 +100,6 @@ public final class CommandSettings extends GEntity {
          * The command identifier.
          */
         private String identifier;
-
-        /**
-         * The permission for the command
-         */
-        private EntityReference<Permission> permission = null;
 
         /**
          * All alias strings which are mapped to the command
@@ -138,17 +124,6 @@ public final class CommandSettings extends GEntity {
             return this.identifier;
         }
 
-        //
-
-        @Nonnull
-        public Optional<Permission> getPermission() {
-            return this.permission == null ? Optional.empty() : this.permission.get();
-        }
-
-        public void setPermission(@Nullable Permission permission) {
-            this.permission = permission == null ? null : permission.reference(Permission.class);
-        }
-
         @Nonnull
         public Set<String> getAliases() {
             return this.aliases;
@@ -164,8 +139,6 @@ public final class CommandSettings extends GEntity {
         public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
 
             this.identifier = source.getAt("identifier").asString().value();
-            this.permission = source.getAt("permission")
-                    .asNullable(EntityReference.fromBson(this.permissionsManager)).or(this.permission);
             this.aliases = source.getAt("aliases").asArray().or(FluentArray.wrapNew())
                     .collect().asString().toSetOr(this.aliases);
 
@@ -177,7 +150,6 @@ public final class CommandSettings extends GEntity {
             FluentDocument data = FluentDocument.wrapNew();
 
             data.setAt("identifier").asString().to(this.identifier);
-            data.setAt("permission").asNullable(EntityReference.<Permission>toBson()).to(this.permission);
             data.setAt("aliases").asArray()
                     .to(FluentArray.wrapNew().insert().asString().atEnd(this.aliases));
 

@@ -9,15 +9,15 @@ package cynoodle.core.base.command;
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.ParsingException;
+import cynoodle.core.base.ac.ACModule;
+import cynoodle.core.base.ac.AccessControl;
 import cynoodle.core.base.localization.Localization;
 import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.base.localization.LocalizationModule;
-import cynoodle.core.base.permission.Permission;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 import java.time.Clock;
-import java.util.Optional;
 
 public abstract class Command {
     protected Command() {}
@@ -103,22 +103,15 @@ public abstract class Command {
 
         // fail if no permission is set, to avoid new commands being exploited
 
-        Optional<Permission> permissionResult = properties.getPermission();
+        AccessControl ac = Module.get(ACModule.class).getSettingsManager()
+                .firstOrCreate(context.getGuildPointer());
 
-        Permission permission;
+        String permission = descriptor.getPermission();
 
-        if(permissionResult.isEmpty()) {
-            context.queueError(CommandErrors.permissionUndefined(this));
-            return;
-        }
-        else permission = permissionResult.orElseThrow();
-
-        // check if permission is met
-
-        boolean passedPermissions = permission.test(context.getUserPointer());
+        boolean passedPermissions = ac.test(context.getUser(), permission);
 
         if(!passedPermissions) {
-            context.queueError(CommandErrors.permissionInsufficient(this, permission));
+            context.queueError(CommandErrors.permissionInsufficient(this));
             return;
         }
 

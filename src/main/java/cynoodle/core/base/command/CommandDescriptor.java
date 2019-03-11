@@ -28,6 +28,7 @@ public final class CommandDescriptor {
     private final String identifier;
 
     private final String[] aliases;
+    private final String permission;
 
     // ===
 
@@ -35,6 +36,7 @@ public final class CommandDescriptor {
         this.commandClass = builder.commandClass;
         this.identifier = builder.identifier;
         this.aliases = builder.aliases;
+        this.permission = builder.permission;
     }
 
     // ===
@@ -54,6 +56,11 @@ public final class CommandDescriptor {
     @Nonnull
     public String[] getAliases() {
         return this.aliases;
+    }
+
+    @Nonnull
+    public String getPermission() {
+        return this.permission;
     }
 
     // ===
@@ -106,6 +113,7 @@ public final class CommandDescriptor {
         private String identifier;
 
         private String[] aliases;
+        private String permission;
 
         // ===
 
@@ -129,6 +137,12 @@ public final class CommandDescriptor {
             return this;
         }
 
+        @Nonnull
+        public Builder setPermission(@Nonnull String permission) {
+            this.permission = permission;
+            return this;
+        }
+
         //
 
         @Nonnull
@@ -137,6 +151,7 @@ public final class CommandDescriptor {
             Checks.notNull(commandClass, "commandClass");
             Checks.notNull(identifier, "identifier");
             Checks.notNull(aliases, "aliases");
+            Checks.notNull(permission, "permission");
 
             return new CommandDescriptor(this);
         }
@@ -175,6 +190,7 @@ public final class CommandDescriptor {
         // find annotations
         CIdentifier annIdentifier = commandClass.getDeclaredAnnotation(CIdentifier.class);
         CAliases annAliases = commandClass.getDeclaredAnnotation(CAliases.class);
+        CPermission annPermission = commandClass.getDeclaredAnnotation(CPermission.class);
 
         // ensure required annotations
         if(annIdentifier == null) throw new CommandClassException("Command class is missing @CIdentifier annotation!");
@@ -188,7 +204,7 @@ public final class CommandDescriptor {
 
         builder.setIdentifier(identifier);
 
-        //
+        // ===
 
         String[] aliases = annAliases.value();
 
@@ -196,6 +212,16 @@ public final class CommandDescriptor {
             throw new CommandClassException("Command class needs to define at least one aliases (@CAliases contained zero).");
 
         builder.setAliases(aliases);
+
+        // ===
+
+        String permission = identifier;
+
+        if(annPermission != null) permission = annPermission.value();
+
+        // TODO validate
+
+        builder.setPermission(permission);
 
         // ===
 
