@@ -62,7 +62,7 @@ public final class DiscordPointer {
 
     @Nonnull
     public Optional<Role> asRole(@Nonnull Guild guild) {
-        return asUser().map(user -> guild.getRoleById(getID()));
+        return Optional.ofNullable(guild.getRoleById(getID()));
     }
 
     // ===
