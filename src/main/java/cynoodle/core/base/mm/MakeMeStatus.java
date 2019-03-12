@@ -59,6 +59,12 @@ public final class MakeMeStatus extends MEntity {
 
     // ===
 
+    public boolean has(@Nonnull MakeMe mm) {
+        return this.makeMe.contains(mm.reference(MakeMe.class));
+    }
+
+    // ===
+
     @Override
     public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
         super.fromBson(source);

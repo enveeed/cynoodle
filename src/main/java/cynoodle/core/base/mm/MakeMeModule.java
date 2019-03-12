@@ -28,6 +28,10 @@ public final class MakeMeModule extends Module {
     private GEntityManager<MakeMeGroup> groupManager;
     private MEntityManager<MakeMeStatus> statusManager;
 
+    //
+
+    private MakeMeController controller;
+
     // ===
 
     @Override
@@ -37,6 +41,10 @@ public final class MakeMeModule extends Module {
         this.makeMeManager = new GEntityManager<>(TYPE_MAKE_ME);
         this.groupManager = new GEntityManager<>(TYPE_GROUP);
         this.statusManager = new MEntityManager<>(TYPE_STATUS);
+
+        //
+
+        this.controller = new MakeMeController();
     }
 
     @Override
@@ -59,5 +67,12 @@ public final class MakeMeModule extends Module {
     @Nonnull
     public MEntityManager<MakeMeStatus> getStatusManager() {
         return this.statusManager;
+    }
+
+    //
+
+    @Nonnull
+    public MakeMeController controller() {
+        return this.controller;
     }
 }
