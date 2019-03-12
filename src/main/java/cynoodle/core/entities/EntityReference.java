@@ -61,13 +61,33 @@ public final class EntityReference<E extends Entity> {
 
     // ===
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EntityReference<?> that = (EntityReference<?>) o;
+
+        if (id != that.id) return false;
+        return manager.equals(that.manager);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = manager.hashCode();
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        return result;
+    }
+
+    // ===
+
     @Nonnull
-    public static <E extends Entity> Function<EntityReference<E>, BsonValue> toBson() {
+    public static <E extends Entity> Function<EntityReference<E>, BsonValue> store() {
         return ref -> new BsonInt64(ref.getId());
     }
 
     @Nonnull
-    public static <E extends Entity> Function<BsonValue, EntityReference<E>> fromBson(@Nonnull EntityManager<E> manager) {
+    public static <E extends Entity> Function<BsonValue, EntityReference<E>> load(@Nonnull EntityManager<E> manager) {
         return value -> manager.reference(value.asInt64().getValue());
     }
 }

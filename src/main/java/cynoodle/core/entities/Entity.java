@@ -132,4 +132,24 @@ public abstract class Entity implements Bsonable {
     public void delete() throws NoSuchElementException, EntityIOException {
         this.manager.delete(this.id);
     }
+
+    // ===
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Entity entity = (Entity) o;
+
+        if (id != entity.id) return false;
+        return manager.equals(entity.manager);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = manager.hashCode();
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        return result;
+    }
 }

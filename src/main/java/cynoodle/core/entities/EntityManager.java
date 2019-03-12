@@ -8,6 +8,7 @@ package cynoodle.core.entities;
 
 import com.google.common.collect.Streams;
 import com.google.common.flogger.FluentLogger;
+import com.google.common.util.concurrent.Striped;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
@@ -32,6 +33,7 @@ import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -48,7 +50,7 @@ public class EntityManager<E extends Entity> {
 
     // ======
 
-    private static final Bson DEFAULT_FILTER = new BsonDocument();
+    protected static final Bson DEFAULT_FILTER = new BsonDocument();
 
     private static final String KEY_ID = "id";
 
@@ -76,6 +78,8 @@ public class EntityManager<E extends Entity> {
      * Entity cache.
      */
     private final MutableLongObjectMap<E> entities = new LongObjectHashMap<>();
+
+    private final Striped<Lock> locks = Striped.lock(1024);
 
     /**
      * Entity access times.
@@ -117,37 +121,50 @@ public class EntityManager<E extends Entity> {
     @Nonnull
     public final Optional<E> get(long id) {
 
-        // TODO improvements / thread safety
-
         this.ensureIndexes();
 
-        // attempt to get the entity from the cache
-        E entity = entities.get(id);
+        //
 
-        if(entity == null) {
-            // entity is not in the cache
+        Lock lock = this.locks.get(id);
 
-            if(this.exists(id)) {
-                // but exists, so create instance
-                E instance = this.type.createInstance(this, id);
+        lock.lock();
 
-                this.entities.put(id, instance);
+        try {
 
-                entity = instance; // this is because suppressing warnings for assigning to existing variables is not possible
+            // TODO improvements
+
+            // attempt to get the entity from the cache
+            E entity = entities.get(id);
+
+            if(entity == null) {
+                // entity is not in the cache
+
+                if(this.exists(id)) {
+                    // but exists, so create instance
+                    E instance = this.type.createInstance(this, id);
+
+                    this.entities.put(id, instance);
+
+                    entity = instance; // this is because suppressing warnings for assigning to existing variables is not possible
+                }
+                else return Optional.empty(); // entity does not exist
             }
-            else return Optional.empty(); // entity does not exist
+
+
+            // TODO his.update(id) is very much not required usually,
+            //  replace this with a change stream in the future to avoid useless calls to the DB
+            // update the cached entity before returning it
+            this.update(id);
+
+            // update access time
+            this.updateAccess(id);
+
+            return Optional.of(entity);
+
+        } finally {
+            lock.unlock();
         }
 
-
-        // TODO his.update(id) is very much not required usually,
-        //  replace this with a change stream in the future to avoid useless calls to the DB
-        // update the cached entity before returning it
-        this.update(id);
-
-        // update access time
-        this.updateAccess(id);
-
-        return Optional.of(entity);
     }
 
     // ===
@@ -347,28 +364,37 @@ public class EntityManager<E extends Entity> {
     public final void persist(long id)
             throws IllegalStateException, EntityIOException {
 
-        E entity = this.entities.get(id);
-        if(entity == null) throw new IllegalStateException("Entity " + id + " is not cached!");
+        Lock lock = this.locks.get(id);
 
-        //
-
-        BsonDocument data;
+        lock.lock();
 
         try {
-            data = entity.toBson().asBson();
-        } catch (BsonDataException e) {
-            throw new EntityIOException("Failed to create BSON from Entity state!", e);
-        }
 
-        // populate the data with the entity ID
-        data.put(KEY_ID, new BsonInt64(id));
+            E entity = this.entities.get(id);
+            if(entity == null) throw new IllegalStateException("Entity " + id + " is not cached!");
 
-        //
+            //
 
-        try {
-            collection().replaceOne(Filters.eq(KEY_ID, id), data, OPTIONS_REPLACE);
-        } catch (MongoException e) {
-            throw new EntityIOException("Exception while issuing MongoDB replace command!", e);
+            BsonDocument data;
+
+            try {
+                data = entity.toBson().asBson();
+            } catch (BsonDataException e) {
+                throw new EntityIOException("Failed to create BSON from Entity state!", e);
+            }
+
+            // populate the data with the entity ID
+            data.put(KEY_ID, new BsonInt64(id));
+
+            //
+
+            try {
+                collection().replaceOne(Filters.eq(KEY_ID, id), data, OPTIONS_REPLACE);
+            } catch (MongoException e) {
+                throw new EntityIOException("Exception while issuing MongoDB replace command!", e);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -407,27 +433,37 @@ public class EntityManager<E extends Entity> {
     public final void update(long id)
             throws IllegalStateException, NoSuchElementException, EntityIOException {
 
-        E entity = this.entities.get(id);
-        if(entity == null) throw new IllegalStateException("Entity " + id + " is not cached!");
+        Lock lock = this.locks.get(id);
 
-        //
-
-        BsonDocument data;
+        lock.lock();
 
         try {
-            data = collection().find(Filters.eq(KEY_ID, id)).first();
-        } catch (MongoException e) {
-            throw new EntityIOException("Exception while issuing MongoDB find command!", e);
-        }
 
-        if(data == null) throw new NoSuchElementException("There is no Entity with ID " + id + "!");
+            E entity = this.entities.get(id);
+            if(entity == null) throw new IllegalStateException("Entity " + id + " is not cached!");
 
-        //
+            //
 
-        try {
-            entity.fromBson(FluentDocument.wrap(data));
-        } catch (BsonDataException e) {
-            throw new EntityIOException("Failed to load BSON into Entity state!", e);
+            BsonDocument data;
+
+            try {
+                data = collection().find(Filters.eq(KEY_ID, id)).first();
+            } catch (MongoException e) {
+                throw new EntityIOException("Exception while issuing MongoDB find command!", e);
+            }
+
+            if(data == null) throw new NoSuchElementException("There is no Entity with ID " + id + "!");
+
+            //
+
+            try {
+                entity.fromBson(FluentDocument.wrap(data));
+            } catch (BsonDataException e) {
+                throw new EntityIOException("Failed to load BSON into Entity state!", e);
+            }
+
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -442,21 +478,32 @@ public class EntityManager<E extends Entity> {
     public final void delete(long id)
             throws NoSuchElementException, EntityIOException {
 
-        E entity = this.entities.get(id);
-        if(entity != null) discard(id);
+        Lock lock = this.locks.get(id);
 
-        //
-
-        DeleteResult result;
+        lock.lock();
 
         try {
-            result = collection().deleteOne(Filters.eq(KEY_ID, id), OPTIONS_DELETE);
-        } catch (MongoException e) {
-            throw new EntityIOException("Exception while issuing MongoDB delete command!", e);
+
+            E entity = this.entities.get(id);
+            if(entity != null) discard(id);
+
+            //
+
+            DeleteResult result;
+
+            try {
+                result = collection().deleteOne(Filters.eq(KEY_ID, id), OPTIONS_DELETE);
+            } catch (MongoException e) {
+                throw new EntityIOException("Exception while issuing MongoDB delete command!", e);
+            }
+
+            if(result.getDeletedCount() == 0)
+                throw new NoSuchElementException("Nothing was deleted because there was no Entity with ID " + id + "!");
+
+        } finally {
+            lock.unlock();
         }
 
-        if(result.getDeletedCount() == 0)
-            throw new NoSuchElementException("Nothing was deleted because there was no Entity with ID " + id + "!");
     }
 
     // === CACHE ===
