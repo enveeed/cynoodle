@@ -612,7 +612,7 @@ public final class Options {
             if (!option.isValueRequired())
                 throw new IllegalArgumentException("Option which do not require values can not have values!");
             if (!hasOption(option))
-                throw new IllegalArgumentException("Option was not given!");
+                throw new NoSuchElementException("Option was not given!");
 
             else return this.values.get(option);
         }
