@@ -27,6 +27,7 @@ import java.util.Optional;
  */
 @EIdentifier("base:mm:mm")
 @EIndex(MakeMe.KEY_KEY)
+@EIndex(MakeMe.KEY_GROUP)
 public final class MakeMe extends GEntity {
     private MakeMe() {}
 
