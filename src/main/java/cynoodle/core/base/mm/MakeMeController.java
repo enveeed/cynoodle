@@ -164,12 +164,11 @@ public final class MakeMeController {
 
         //
 
-        public void unmake(@Nonnull MakeMe mm) throws IllegalStateException {
+        public void unmake(@Nonnull MakeMe mm) {
 
             MakeMeStatus status = statusManager.firstOrCreate(this.guild, this.user);
 
-            if(!status.has(mm))
-                throw new IllegalStateException("User " + user + " does not have MakeMe " + mm + ".");
+            if(!status.has(mm)) return;
 
             status.remove(mm);
             status.persist();
