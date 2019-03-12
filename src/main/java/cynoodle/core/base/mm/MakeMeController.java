@@ -6,6 +6,8 @@
 
 package cynoodle.core.base.mm;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.mongodb.client.model.Filters;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
@@ -40,6 +42,11 @@ public final class MakeMeController {
     // ===
 
     @Nonnull
+    public OnGuild onGuild(@Nonnull DiscordPointer guild) {
+        return new OnGuild(guild);
+    }
+
+    @Nonnull
     public OnMember onMember(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user) {
         return new OnMember(guild, user);
     }
@@ -47,7 +54,75 @@ public final class MakeMeController {
     // ===
 
     /**
-     * API for a single members {@link MakeMe} status.
+     * API for a guilds {@link MakeMe}.
+     */
+    public final class OnGuild {
+
+        private final DiscordPointer guild;
+
+        // ===
+
+        private OnGuild(@Nonnull DiscordPointer guild) {
+            this.guild = guild;
+        }
+
+        // ===
+
+        @Nonnull
+        @CanIgnoreReturnValue
+        public MakeMe create(@Nonnull String key, @Nonnull String name, @Nonnull DiscordPointer role) {
+
+            boolean existing = makeMeManager
+                    .exists(Filters.and(MakeMe.filterGuild(guild), MakeMe.filterKey(key)));
+
+            if(existing) throw new IllegalArgumentException("There is already a MakeMe with this key: \"" + key + "\"!");
+
+            //
+
+            return makeMeManager.create(this.guild, mm -> mm.create(key, name, role));
+        }
+
+        @Nonnull
+        @CanIgnoreReturnValue
+        public MakeMeGroup createGroup(@Nonnull String key, @Nonnull String name) {
+
+            boolean existing = groupManager
+                    .exists(Filters.and(MakeMeGroup.filterGuild(guild), MakeMeGroup.filterKey(key)));
+
+            if(existing) throw new IllegalArgumentException("There is already a MakeMeGroup with this key: \"" + key + "\"!");
+
+            //
+
+            return groupManager.create(this.guild, group -> group.create(key, name));
+        }
+
+        //
+
+        @Nonnull
+        public Optional<MakeMe> find(@Nonnull String key) {
+            return makeMeManager.first(Filters.and(MakeMe.filterGuild(this.guild), MakeMe.filterKey(key)));
+        }
+
+        @Nonnull
+        public Optional<MakeMeGroup> findGroup(@Nonnull String key) {
+            return groupManager.first(Filters.and(MakeMeGroup.filterGuild(this.guild), MakeMeGroup.filterKey(key)));
+        }
+
+        //
+
+        @Nonnull
+        public Set<MakeMe> all() {
+            return makeMeManager.stream(this.guild).collect(Collectors.toSet());
+        }
+
+        @Nonnull
+        public Set<MakeMeGroup> allGroups() {
+            return groupManager.stream(this.guild).collect(Collectors.toSet());
+        }
+    }
+
+    /**
+     * API for a single members {@link MakeMe}.
      */
     public final class OnMember {
 
