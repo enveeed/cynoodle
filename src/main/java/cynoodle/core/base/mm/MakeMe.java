@@ -120,7 +120,7 @@ public final class MakeMe extends GEntity {
         this.key = source.getAt(KEY_KEY).asString().or(this.key);
         this.name = source.getAt("name").asString().or(this.name);
         this.role = source.getAt("role").as(DiscordPointer.fromBson()).or(this.role);
-        this.group = source.getAt(KEY_GROUP).as(EntityReference.load(groupManager)).or(this.group);
+        this.group = source.getAt(KEY_GROUP).asNullable(EntityReference.load(groupManager)).or(this.group);
     }
 
     @Nonnull
@@ -131,7 +131,7 @@ public final class MakeMe extends GEntity {
         data.setAt(KEY_KEY).asString().to(this.key);
         data.setAt("name").asString().to(this.name);
         data.setAt("role").as(DiscordPointer.toBson()).to(this.role);
-        data.setAt(KEY_GROUP).as(EntityReference.<MakeMeGroup>store()).to(this.group);
+        data.setAt(KEY_GROUP).asNullable(EntityReference.<MakeMeGroup>store()).to(this.group);
 
         return data;
     }

@@ -75,7 +75,7 @@ public final class MakeMeController {
             boolean existing = makeMeManager
                     .exists(Filters.and(MakeMe.filterGuild(guild), MakeMe.filterKey(key)));
 
-            if(existing) throw new IllegalArgumentException("There is already a MakeMe with this key: \"" + key + "\"!");
+            if(existing) throw new IllegalArgumentException("There is already a make-me with this key: \"" + key + "\"!");
 
             //
 
@@ -86,10 +86,13 @@ public final class MakeMeController {
         @CanIgnoreReturnValue
         public MakeMeGroup createGroup(@Nonnull String key, @Nonnull String name) {
 
-            boolean existing = groupManager
+            boolean existingGroup = groupManager
                     .exists(Filters.and(MakeMeGroup.filterGuild(guild), MakeMeGroup.filterKey(key)));
+            boolean existingMM = makeMeManager
+                    .exists(Filters.and(MakeMe.filterGuild(guild), MakeMe.filterKey(key)));
 
-            if(existing) throw new IllegalArgumentException("There is already a MakeMeGroup with this key: \"" + key + "\"!");
+            if(existingGroup || existingMM)
+                throw new IllegalArgumentException("There is already a make-me group or make-me with this key: \"" + key + "\"!");
 
             //
 
@@ -195,7 +198,7 @@ public final class MakeMeController {
 
             Guild guild = this.guild.asGuild()
                     .orElseThrow();
-            Member member = this.guild.asMember(guild)
+            Member member = this.user.asMember(guild)
                     .orElseThrow();
 
             //
@@ -231,7 +234,7 @@ public final class MakeMeController {
                     .add(applyingRoles)
                     .done();
 
-            action.reason("Applied MakeMe")
+            action.reason("Applied make-me")
                     .queue();
         }
 

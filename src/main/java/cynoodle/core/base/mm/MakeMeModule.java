@@ -6,15 +6,19 @@
 
 package cynoodle.core.base.mm;
 
+import cynoodle.core.base.command.CommandModule;
+import cynoodle.core.base.command.CommandRegistry;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
+import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
 @MIdentifier("base:mm")
+@MRequires("base:command")
 public final class MakeMeModule extends Module {
     private MakeMeModule() {}
 
@@ -45,6 +49,14 @@ public final class MakeMeModule extends Module {
         //
 
         this.controller = new MakeMeController();
+
+        //
+
+        CommandRegistry registry = Module.get(CommandModule.class)
+                .getRegistry();
+
+        registry.register(MakeMeCommand.class);
+        registry.register(UnMakeMeCommand.class);
     }
 
     @Override
