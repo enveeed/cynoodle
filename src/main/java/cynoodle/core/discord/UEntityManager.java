@@ -15,6 +15,7 @@ import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Convenience {@link EntityManager} specifically for {@link UEntity UEntities}.
@@ -84,5 +85,27 @@ public class UEntityManager<E extends UEntity> extends EntityManager<E> {
     @Nonnull
     public final E firstOrCreate(@Nonnull User user) {
         return this.firstOrCreate(user, e -> {});
+    }
+
+    //
+
+    @Nonnull
+    public final Stream<E> stream(@Nonnull DiscordPointer user, @Nonnull Bson filter) {
+        return stream(Filters.and(UEntity.filterUser(user), filter));
+    }
+
+    @Nonnull
+    public final Stream<E> stream(@Nonnull DiscordPointer user) {
+        return stream(user, DEFAULT_FILTER);
+    }
+
+    @Nonnull
+    public final Stream<E> stream(@Nonnull User user, @Nonnull Bson filter) {
+        return stream(DiscordPointer.to(user), filter);
+    }
+
+    @Nonnull
+    public final Stream<E> stream(@Nonnull User user) {
+        return stream(user, DEFAULT_FILTER);
     }
 }

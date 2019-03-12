@@ -15,6 +15,7 @@ import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Convenience {@link EntityManager} specifically for {@link GEntity GEntities}.
@@ -84,5 +85,27 @@ public class GEntityManager<E extends GEntity> extends EntityManager<E> {
     @Nonnull
     public final E firstOrCreate(@Nonnull Guild guild) {
         return this.firstOrCreate(guild, e -> {});
+    }
+
+    //
+
+    @Nonnull
+    public final Stream<E> stream(@Nonnull DiscordPointer guild, @Nonnull Bson filter) {
+        return stream(Filters.and(GEntity.filterGuild(guild), filter));
+    }
+
+    @Nonnull
+    public final Stream<E> stream(@Nonnull DiscordPointer guild) {
+        return stream(guild, DEFAULT_FILTER);
+    }
+
+    @Nonnull
+    public final Stream<E> stream(@Nonnull Guild guild, @Nonnull Bson filter) {
+        return stream(DiscordPointer.to(guild), filter);
+    }
+
+    @Nonnull
+    public final Stream<E> stream(@Nonnull Guild guild) {
+        return stream(guild, DEFAULT_FILTER);
     }
 }
