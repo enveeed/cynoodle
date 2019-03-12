@@ -14,6 +14,7 @@ import cynoodle.core.base.command.CommandModule;
 import cynoodle.core.base.condition.ConditionModule;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.localization.LocalizationModule;
+import cynoodle.core.base.mm.MakeMeModule;
 import cynoodle.core.base.profile.ProfileModule;
 import cynoodle.core.base.strikes.StrikesModule;
 import cynoodle.core.base.xp.XPModule;
@@ -21,8 +22,6 @@ import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.ModuleClassException;
 import cynoodle.core.module.ModuleManager;
 import cynoodle.core.mongo.MongoModule;
-import enveeed.carambola.Carambola;
-import enveeed.carambola.CarambolaConfiguration;
 import sun.misc.Signal;
 
 import javax.annotation.Nonnull;
@@ -31,7 +30,6 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
 
 /**
  * cynoodle-core main class
@@ -97,13 +95,6 @@ public final class CyNoodle {
     public static void launch(@Nonnull LaunchSettings settings) throws IllegalStateException {
         if(noodle != null) throw new IllegalStateException("cynoodle was already launched.");
 
-        // set up logging
-
-        Carambola carambola = Carambola.get();
-        CarambolaConfiguration configuration = carambola.getConfiguration();
-
-        configuration.setMinimumLevel(Level.INFO.intValue() - 1);
-
         // create the cynoodle instance
         noodle = new CyNoodle(settings);
 
@@ -153,7 +144,7 @@ public final class CyNoodle {
                     .withCause(ex)
                     .log("Unexpected exception in root thread: %s", ex.getMessage());
             ex.printStackTrace();
-            status = 1;
+            status = 100;
         }
 
         //
@@ -209,6 +200,12 @@ public final class CyNoodle {
         // ===
 
         this.events.post(new StartEvent());
+
+        // === WARNINGS ===
+
+        if(this.launchSettings.isNoPermissionsEnabled()) {
+            LOG.atWarning().log("Access control is overridden on all servers (--no-permissions was given)!");
+        }
 
         // ===
 
@@ -334,6 +331,7 @@ public final class CyNoodle {
         this.modules.register(ProfileModule.class);         // base:profile
         this.modules.register(ConditionModule.class);       // base:condition
         this.modules.register(ACModule.class);              // base:ac
+        this.modules.register(MakeMeModule.class);          // base:mm
     }
 
     // ===

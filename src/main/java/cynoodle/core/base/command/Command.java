@@ -7,6 +7,7 @@
 package cynoodle.core.base.command;
 
 import com.google.common.flogger.FluentLogger;
+import cynoodle.core.CyNoodle;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.ParsingException;
 import cynoodle.core.base.ac.ACModule;
@@ -101,14 +102,16 @@ public abstract class Command {
 
         // === PERMISSIONS ===
 
-        // fail if no permission is set, to avoid new commands being exploited
+        boolean override = CyNoodle.get().getLaunchSettings().isNoPermissionsEnabled();
+
+        //
 
         AccessControl ac = Module.get(ACModule.class).getSettingsManager()
                 .firstOrCreate(context.getGuildPointer());
 
         String permission = descriptor.getPermission();
 
-        boolean passedPermissions = ac.test(context.getUser(), permission);
+        boolean passedPermissions = ac.test(context.getUser(), permission) || override;
 
         if(!passedPermissions) {
             context.queueError(CommandErrors.permissionInsufficient(this));
@@ -156,9 +159,15 @@ public abstract class Command {
             this.run(context, local, input);
         } catch (Exception e) {
 
-            LOG.atSevere().withCause(e).log("Internal error at %s with %s!", this.getIdentifier(), input);
+            CommandError ce;
 
-            context.queueError(CommandErrors.internalError(this));
+            if(e instanceof CommandError) ce = (CommandError) e;
+            else {
+                ce = CommandErrors.internalError(this);
+                LOG.atSevere().withCause(e).log("Internal error at %s with input %s!", this.getIdentifier(), input);
+            }
+
+            context.queueError(ce);
         }
 
         long tEnd = Clock.systemUTC().millis();
