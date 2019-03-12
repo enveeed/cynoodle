@@ -19,7 +19,7 @@ public final class DiscordEvent implements Event {
 
     // ===
 
-    DiscordEvent(@Nonnull net.dv8tion.jda.core.events.Event event) {
+    private DiscordEvent(@Nonnull net.dv8tion.jda.core.events.Event event) {
         this.event = event;
     }
 
@@ -39,5 +39,12 @@ public final class DiscordEvent implements Event {
 
     public boolean is(@Nonnull Class<? extends net.dv8tion.jda.core.events.Event> eventClass) {
         return eventClass.isAssignableFrom(event.getClass());
+    }
+
+    // ===
+
+    @Nonnull
+    static DiscordEvent wrap(@Nonnull net.dv8tion.jda.core.events.Event event) {
+        return new DiscordEvent(event);
     }
 }

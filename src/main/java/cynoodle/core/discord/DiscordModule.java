@@ -125,7 +125,7 @@ public final class DiscordModule extends Module {
 
     private void relayEvent(@Nonnull Event event) {
         CyNoodle.get().getEvents()
-                .post(new DiscordEvent(event));
+                .post(DiscordEvent.wrap(event));
     }
 
 }
