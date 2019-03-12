@@ -14,6 +14,11 @@ import cynoodle.core.mongo.fluent.FluentDocument;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Conditions are functional objects, for the purpose of checking conditions on guild members,
+ * which can be embedded into {@link cynoodle.core.entities.Entity Entities}.
+ * Condition instances must be created via {@link ConditionType}.
+ */
 public abstract class Condition implements Bsonable {
     protected Condition() {}
 
@@ -54,14 +59,31 @@ public abstract class Condition implements Bsonable {
 
     // ===
 
+    /**
+     * Utility method to safely test a condition, even if its null.
+     * If the given condition is null, false is always returned.
+     * @param condition the condition, may be null
+     * @param guild the guild
+     * @param user the user
+     * @return the condition test result or false if the condition was null
+     */
     static boolean testSafe(@Nullable Condition condition,
                             @Nonnull DiscordPointer guild,
                             @Nonnull DiscordPointer user) {
-        if(condition == null) return false;
-        else return condition.test(guild, user);
+        return condition != null && condition.test(guild, user);
     }
 
     // ===
+
+
+    @Override
+    public void fromBson(@Nonnull FluentDocument data) throws BsonDataException {
+        String identifier = data.getAt(KEY_TYPE).asString().value();
+
+        if(!identifier.equals(this.getTypeIdentifier()))
+            throw new BsonDataException("Identifier mismatch: Expected "
+                    + this.getTypeIdentifier() + " but got " + identifier + "!");
+    }
 
     @Nonnull
     @Override
