@@ -156,7 +156,7 @@ public abstract class Command {
 
         try {
             // run the command
-            this.run(context, local, CommandInput.wrap(this, input));
+            this.run(context, CommandInput.wrap(this, input), local);
         } catch (Exception e) {
 
             CommandError ce;
@@ -182,13 +182,12 @@ public abstract class Command {
      * Run the command.
      * This method may be called concurrently by multiple threads at the same time.
      * @param context the command context
-     * @param local the localization context
      * @param input the command input
+     * @param local the localization context
      * @throws Exception if the execution completed with a exception, will be handled
      */
     protected abstract void run(@Nonnull CommandContext context,
-                                @Nonnull LocalizationContext local,
-                                @Nonnull CommandInput input)
+                                @Nonnull CommandInput input, @Nonnull LocalizationContext local)
             throws Exception;
 
 }

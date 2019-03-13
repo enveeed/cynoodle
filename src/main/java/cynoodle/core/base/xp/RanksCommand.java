@@ -45,7 +45,7 @@ public final class RanksCommand extends Command {
     //
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
 
         RankManager rankManager = module.getRankManager();
 

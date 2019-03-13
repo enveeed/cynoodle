@@ -40,7 +40,7 @@ public final class FMEditCommand extends Command {
     //
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
 
         UEntityManager<FM> fmManager = module.getFMManager();
 
@@ -49,7 +49,6 @@ public final class FMEditCommand extends Command {
         //
 
         boolean reset = input.hasOption(OPT_RESET);
-
         String selector = input.requireParameter(0, "selector");
 
         //

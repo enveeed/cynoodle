@@ -41,6 +41,13 @@ public final class CommandInput {
 
     // === PARAMETERS ===
 
+    public boolean hasParameter(int index) {
+        return this.result.getParameters()
+                .has(index);
+    }
+
+    //
+
     @Nonnull
     public Optional<String> getParameter(int index) {
         return this.result.getParameters()

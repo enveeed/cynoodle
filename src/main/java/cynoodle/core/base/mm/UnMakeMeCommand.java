@@ -22,8 +22,7 @@ public final class UnMakeMeCommand extends Command {
 
     @Override
     protected void run(@Nonnull CommandContext context,
-                       @Nonnull LocalizationContext local,
-                       @Nonnull CommandInput input) throws Exception {
+                       @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
 
         String key = input.requireParameter(0, "key");
 

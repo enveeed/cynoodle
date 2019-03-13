@@ -23,7 +23,7 @@ public final class ProfileCommand extends Command {
     private final ProfileModule module = Module.get(ProfileModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
 
         DiscordPointer user = input.getParameterAs(0, "user", Members.parserOf(context)::parse)
                 .orElse(context.getUserPointer());
