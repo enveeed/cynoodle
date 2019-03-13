@@ -46,6 +46,27 @@ public final class FMEditCommand extends Command {
 
         FM fm = fmManager.firstOrCreate(context.getUser());
 
+        // TODO make this pretty
+
+        if(!input.hasParameter(0)) {
+
+            StringBuilder out = new StringBuilder();
+
+            out.append("**last.fm Settings**")
+                    .append("\n\n");
+
+            out.append("`name` - ")
+                    .append(fm.getUsername().orElse("(not set)"))
+                    .append("\n");
+            out.append("`profile` - ")
+                    .append(fm.isProfileEnabled() ? "enabled" : "disabled")
+                    .append("\n");
+
+            context.queueReply(out.toString());
+
+            return;
+        }
+
         //
 
         boolean reset = input.hasOption(OPT_RESET);
