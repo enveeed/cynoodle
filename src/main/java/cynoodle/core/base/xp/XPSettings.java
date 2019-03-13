@@ -87,7 +87,7 @@ public final class XPSettings extends GEntity {
         FluentDocument data = super.toBson();
 
         data.setAt("gain_min").asLong().to(this.gain_min);
-        data.setAt("gain_max").asLong().to(this.gain_min);
+        data.setAt("gain_max").asLong().to(this.gain_max);
         data.setAt("gain_timeout").as(FluentValues.fromDuration()).to(this.gain_timeout);
         data.setAt("drops_enabled").asBoolean().to(this.drops_enabled);
 
