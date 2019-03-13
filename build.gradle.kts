@@ -85,10 +85,10 @@ dependencies {
 
     implementation(group = "com.github.jillesvangurp",      name = "jsonj",                     version = "v2.56") // JsonJ fluent JSON API
 
-    //implementation(group = "enveeed.carambola",             name = "carambola-core",            version = "0.0.1-beta")
+    implementation(group = "enveeed.carambola",             name = "carambola-core",            version = "0.0.1-beta5")
 
-    //implementation(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.1-beta")
-    //implementation(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.1-beta")
+    implementation(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.1-beta5")
+    //implementation(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.1-beta5")
 
     // base:fm
 

@@ -22,6 +22,8 @@ import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.ModuleClassException;
 import cynoodle.core.module.ModuleManager;
 import cynoodle.core.mongo.MongoModule;
+import enveeed.carambola.Carambola;
+import enveeed.carambola.handlers.StandardHandler;
 import sun.misc.Signal;
 
 import javax.annotation.Nonnull;
@@ -94,6 +96,11 @@ public final class CyNoodle {
 
     public static void launch(@Nonnull LaunchSettings settings) throws IllegalStateException {
         if(noodle != null) throw new IllegalStateException("cynoodle was already launched.");
+
+        // set up logging
+
+        Carambola carambola = Carambola.get();
+        carambola.getHandlers().register(new StandardHandler());
 
         // create the cynoodle instance
         noodle = new CyNoodle(settings);
