@@ -126,7 +126,7 @@ public abstract class Module implements EventListener {
             dependencies.addAll(systemModules);
         }
 
-        System.out.println("effective dependencies on "+getIdentifier()+": "+dependencies);
+        LOG.atFiner().log("Found effective dependencies on %s: %s", this.getIdentifier(), dependencies);
 
         return Collections.unmodifiableSet(dependencies);
     }
