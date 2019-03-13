@@ -130,7 +130,7 @@ public abstract class Command {
             input = options.parse(context.getRawInput());
 
         } catch (ParsingException e) {
-            context.queueError(CommandErrors.parsingFailed(this, e));
+            context.queueError(CommandErrors.commandParsingFailed(this, e));
             return;
         }
 
@@ -156,7 +156,7 @@ public abstract class Command {
 
         try {
             // run the command
-            this.run(context, local, input);
+            this.run(context, local, CommandInput.wrap(this, input));
         } catch (Exception e) {
 
             CommandError ce;
@@ -188,7 +188,7 @@ public abstract class Command {
      */
     protected abstract void run(@Nonnull CommandContext context,
                                 @Nonnull LocalizationContext local,
-                                @Nonnull Options.Result input)
+                                @Nonnull CommandInput input)
             throws Exception;
 
 }

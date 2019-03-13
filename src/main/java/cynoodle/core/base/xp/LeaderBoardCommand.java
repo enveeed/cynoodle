@@ -8,14 +8,9 @@ package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
-import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.Parameters;
-import cynoodle.core.api.text.IntegerParser;
+import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
-import cynoodle.core.base.command.CAliases;
-import cynoodle.core.base.command.CIdentifier;
-import cynoodle.core.base.command.Command;
-import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.discord.Members;
@@ -27,7 +22,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandErrors.*;
+import static cynoodle.core.base.command.CommandErrors.simple;
 
 @CIdentifier("base:xp:lb")
 @CAliases({"leaderboard","lb","toplist","tl","levels","lvls"})
@@ -37,18 +32,16 @@ public final class LeaderBoardCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
         GEntityManager<XPSettings> settingsManager = module.getSettingsManager();
         LeaderBoardManager leaderBoardManager = module.getLeaderBoardManager();
 
-        Parameters parameters = input.getParameters();
-
         //
 
-        int from = parameters.get(0).map(IntegerParser.get()::parse).orElse(1);
-        int to = parameters.get(1).map(IntegerParser.get()::parse).orElse((from - 1) + 25);
+        int from = input.getParameterAs(0, "from", PrimitiveParsers.parseInteger()).orElse(1);
+        int to = input.getParameterAs(1, "to", PrimitiveParsers.parseInteger()).orElse((from - 1) + 25);
 
         //
 

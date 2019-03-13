@@ -7,21 +7,18 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
-import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.Parameters;
-import cynoodle.core.api.text.LongParser;
+import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
-import cynoodle.core.base.command.CAliases;
-import cynoodle.core.base.command.CIdentifier;
-import cynoodle.core.base.command.Command;
-import cynoodle.core.base.command.CommandContext;
-import cynoodle.core.discord.*;
+import cynoodle.core.discord.DiscordPointer;
+import cynoodle.core.discord.MEntityManager;
+import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
 
-import static cynoodle.core.base.command.CommandErrors.*;
+import static cynoodle.core.base.command.CommandErrors.simple;
 
 @CIdentifier("base:xp:add")
 @CAliases({"xp+","x+","addxp","xpadd","addx"})
@@ -31,18 +28,12 @@ public final class XPAddCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
 
-        Parameters parameters = input.getParameters();
-
-        DiscordPointer member = parameters.get(0)
-                .map(Members.parserOf(context)::parse)
-                .orElseThrow(() -> missingParameter(this, "member"));
-        long value = parameters.get(1)
-                .map(LongParser.get()::parse)
-                .orElseThrow(() -> missingParameter(this, "value"));
+        DiscordPointer member = input.requireParameterAs(0, "member", Members.parserOf(context)::parse);
+        long value = input.requireParameterAs(1, "value", PrimitiveParsers.parseLong());
 
         // ===
 

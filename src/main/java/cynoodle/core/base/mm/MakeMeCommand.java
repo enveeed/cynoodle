@@ -6,8 +6,6 @@
 
 package cynoodle.core.base.mm;
 
-import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.Parameters;
 import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.module.Module;
@@ -24,12 +22,9 @@ public final class MakeMeCommand extends Command {
     @Override
     protected void run(@Nonnull CommandContext context,
                        @Nonnull LocalizationContext local,
-                       @Nonnull Options.Result input) throws Exception {
+                       @Nonnull CommandInput input) throws Exception {
 
-        Parameters parameters = input.getParameters();
-
-        String key = parameters.get(0)
-                .orElseThrow(() -> CommandErrors.missingParameter(this, "key"));
+        String key = input.requireParameter(0, "key");
 
         //
 

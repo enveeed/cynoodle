@@ -6,12 +6,7 @@
 
 package cynoodle.core.base.profile;
 
-import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.Parameters;
-import cynoodle.core.base.command.CAliases;
-import cynoodle.core.base.command.CIdentifier;
-import cynoodle.core.base.command.Command;
-import cynoodle.core.base.command.CommandContext;
+import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
@@ -28,12 +23,9 @@ public final class ProfileCommand extends Command {
     private final ProfileModule module = Module.get(ProfileModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
 
-        Parameters parameters = input.getParameters();
-
-        DiscordPointer user = parameters.get(0)
-                .map(Members.parserOf(context)::parse)
+        DiscordPointer user = input.getParameterAs(0, "user", Members.parserOf(context)::parse)
                 .orElse(context.getUserPointer());
 
         //

@@ -42,14 +42,14 @@ public final class CommandErrors {
     // === INPUT ===
 
     @Nonnull
-    public static CommandError parsingFailed(@Nonnull Command command, @Nonnull ParsingException exception) {
+    public static CommandError commandParsingFailed(@Nonnull Command command, @Nonnull ParsingException exception) {
 
         String message = exception.getMessage();
         if(message == null) message = "Failed to parse input!";
 
         return CommandError.builder(command)
-                .withTitle("Parsing Failed")
-                .withMessage(message)
+                .withTitle("Command Parsing Failed")
+                .withMessage("Failed to parse command:\n" + message)
                 .withIcon(ICON_EXTERNAL)
                 .withColor(COLOR_MODERATE)
                 .withFlags(DISPLAY_USAGE)
@@ -57,7 +57,22 @@ public final class CommandErrors {
     }
 
     @Nonnull
-    public static CommandError missingParameter(@Nonnull Command command, @Nonnull String name) {
+    public static CommandError parameterParsingFailed(@Nonnull Command command, @Nonnull String name, @Nonnull ParsingException exception) {
+
+        String message = exception.getMessage();
+        if(message == null) message = "Failed to parse input!";
+
+        return CommandError.builder(command)
+                .withTitle("Parameter Parsing Failed")
+                .withMessage("Failed to parse parameter `" + name + "`:\n" + message)
+                .withIcon(ICON_EXTERNAL)
+                .withColor(COLOR_MODERATE)
+                .withFlags(DISPLAY_USAGE)
+                .build();
+    }
+
+    @Nonnull
+    public static CommandError parameterMissing(@Nonnull Command command, @Nonnull String name) {
         return CommandError.builder(command)
                 .withTitle("Invalid Input")
                 .withMessage("Missing parameter `" + name + "`!")

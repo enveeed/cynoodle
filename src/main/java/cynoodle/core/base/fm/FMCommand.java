@@ -7,12 +7,8 @@
 package cynoodle.core.base.fm;
 
 import cynoodle.core.api.Strings;
-import cynoodle.core.api.text.Options;
+import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
-import cynoodle.core.base.command.CAliases;
-import cynoodle.core.base.command.CIdentifier;
-import cynoodle.core.base.command.Command;
-import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
 import de.umass.lastfm.PaginatedResult;
@@ -25,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandErrors.*;
+import static cynoodle.core.base.command.CommandErrors.simple;
 
 @CIdentifier("base:fm:fm")
 @CAliases({"fm","fmi","fminfo"})
@@ -37,7 +33,7 @@ public final class FMCommand extends Command {
     // ===
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
 
         UEntityManager<FM> fmManager = module.getFMManager();
 

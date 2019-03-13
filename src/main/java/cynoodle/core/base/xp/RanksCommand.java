@@ -11,11 +11,8 @@ import com.mongodb.client.model.Filters;
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
+import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
-import cynoodle.core.base.command.CAliases;
-import cynoodle.core.base.command.CIdentifier;
-import cynoodle.core.base.command.Command;
-import cynoodle.core.base.command.CommandContext;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
@@ -48,7 +45,7 @@ public final class RanksCommand extends Command {
     //
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
 
         RankManager rankManager = module.getRankManager();
 

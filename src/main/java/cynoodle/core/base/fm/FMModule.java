@@ -58,7 +58,6 @@ public final class FMModule extends Module {
         CommandRegistry registry = Module.get(CommandModule.class).getRegistry();
 
         registry.register(FMCommand.class);
-        registry.register(FMProfileCommand.class);
         registry.register(FMEditCommand.class);
     }
 

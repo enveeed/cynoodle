@@ -7,19 +7,14 @@
 package cynoodle.core.base.fm;
 
 import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.Parameters;
 import cynoodle.core.api.text.PrimitiveParsers;
-import cynoodle.core.base.command.CAliases;
-import cynoodle.core.base.command.CIdentifier;
-import cynoodle.core.base.command.Command;
-import cynoodle.core.base.command.CommandContext;
+import cynoodle.core.base.command.*;
 import cynoodle.core.base.localization.LocalizationContext;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
-import static cynoodle.core.base.command.CommandErrors.missingParameter;
 import static cynoodle.core.base.command.CommandErrors.simple;
 
 @CIdentifier("base:fm:edit")
@@ -45,7 +40,7 @@ public final class FMEditCommand extends Command {
     //
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull Options.Result input) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull LocalizationContext local, @Nonnull CommandInput input) throws Exception {
 
         UEntityManager<FM> fmManager = module.getFMManager();
 
@@ -53,12 +48,9 @@ public final class FMEditCommand extends Command {
 
         //
 
-        Parameters parameters = input.getParameters();
-
         boolean reset = input.hasOption(OPT_RESET);
 
-        String selector = parameters.get(0)
-                .orElseThrow(() -> missingParameter(this, "selector"));
+        String selector = input.requireParameter(0, "selector");
 
         //
 
@@ -69,8 +61,7 @@ public final class FMEditCommand extends Command {
                 context.getChannel().sendMessage("**|** last.fm username was reset.").queue();
             }
             else {
-                String username = parameters.get(1)
-                        .orElseThrow(() -> missingParameter(this, "username"));
+                String username = input.requireParameter(1, "username");
 
                 fm.setUsername(username);
 
@@ -93,9 +84,7 @@ public final class FMEditCommand extends Command {
                 context.getChannel().sendMessage("**|** last.fm profile connection was reset.").queue();
             }
             else {
-                boolean profileEnabled = parameters.get(1)
-                        .map(PrimitiveParsers.parseBoolean())
-                        .orElseThrow(() -> missingParameter(this, "on / off"));
+                boolean profileEnabled = input.requireParameterAs(1, "profile on / off", PrimitiveParsers.parseBoolean());
 
                 fm.setProfileEnabled(profileEnabled);
 
