@@ -71,8 +71,20 @@ public final class Parameters {
     // ===
 
     @Nonnull
+    public String join(char separator) {
+        return Joiner.on(separator).join(this.parameters);
+    }
+
+    @Nonnull
     public String join() {
-        return Joiner.on(' ').join(this.parameters);
+        return join(' ');
+    }
+
+    // ===
+
+    @Override
+    public String toString() {
+        return Arrays.toString(this.parameters);
     }
 
     // ===

@@ -11,8 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Utility for pseudo-random numbers and other pseudo-random actions
  */
-public class Random {
-
+public final class Random {
     private Random() {}
 
     /**
