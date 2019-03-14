@@ -41,6 +41,7 @@ public final class ProfileModule extends Module {
         CommandRegistry registry = Module.get(CommandModule.class).getRegistry();
 
         registry.register(ProfileCommand.class);
+        registry.register(ProfileEditCommand.class);
     }
 
     @Override
