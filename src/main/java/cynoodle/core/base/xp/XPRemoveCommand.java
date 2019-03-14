@@ -40,17 +40,14 @@ public final class XPRemoveCommand extends Command {
         User user = member.asUser()
                 .orElseThrow(() -> simple(this, "There is no User for the given Member!"));
 
-        XP xp = xpManager.first(XP.filterMember(DiscordPointer.to(context.getGuild()), member))
-                .orElseThrow(() -> simple(this, "There is no XP for this Member!"));
-
         // validation
 
         if(user.isBot()) throw simple(this, "Bots can not have XP.");
         if(value <= 0) throw simple(this, "You can not remove a negative or zero amount of XP!");
-        if(value > xp.get()) throw simple(this, "You can not remove more XP than the Member has!");
 
-        xp.remove(value);
-        xp.persist();
+        module.controller()
+                .onMember(context.getGuildPointer(), member)
+                .modify(-value, context.getChannelPointer());
 
         //
 

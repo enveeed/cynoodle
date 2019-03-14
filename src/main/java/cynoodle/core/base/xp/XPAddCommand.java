@@ -40,15 +40,14 @@ public final class XPAddCommand extends Command {
         User user = member.asUser()
                 .orElseThrow(() -> simple(this, "There is no User for the given Member!"));
 
-        XP xp = xpManager.firstOrCreate(XP.filterMember(DiscordPointer.to(context.getGuild()), member));
-
         // validation
 
         if(user.isBot()) throw simple(this, "Bots can not have XP.");
         if(value <= 0) throw simple(this, "You can not add a negative or zero amount of XP!");
 
-        xp.add(value);
-        xp.persist();
+        module.controller()
+                .onMember(context.getGuildPointer(), member)
+                .modify(value, context.getChannelPointer());
 
         //
 

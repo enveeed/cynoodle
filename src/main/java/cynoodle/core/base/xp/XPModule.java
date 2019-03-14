@@ -54,6 +54,8 @@ public final class XPModule extends Module {
 
     private final XPEventHandler handler = new XPEventHandler(this);
 
+    private XPController controller;
+
     // ===
 
     @Override
@@ -88,6 +90,10 @@ public final class XPModule extends Module {
         this.xpManager.ensureIndexes();
         this.rankManager.ensureIndexes();
         this.settingsManager.ensureIndexes();
+
+        //
+
+        this.controller = new XPController();
 
     }
 
@@ -133,5 +139,12 @@ public final class XPModule extends Module {
     @Nonnull
     public LeaderBoardManager getLeaderBoardManager() {
         return this.leaderBoardManager;
+    }
+
+    //
+
+    @Nonnull
+    public XPController controller() {
+        return this.controller;
     }
 }

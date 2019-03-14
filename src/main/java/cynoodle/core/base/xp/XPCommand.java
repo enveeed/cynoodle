@@ -36,7 +36,8 @@ public final class XPCommand extends Command {
         GEntityManager<XPSettings> settingsManager = module.getSettingsManager();
         RankManager rankManager = module.getRankManager();
 
-        DiscordPointer member = input.requireParameterAs(0, "member", Members.parserOf(context)::parse);
+        DiscordPointer member = input.getParameterAs(0, "member", Members.parserOf(context)::parse)
+                .orElse(context.getUserPointer());
 
         // ===
 

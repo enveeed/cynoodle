@@ -13,7 +13,6 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
 
 /**
  * Handling of events for the XP module.
@@ -46,13 +45,12 @@ final class XPEventHandler {
         //
 
         DiscordPointer guild = DiscordPointer.to(event.getGuild());
-        DiscordPointer member = DiscordPointer.to(event.getAuthor());
+        DiscordPointer user = DiscordPointer.to(event.getAuthor());
 
         //
 
-        XPSettings settings = this.module.getSettingsManager().firstOrCreate(event.getGuild());
-        XPStatus status = module.status.computeIfAbsent(guild, XPStatus::new);
-        XP xp = module.getXPManager().firstOrCreate(guild, member);
+        XPSettings settings     = this.module.getSettingsManager().firstOrCreate(event.getGuild());
+        XPStatus status         = this.module.status.computeIfAbsent(guild, XPStatus::new);
 
         //
 
@@ -60,8 +58,8 @@ final class XPEventHandler {
 
         // === GAIN ===
 
-        if(!status.isInTimeout(member)) {
-            status.updateLastGain(member);
+        if(!status.isInTimeout(user)) {
+            status.updateLastGain(user);
 
             long gain = Random.nextLong(settings.getGainMin(), settings.getGainMax());
 
@@ -86,8 +84,9 @@ final class XPEventHandler {
 
         if(value == 0L) return; // ignore if nothing was added
 
-        xp.add(value);
-        xp.persist();
+        module.controller()
+                .onMember(guild, user)
+                .modify(value, DiscordPointer.to(event.getChannel()));
 
     }
 
@@ -100,18 +99,13 @@ final class XPEventHandler {
         //
 
         DiscordPointer guild = DiscordPointer.to(event.getGuild());
-        DiscordPointer member = DiscordPointer.to(event.getUser());
-
-        //
-
-        Optional<XP> xpResult = module.getXPManager().first(XP.filterMember(guild, member));
-        if(xpResult.isEmpty()) return; // ignore
-
-        XP xp = xpResult.orElseThrow();
+        DiscordPointer user = DiscordPointer.to(event.getUser());
 
         // === RANKS ===
 
-        xp.applyRanks();
+        module.controller()
+                .onMember(guild, user)
+                .applyRanks();
     }
 
 }
