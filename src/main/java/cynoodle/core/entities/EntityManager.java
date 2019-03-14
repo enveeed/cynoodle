@@ -6,14 +6,18 @@
 
 package cynoodle.core.entities;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Streams;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.util.concurrent.Striped;
 import com.mongodb.MongoException;
+import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.*;
+import com.mongodb.client.model.changestream.ChangeStreamDocument;
+import com.mongodb.client.model.changestream.FullDocument;
 import com.mongodb.client.result.DeleteResult;
 import cynoodle.core.CyNoodle;
 import cynoodle.core.api.Snowflake;
@@ -79,7 +83,11 @@ public class EntityManager<E extends Entity> {
      */
     private final MutableLongObjectMap<E> entities = new LongObjectHashMap<>();
 
+    //
+
     private final Striped<Lock> locks = Striped.lock(1024);
+
+    //
 
     /**
      * Entity access times.
@@ -89,6 +97,7 @@ public class EntityManager<E extends Entity> {
     // ======
 
     private boolean indexesEnsured = false;
+    private boolean collectionWatched = false;
 
     // ======
 
@@ -122,6 +131,7 @@ public class EntityManager<E extends Entity> {
     public final Optional<E> get(long id) {
 
         this.ensureIndexes();
+        // this.watchCollection();
 
         //
 
@@ -140,12 +150,15 @@ public class EntityManager<E extends Entity> {
                 // entity is not in the cache
 
                 if(this.exists(id)) {
+
                     // but exists, so create instance
-                    E instance = this.type.createInstance(this, id);
+                    entity = this.type.createInstance(this, id);
 
-                    this.entities.put(id, instance);
+                    this.entities.put(id, entity);
 
-                    entity = instance; // this is because suppressing warnings for assigning to existing variables is not possible
+                    // update since the instance is new
+                    this.update(id);
+
                 }
                 else return Optional.empty(); // entity does not exist
             }
@@ -538,6 +551,34 @@ public class EntityManager<E extends Entity> {
         } catch (MongoException e) {
             throw new EntityIOException("Exception while issuing MongoDB createIndexes command!", e);
         }
+    }
+
+    // === CHANGE STREAM ===
+
+    @Beta
+    public final void watchCollection() {
+        if(collectionWatched) return;
+
+        collectionWatched = true;
+
+        ChangeStreamIterable<BsonDocument> stream = collection().watch(BsonDocument.class)
+                .fullDocument(FullDocument.UPDATE_LOOKUP);
+
+        // listen for changes
+
+        stream.forEach((Consumer<ChangeStreamDocument<BsonDocument>>) cs -> {
+
+            BsonDocument document = cs.getFullDocument();
+            if (document == null) return;
+
+            long id = document.getInt64(KEY_ID).longValue();
+
+            LOG.atFiner().log("Updating due to change on %s for ID %s", this.type.getIdentifier(), id);
+
+            //
+
+            update(id);
+        });
     }
 
     // === MONGO ===
