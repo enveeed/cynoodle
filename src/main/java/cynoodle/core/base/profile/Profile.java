@@ -8,7 +8,7 @@ package cynoodle.core.base.profile;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
-import cynoodle.core.base.fm.FM;
+import cynoodle.core.base.fm.FMProperties;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.localization.Localization;
 import cynoodle.core.base.localization.LocalizationModule;
@@ -100,6 +100,11 @@ public final class Profile extends UEntity {
      */
     private String linkedDeviantArt = null;
 
+    /**
+     * linked GitHub username / organization name.
+     */
+    private String linkedGitHub = null;
+
     // ===
 
     @Nonnull
@@ -172,10 +177,18 @@ public final class Profile extends UEntity {
         return Optional.ofNullable(linkedDeviantArt);
     }
 
-    public void setLinkedDeviantart(@Nullable String linkedDeviantArt) {
+    public void setLinkedDeviantArt(@Nullable String linkedDeviantArt) {
         this.linkedDeviantArt = linkedDeviantArt;
     }
 
+    @Nonnull
+    public Optional<String> getLinkedGitHub() {
+        return Optional.ofNullable(this.linkedGitHub);
+    }
+
+    public void setLinkedGitHub(@Nonnull String linkedGitHub) {
+        this.linkedGitHub = linkedGitHub;
+    }
 
     // ===
 
@@ -192,6 +205,7 @@ public final class Profile extends UEntity {
         this.linkedInstagram = source.getAt("linked_instagram").asStringNullable().or(this.linkedInstagram);
         this.linkedSnapchat = source.getAt("linked_snapchat").asStringNullable().or(this.linkedSnapchat);
         this.linkedDeviantArt = source.getAt("linked_deviant_art").asStringNullable().or(this.linkedDeviantArt);
+        this.linkedGitHub = source.getAt("linked_github").asStringNullable().or(this.linkedGitHub);
     }
 
     @Nonnull
@@ -208,6 +222,7 @@ public final class Profile extends UEntity {
         data.setAt("linked_instagram").asStringNullable().to(this.linkedInstagram);
         data.setAt("linked_snapchat").asStringNullable().to(this.linkedSnapchat);
         data.setAt("linked_deviant_art").asStringNullable().to(this.linkedDeviantArt);
+        data.setAt("linked_github").asStringNullable().to(this.linkedGitHub);
 
         return data;
     }
@@ -358,7 +373,7 @@ public final class Profile extends UEntity {
 
         FMModule fmModule = Module.get(FMModule.class);
 
-        FM fm = fmModule.getFMManager().firstOrCreate(userP);
+        FMProperties fm = fmModule.getFMManager().firstOrCreate(userP);
 
         Optional<String> username = fm.getUsername();
         boolean profileEnabled = fm.isProfileEnabled();
@@ -376,6 +391,7 @@ public final class Profile extends UEntity {
         Optional<String> linkedInstagramResult = this.getLinkedInstagram();
         Optional<String> linkedSnapchatResult = this.getLinkedSnapchat();
         Optional<String> linkedDeviantArtResult = this.getLinkedDeviantArt();
+        Optional<String> linkedGitHubResult = this.getLinkedGitHub();
 
         if(linkedInstagramResult.isPresent())
             leftOut.append("<:instagram:551807327653724160>")
@@ -396,6 +412,13 @@ public final class Profile extends UEntity {
                     .append(EMBED_SEPARATOR)
                     .append("[Deviant Art](https://deviantart.com/")
                     .append(linkedDeviantArtResult.orElseThrow())
+                    .append("/)\n");
+
+        if(linkedGitHubResult.isPresent())
+            leftOut.append("<:github:555819341766066207>")
+                    .append(EMBED_SEPARATOR)
+                    .append("[GitHub](https://github.com/")
+                    .append(linkedGitHubResult.orElseThrow())
                     .append("/)\n");
 
         //
