@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.fm;
 
+import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.PrimitiveParsers;
 import cynoodle.core.base.command.*;
@@ -14,6 +15,8 @@ import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
+
+import java.util.Optional;
 
 import static cynoodle.core.base.command.CommandErrors.simple;
 
@@ -42,25 +45,44 @@ public final class FMEditCommand extends Command {
     @Override
     protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
 
-        UEntityManager<FM> fmManager = module.getFMManager();
+        UEntityManager<FMProperties> fmManager = module.getFMManager();
 
-        FM fm = fmManager.firstOrCreate(context.getUser());
+        FMProperties fm = fmManager.firstOrCreate(context.getUser());
 
-        // TODO make this pretty
+        //
 
         if(!input.hasParameter(0)) {
 
             StringBuilder out = new StringBuilder();
 
-            out.append("**last.fm Settings**")
+            out.append("**last.fm**")
                     .append("\n\n");
 
-            out.append("`name` - ")
-                    .append(fm.getUsername().orElse("(not set)"))
-                    .append("\n");
-            out.append("`profile` - ")
-                    .append(fm.isProfileEnabled() ? "enabled" : "disabled")
-                    .append("\n");
+            Optional<String> usernameResult = fm.getUsername();
+            out.append(formatPropertyListing(
+                    "name",
+                    usernameResult.isPresent() ? usernameResult.orElseThrow() : "(not set)",
+                    "last.fm username"
+            ));
+
+            FMFormat format = fm.getPreferredFormat();
+            out.append(formatPropertyListing(
+                    "format",
+                    format.getName(),
+                    "preferred `!fm` format"
+            ));
+
+            boolean profileEnabled = fm.isProfileEnabled();
+            out.append(formatPropertyListing(
+                    "profile",
+                    profileEnabled ? "on" : "off",
+                    "last.fm social link on profile"
+            ));
+
+            //
+
+            out.append("\n")
+                    .append("`!fmedit [property] (--reset) (value)`");
 
             context.queueReply(out.toString());
 
@@ -70,14 +92,14 @@ public final class FMEditCommand extends Command {
         //
 
         boolean reset = input.hasOption(OPT_RESET);
-        String selector = input.requireParameter(0, "selector");
+        String selector = input.requireParameter(0, "property");
 
         //
 
         if(selector.equals("name")) {
 
             if(reset) {
-                fm.setUsername(FM.DEF_USERNAME);
+                fm.setUsername(FMProperties.DEF_USERNAME);
                 context.getChannel().sendMessage("**|** last.fm username was reset.").queue();
             }
             else {
@@ -94,13 +116,39 @@ public final class FMEditCommand extends Command {
         }
         else if(selector.equals("format")) {
 
-            throw simple(this, "TODO"); // TODO implementation
+           if(reset) {
+               fm.setPreferredFormat(FMProperties.DEF_PREFERRED_FORMAT);
+               context.getChannel().sendMessage("**|** last.fm preferred format was reset.").queue();
+           }
+           else {
+
+               String formatName = input.requireParameter(1, "format name");
+
+               FMFormat format = null;
+               for (FMFormat test : FMFormat.values()) {
+                   if(test.getName().equals(formatName)) {
+                       format = test;
+                       break;
+                   }
+               }
+
+               if(format == null) {
+                   context.queueError(CommandErrors.simple(this, "Unknown format: `" + formatName + "`!"));
+                   return;
+               }
+
+               fm.setPreferredFormat(format);
+
+               context.getChannel().sendMessage("**|** last.fm preferred format was set to `" + format.getName() + "`.").queue();
+           }
+
+            fm.persist();
 
         }
         else if(selector.equals("profile")) {
 
             if(reset) {
-                fm.setProfileEnabled(FM.DEF_PROFILE_ENABLED);
+                fm.setProfileEnabled(FMProperties.DEF_PROFILE_ENABLED);
                 context.getChannel().sendMessage("**|** last.fm profile connection was reset.").queue();
             }
             else {
@@ -119,5 +167,25 @@ public final class FMEditCommand extends Command {
             return;
         }
         else throw simple(this, "TODO"); // TODO exception
+    }
+
+    // ===
+
+    @Nonnull
+    private static String formatPropertyListing(@Nonnull String property,
+                                                @Nonnull String value,
+                                                @Nonnull String description) {
+
+        StringBuilder out = new StringBuilder();
+
+        out.append("**`\u200b ").append(Strings.box(property, 10)).append("\u200b`** ")
+                .append("`\u200b ")
+                .append(Strings.box(value, 20))
+                .append("\u200b`")
+                .append(" **|** ")
+                .append(description)
+                .append("\n");
+
+        return out.toString();
     }
 }

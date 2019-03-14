@@ -72,7 +72,7 @@ public final class FMUtil {
     @Nonnull
     public static Optional<Color> findColor(@Nonnull ImageHolder holder) {
 
-        Optional<String> smallestImageURL = findImage(holder, true);
+        Optional<String> smallestImageURL = findImageSmallest(holder);
 
         if(smallestImageURL.isPresent()) {
 

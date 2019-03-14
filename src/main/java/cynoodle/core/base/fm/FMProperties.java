@@ -18,15 +18,15 @@ import java.util.Optional;
 /**
  * A users last.fm settings.
  */
-@EIdentifier("base:fm:fm")
-public final class FM extends UEntity {
-    private FM() {}
+@EIdentifier("base:fm:properties")
+public final class FMProperties extends UEntity {
+    private FMProperties() {}
 
     // ===
 
-    public static String DEF_USERNAME = null;
-    public static FMFormat DEF_PREFERRED_FORMAT = FMFormat.SIMPLE;
-    public static boolean DEF_PROFILE_ENABLED = false;
+    public static final String      DEF_USERNAME = null;
+    public static final FMFormat    DEF_PREFERRED_FORMAT = FMFormat.SIMPLE;
+    public static final boolean     DEF_PROFILE_ENABLED = false;
 
     // ===
 

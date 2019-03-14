@@ -28,15 +28,15 @@ public final class FMModule extends Module {
 
     // ===
 
-    private static final EntityType<FM> TYPE_FM = EntityType.of(FM.class);
+    private static final EntityType<FMProperties> TYPE_FM = EntityType.of(FMProperties.class);
 
     // ===
 
-    private FMConfiguration configuration;
+    private FMModuleConfiguration configuration;
 
     //
 
-    private UEntityManager<FM> fmManager;
+    private UEntityManager<FMProperties> fmManager;
 
     // ===
 
@@ -47,7 +47,7 @@ public final class FMModule extends Module {
         Configuration.Section section = CyNoodle.get().getConfiguration().get("fm")
                 .orElseThrow(() -> new RuntimeException("last.fm configuration is missing! (section 'fm')"));
 
-        this.configuration = FMConfiguration.parse(section);
+        this.configuration = FMModuleConfiguration.parse(section);
 
         //
 
@@ -69,14 +69,14 @@ public final class FMModule extends Module {
     // ===
 
     @Nonnull
-    public FMConfiguration getConfiguration() {
+    public FMModuleConfiguration getConfiguration() {
         return this.configuration;
     }
 
     //
 
     @Nonnull
-    public UEntityManager<FM> getFMManager() {
+    public UEntityManager<FMProperties> getFMManager() {
         return this.fmManager;
     }
 }

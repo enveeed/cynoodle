@@ -6,15 +6,41 @@
 
 package cynoodle.core.base.fm;
 
+import javax.annotation.Nonnull;
+
 /**
  * Formatting options for {@link FMCommand}.
  */
 public enum FMFormat {
 
+    // SIMPLE
+
     /**
      * Simple track info, without links or additional metadata.
      */
-    SIMPLE,
+    SIMPLE("simple"),
+
+    /**
+     * Simple track info, with huge cover art.
+     */
+    SIMPLE_COVER("simple-cover"),
 
     ;
+
+    // ===
+
+    private final String name;
+
+    //
+
+    FMFormat(@Nonnull String name) {
+        this.name = name;
+    }
+
+    //
+
+    @Nonnull
+    public String getName() {
+        return this.name;
+    }
 }

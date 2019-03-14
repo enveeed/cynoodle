@@ -35,11 +35,11 @@ public final class FMCommand extends Command {
     @Override
     protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
 
-        UEntityManager<FM> fmManager = module.getFMManager();
+        UEntityManager<FMProperties> fmManager = module.getFMManager();
 
         //
 
-        FM fm = fmManager.firstOrCreate(context.getUser());
+        FMProperties fm = fmManager.firstOrCreate(context.getUser());
 
         //
 
@@ -69,14 +69,15 @@ public final class FMCommand extends Command {
 
     @Nonnull
     private static MessageEmbed createEmbed(@Nonnull Track track, @Nonnull FMFormat format) {
-        if(format == FMFormat.SIMPLE) return createEmbedSimple(track);
+        if(format == FMFormat.SIMPLE) return createEmbedSimple(track, false);
+        else if(format == FMFormat.SIMPLE_COVER) return createEmbedSimple(track, true);
         else throw new IllegalStateException("Unknown format!");
     }
 
     //
 
     @Nonnull
-    private static MessageEmbed createEmbedSimple(@Nonnull Track track) {
+    private static MessageEmbed createEmbedSimple(@Nonnull Track track, boolean cover) {
 
         EmbedBuilder eOut = new EmbedBuilder();
 
@@ -95,7 +96,10 @@ public final class FMCommand extends Command {
 
         Optional<String> url = FMUtil.findImageLargest(track);
 
-        if(url.isPresent()) eOut.setThumbnail(url.orElseThrow());
+        if(url.isPresent()) {
+            if(cover) eOut.setImage(url.orElseThrow());
+            else eOut.setThumbnail(url.orElseThrow());
+        }
 
         // === COLOR ===
 

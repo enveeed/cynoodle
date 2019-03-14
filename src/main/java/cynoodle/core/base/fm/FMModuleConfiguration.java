@@ -15,13 +15,13 @@ import javax.annotation.Nonnull;
 /**
  * Immutable configuration for {@link FMModule}.
  */
-public final class FMConfiguration {
+public final class FMModuleConfiguration {
 
     private final String apiKey;
 
     // ===
 
-    private FMConfiguration(@Nonnull Builder builder) {
+    private FMModuleConfiguration(@Nonnull Builder builder) {
         this.apiKey = builder.apiKey;
     }
 
@@ -50,9 +50,9 @@ public final class FMConfiguration {
         // ===
 
         @Nonnull
-        public FMConfiguration build() {
+        public FMModuleConfiguration build() {
             Checks.notNull(apiKey, "apiKey");
-            return new FMConfiguration(this);
+            return new FMModuleConfiguration(this);
         }
     }
 
@@ -64,7 +64,7 @@ public final class FMConfiguration {
     // ===
 
     @Nonnull
-    public static FMConfiguration parse(@Nonnull Configuration.Section section) throws IllegalArgumentException {
+    public static FMModuleConfiguration parse(@Nonnull Configuration.Section section) throws IllegalArgumentException {
 
         JsonObject json = section.get();
 
