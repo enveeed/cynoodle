@@ -4,7 +4,7 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.condition;
+package cynoodle.core.incubating.condition;
 
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.Module;

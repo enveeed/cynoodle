@@ -4,7 +4,7 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.condition;
+package cynoodle.core.incubating.condition;
 
 import javax.annotation.Nonnull;
 import java.lang.annotation.ElementType;
@@ -12,12 +12,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// TODO
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ConditionMetaData {
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ConditionIdentifier {
 
     @Nonnull
-    ConditionMeta[] value();
+    String value();
 
 }
