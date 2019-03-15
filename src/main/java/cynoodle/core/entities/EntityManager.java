@@ -11,13 +11,10 @@ import com.google.common.collect.Streams;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.util.concurrent.Striped;
 import com.mongodb.MongoException;
-import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.*;
-import com.mongodb.client.model.changestream.ChangeStreamDocument;
-import com.mongodb.client.model.changestream.FullDocument;
 import com.mongodb.client.result.DeleteResult;
 import cynoodle.core.CyNoodle;
 import cynoodle.core.api.Snowflake;
@@ -56,7 +53,7 @@ public class EntityManager<E extends Entity> {
 
     protected static final Bson DEFAULT_FILTER = new BsonDocument();
 
-    private static final String KEY_ID = "id";
+    static final String KEY_ID = "id";
 
     private static final ReplaceOptions OPTIONS_REPLACE     = new ReplaceOptions().upsert(true);
     private static final DeleteOptions  OPTIONS_DELETE      = new DeleteOptions();
@@ -556,29 +553,21 @@ public class EntityManager<E extends Entity> {
     // === CHANGE STREAM ===
 
     @Beta
-    public final void watchCollection() {
+    public final void watchWith(@Nonnull EntityWatcher watcher) {
         if(collectionWatched) return;
 
-        collectionWatched = true;
+        watcher.register(this);
 
-        ChangeStreamIterable<BsonDocument> stream = collection().watch(BsonDocument.class)
-                .fullDocument(FullDocument.UPDATE_LOOKUP);
+        this.collectionWatched = true;
+    }
 
-        // listen for changes
+    @Beta
+    final void updateWatched(long id) {
+        if(!collectionWatched) return;
 
-        stream.forEach((Consumer<ChangeStreamDocument<BsonDocument>>) cs -> {
+        LOG.atFiner().log("Updating due to change on %s for ID %s", this.type.getIdentifier(), id);
 
-            BsonDocument document = cs.getFullDocument();
-            if (document == null) return;
-
-            long id = document.getInt64(KEY_ID).longValue();
-
-            LOG.atFiner().log("Updating due to change on %s for ID %s", this.type.getIdentifier(), id);
-
-            //
-
-            update(id);
-        });
+        update(id);
     }
 
     // === MONGO ===
