@@ -8,8 +8,8 @@ package cynoodle.core.base.fm;
 
 import cynoodle.core.Configuration;
 import cynoodle.core.CyNoodle;
-import cynoodle.core.base.command.CommandModule;
-import cynoodle.core.base.command.CommandRegistry;
+import cynoodle.core.base.commands.CommandsModule;
+import cynoodle.core.base.commands.CommandRegistry;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
@@ -22,13 +22,13 @@ import javax.annotation.Nonnull;
  * <code>base:fm</code>
  */
 @MIdentifier("base:fm")
-@MRequires("base:command")
+@MRequires("base:commands")
 public final class FMModule extends Module {
     private FMModule() {}
 
     // ===
 
-    private static final EntityType<FMProperties> TYPE_FM = EntityType.of(FMProperties.class);
+    private static final EntityType<FMPreferences> TYPE_PREFERENCES = EntityType.of(FMPreferences.class);
 
     // ===
 
@@ -36,7 +36,7 @@ public final class FMModule extends Module {
 
     //
 
-    private UEntityManager<FMProperties> fmManager;
+    private UEntityManager<FMPreferences> preferencesManager;
 
     // ===
 
@@ -51,11 +51,11 @@ public final class FMModule extends Module {
 
         //
 
-        fmManager = new UEntityManager<>(TYPE_FM);
+        preferencesManager = new UEntityManager<>(TYPE_PREFERENCES);
 
         //
 
-        CommandRegistry registry = Module.get(CommandModule.class).getRegistry();
+        CommandRegistry registry = Module.get(CommandsModule.class).getRegistry();
 
         registry.register(FMCommand.class);
         registry.register(FMEditCommand.class);
@@ -76,7 +76,7 @@ public final class FMModule extends Module {
     //
 
     @Nonnull
-    public UEntityManager<FMProperties> getFMManager() {
-        return this.fmManager;
+    public UEntityManager<FMPreferences> getPreferencesManager() {
+        return this.preferencesManager;
     }
 }

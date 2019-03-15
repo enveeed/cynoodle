@@ -7,10 +7,8 @@
 package cynoodle.core.base.xp;
 
 import com.google.common.eventbus.Subscribe;
-import cynoodle.core.base.command.CommandModule;
-import cynoodle.core.base.command.CommandRegistry;
-import cynoodle.core.base.condition.ConditionModule;
-import cynoodle.core.base.condition.ConditionRegistry;
+import cynoodle.core.base.commands.CommandRegistry;
+import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
@@ -28,8 +26,7 @@ import java.util.Map;
  * <code>base:xp</code>
  */
 @MIdentifier("base:xp")
-@MRequires("base:command")
-@MRequires("base:condition")
+@MRequires("base:commands")
 public final class XPModule extends Module {
     private XPModule() {}
 
@@ -70,7 +67,7 @@ public final class XPModule extends Module {
 
         //
 
-        CommandRegistry registry = Module.get(CommandModule.class).getRegistry();
+        CommandRegistry registry = Module.get(CommandsModule.class).getRegistry();
 
         registry.register(XPCommand.class);
         registry.register(XPAddCommand.class);
@@ -78,12 +75,6 @@ public final class XPModule extends Module {
         registry.register(XPTransferCommand.class);
         registry.register(LeaderBoardCommand.class);
         registry.register(RanksCommand.class);
-
-        //
-
-        ConditionRegistry conditionRegistry = Module.get(ConditionModule.class).getRegistry();
-
-        conditionRegistry.register(XPCondition.class);
 
         //
 

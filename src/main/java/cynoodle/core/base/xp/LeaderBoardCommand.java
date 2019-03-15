@@ -9,8 +9,8 @@ package cynoodle.core.base.xp;
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.PrimitiveParsers;
-import cynoodle.core.base.command.*;
-import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.commands.*;
+import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.discord.Members;
@@ -22,7 +22,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandErrors.simple;
+import static cynoodle.core.base.commands.CommandErrors.simple;
 
 @CIdentifier("base:xp:lb")
 @CAliases({"leaderboard","lb","toplist","tl","levels","lvls"})
@@ -32,7 +32,7 @@ public final class LeaderBoardCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
         GEntityManager<XPSettings> settingsManager = module.getSettingsManager();

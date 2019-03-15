@@ -6,6 +6,7 @@
 
 package cynoodle.core.discord;
 
+import cynoodle.core.api.text.Parser;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -16,7 +17,7 @@ import javax.annotation.Nullable;
 /**
  * Parser for a {@link Member}.
  */
-public final class MParser {
+public final class MParser implements Parser<DiscordPointer> {
 
     private final DiscordModule discord = Module.get(DiscordModule.class);
 

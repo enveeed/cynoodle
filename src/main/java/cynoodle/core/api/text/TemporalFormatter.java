@@ -6,7 +6,7 @@
 
 package cynoodle.core.api.text;
 
-import cynoodle.core.base.localization.Localization;
+import cynoodle.core.base.local.LocalPreferences;
 
 import javax.annotation.Nonnull;
 import java.time.ZoneId;
@@ -42,7 +42,7 @@ public final class TemporalFormatter {
 
     // ===
 
-    public void apply(@Nonnull Localization localization) {
+    public void apply(@Nonnull LocalPreferences localization) {
         this.formatter.withZone(localization.getTimezone().orElse(DEF_TIMEZONE));
     }
 

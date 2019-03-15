@@ -9,8 +9,8 @@ package cynoodle.core.base.fm;
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.PrimitiveParsers;
-import cynoodle.core.base.command.*;
-import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.commands.*;
+import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
 
@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandErrors.simple;
+import static cynoodle.core.base.commands.CommandErrors.simple;
 
 @CIdentifier("base:fm:edit")
 @CAliases({"fmedit","fme"})
@@ -43,11 +43,11 @@ public final class FMEditCommand extends Command {
     //
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
-        UEntityManager<FMProperties> fmManager = module.getFMManager();
+        UEntityManager<FMPreferences> preferencesManager = module.getPreferencesManager();
 
-        FMProperties fm = fmManager.firstOrCreate(context.getUser());
+        FMPreferences preferences = preferencesManager.firstOrCreate(context.getUser());
 
         //
 
@@ -58,21 +58,21 @@ public final class FMEditCommand extends Command {
             out.append("**last.fm**")
                     .append("\n\n");
 
-            Optional<String> usernameResult = fm.getUsername();
+            Optional<String> usernameResult = preferences.getUsername();
             out.append(formatPropertyListing(
                     "name",
-                    usernameResult.isPresent() ? usernameResult.orElseThrow() : "(not set)",
+                    usernameResult.isPresent() ? usernameResult.orElseThrow() : " - ",
                     "last.fm username"
             ));
 
-            FMFormat format = fm.getPreferredFormat();
+            FMFormat format = preferences.getPreferredFormat();
             out.append(formatPropertyListing(
                     "format",
                     format.getName(),
                     "preferred `!fm` format"
             ));
 
-            boolean profileEnabled = fm.isProfileEnabled();
+            boolean profileEnabled = preferences.isProfileEnabled();
             out.append(formatPropertyListing(
                     "profile",
                     profileEnabled ? "on" : "off",
@@ -99,25 +99,25 @@ public final class FMEditCommand extends Command {
         if(selector.equals("name")) {
 
             if(reset) {
-                fm.setUsername(FMProperties.DEF_USERNAME);
+                preferences.setUsername(FMPreferences.DEF_USERNAME);
                 context.getChannel().sendMessage("**|** last.fm username was reset.").queue();
             }
             else {
                 String username = input.requireParameter(1, "username");
 
-                fm.setUsername(username);
+                preferences.setUsername(username);
 
                 context.getChannel().sendMessage("**|** last.fm username was set to `" + username + "`.").queue();
             }
 
-            fm.persist();
+            preferences.persist();
 
             return;
         }
         else if(selector.equals("format")) {
 
            if(reset) {
-               fm.setPreferredFormat(FMProperties.DEF_PREFERRED_FORMAT);
+               preferences.setPreferredFormat(FMPreferences.DEF_PREFERRED_FORMAT);
                context.getChannel().sendMessage("**|** last.fm preferred format was reset.").queue();
            }
            else {
@@ -137,24 +137,24 @@ public final class FMEditCommand extends Command {
                    return;
                }
 
-               fm.setPreferredFormat(format);
+               preferences.setPreferredFormat(format);
 
                context.getChannel().sendMessage("**|** last.fm preferred format was set to `" + format.getName() + "`.").queue();
            }
 
-            fm.persist();
+            preferences.persist();
 
         }
         else if(selector.equals("profile")) {
 
             if(reset) {
-                fm.setProfileEnabled(FMProperties.DEF_PROFILE_ENABLED);
+                preferences.setProfileEnabled(FMPreferences.DEF_PROFILE_ENABLED);
                 context.getChannel().sendMessage("**|** last.fm profile connection was reset.").queue();
             }
             else {
                 boolean profileEnabled = input.requireParameterAs(1, "profile on / off", PrimitiveParsers.parseBoolean());
 
-                fm.setProfileEnabled(profileEnabled);
+                preferences.setProfileEnabled(profileEnabled);
 
                 if(profileEnabled)
                     context.getChannel().sendMessage("**|** last.fm profile connection was enabled.").queue();
@@ -162,7 +162,7 @@ public final class FMEditCommand extends Command {
                     context.getChannel().sendMessage("**|** last.fm profile connection was disabled.").queue();
             }
 
-            fm.persist();
+            preferences.persist();
 
             return;
         }

@@ -8,8 +8,8 @@ package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.text.PrimitiveParsers;
-import cynoodle.core.base.command.*;
-import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.commands.*;
+import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.discord.Members;
@@ -18,7 +18,7 @@ import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
 
-import static cynoodle.core.base.command.CommandErrors.simple;
+import static cynoodle.core.base.commands.CommandErrors.simple;
 
 @CIdentifier("base:xp:transfer")
 @CAliases({"xpt","xt","transferxp","xptrans","transx"})
@@ -28,12 +28,12 @@ public final class XPTransferCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
 
-        DiscordPointer memberFrom = input.requireParameterAs(0, "member from", Members.parserOf(context)::parse);
-        DiscordPointer memberTo = input.requireParameterAs(1, "member to", Members.parserOf(context)::parse);
+        DiscordPointer memberFrom = input.requireParameterAs(0, "member from", Members.parserOf(context));
+        DiscordPointer memberTo = input.requireParameterAs(1, "member to", Members.parserOf(context));
         long value = input.requireParameterAs(2, "value", PrimitiveParsers.parseLong());
 
         // ===

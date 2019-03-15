@@ -9,14 +9,14 @@ package cynoodle.core;
 import com.google.common.eventbus.EventBus;
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.Snowflake;
-import cynoodle.core.base.ac.ACModule;
-import cynoodle.core.base.command.CommandModule;
-import cynoodle.core.base.condition.ConditionModule;
+import cynoodle.core.base.access.AccessModule;
+import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.base.fm.FMModule;
-import cynoodle.core.base.localization.LocalizationModule;
-import cynoodle.core.base.mm.MakeMeModule;
-import cynoodle.core.base.profile.ProfileModule;
-import cynoodle.core.base.strikes.StrikesModule;
+import cynoodle.core.base.local.LocalModule;
+import cynoodle.core.base.makeme.MakeMeModule;
+import cynoodle.core.base.moderation.ModerationModule;
+import cynoodle.core.base.notifications.NotificationsModule;
+import cynoodle.core.base.profiles.ProfilesModule;
 import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.ModuleClassException;
@@ -76,6 +76,10 @@ public final class CyNoodle {
 
     // TODO replace Guava EventBus with a more specific self-made implementation for cynoodle
     private final EventBus events = new EventBus("cynoodle");
+
+    //
+
+    // private EntityWatcher entityWatcher;
 
     // ======
 
@@ -200,6 +204,11 @@ public final class CyNoodle {
             throw new StartException(ex);
         }
 
+        // === ENTITY WATCHER ===
+
+        // this.entityWatcher = new EntityWatcher();
+        // this.entityWatcher.start();
+
         // ===
 
         this.setupInterruptionHandler();
@@ -230,6 +239,10 @@ public final class CyNoodle {
         // ===
 
         this.events.post(new StopEvent());
+
+        // === ENTITY WATCHER ===
+
+        // this.entityWatcher.close();
 
         // === DISCORD ===
 
@@ -329,16 +342,19 @@ public final class CyNoodle {
      */
     // TODO temporary
     private void registerBaseModules() throws ModuleClassException {
+        // TODO
 
-        this.modules.register(CommandModule.class);         // base:command
-        this.modules.register(LocalizationModule.class);    // base:localization
-        this.modules.register(StrikesModule.class);         // base:strikes
-        this.modules.register(XPModule.class);              // base:xp
-        this.modules.register(FMModule.class);              // base:fm
-        this.modules.register(ProfileModule.class);         // base:profile
-        this.modules.register(ConditionModule.class);       // base:condition
-        this.modules.register(ACModule.class);              // base:ac
-        this.modules.register(MakeMeModule.class);          // base:mm
+        this.modules.register(CommandsModule.class);
+        this.modules.register(NotificationsModule.class);
+        this.modules.register(AccessModule.class);
+        this.modules.register(LocalModule.class);
+
+        this.modules.register(XPModule.class);
+        this.modules.register(FMModule.class);
+        this.modules.register(MakeMeModule.class);
+        this.modules.register(ProfilesModule.class);
+        this.modules.register(ModerationModule.class);
+
     }
 
     // ===

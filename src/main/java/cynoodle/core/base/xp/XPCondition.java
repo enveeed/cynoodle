@@ -6,8 +6,8 @@
 
 package cynoodle.core.base.xp;
 
-import cynoodle.core.base.condition.Condition;
-import cynoodle.core.base.condition.ConditionIdentifier;
+import cynoodle.core.incubating.condition.Condition;
+import cynoodle.core.incubating.condition.ConditionIdentifier;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;

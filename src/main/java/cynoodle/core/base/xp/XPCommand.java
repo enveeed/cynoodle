@@ -8,8 +8,8 @@ package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.text.ProgressFormatter;
-import cynoodle.core.base.command.*;
-import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.commands.*;
+import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
@@ -19,8 +19,8 @@ import cynoodle.core.module.Module;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandErrors.internalError;
-import static cynoodle.core.base.command.CommandErrors.simple;
+import static cynoodle.core.base.commands.CommandErrors.internalError;
+import static cynoodle.core.base.commands.CommandErrors.simple;
 
 @CIdentifier("base:xp:xp")
 @CAliases({"xp", "rank", "r"})
@@ -30,13 +30,13 @@ public final class XPCommand extends Command {
     private final XPModule module = Module.get(XPModule.class);
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
         MEntityManager<XP> xpManager = module.getXPManager();
         GEntityManager<XPSettings> settingsManager = module.getSettingsManager();
         RankManager rankManager = module.getRankManager();
 
-        DiscordPointer member = input.getParameterAs(0, "member", Members.parserOf(context)::parse)
+        DiscordPointer member = input.getParameterAs(0, "member", Members.parserOf(context))
                 .orElse(context.getUserPointer());
 
         // ===

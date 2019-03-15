@@ -6,7 +6,7 @@
 
 package cynoodle.core.discord;
 
-import cynoodle.core.base.command.CommandContext;
+import cynoodle.core.base.commands.CommandContext;
 import net.dv8tion.jda.core.entities.Guild;
 
 import javax.annotation.Nonnull;

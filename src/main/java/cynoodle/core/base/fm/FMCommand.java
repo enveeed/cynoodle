@@ -7,8 +7,8 @@
 package cynoodle.core.base.fm;
 
 import cynoodle.core.api.Strings;
-import cynoodle.core.base.command.*;
-import cynoodle.core.base.localization.LocalizationContext;
+import cynoodle.core.base.commands.*;
+import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.UEntityManager;
 import cynoodle.core.module.Module;
 import de.umass.lastfm.PaginatedResult;
@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Optional;
 
-import static cynoodle.core.base.command.CommandErrors.simple;
+import static cynoodle.core.base.commands.CommandErrors.simple;
 
 @CIdentifier("base:fm:fm")
 @CAliases({"fm","fmi","fminfo"})
@@ -33,20 +33,20 @@ public final class FMCommand extends Command {
     // ===
 
     @Override
-    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalizationContext local) throws Exception {
+    protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
-        UEntityManager<FMProperties> fmManager = module.getFMManager();
-
-        //
-
-        FMProperties fm = fmManager.firstOrCreate(context.getUser());
+        UEntityManager<FMPreferences> preferencesManager = module.getPreferencesManager();
 
         //
 
-        String username = fm.getUsername()
+        FMPreferences preferences = preferencesManager.firstOrCreate(context.getUser());
+
+        //
+
+        String username = preferences.getUsername()
                 .orElseThrow(() -> simple(this, "No username defined."));
 
-        FMFormat format = fm.getPreferredFormat();
+        FMFormat format = preferences.getPreferredFormat();
 
         // === API REQUEST ===
 
