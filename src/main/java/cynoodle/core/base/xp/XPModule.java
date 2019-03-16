@@ -44,6 +44,8 @@ public final class XPModule extends Module {
             "{0} has leveled down to **Level {1}**!");
     final static NotificationType NOTIFICATION_RANK_UP = new NotificationType("base:xp:rank_up",
             "{0} has reached the Rank **{1}**!");
+    final static NotificationType NOTIFICATION_XP_BOMB = new NotificationType("base:xp:bomb",
+            "{0} got an XP Bomb of **{1} XP**!");
 
     // ===
 

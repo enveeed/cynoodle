@@ -7,8 +7,11 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Random;
+import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.discord.DiscordPointer;
+import cynoodle.core.discord.Members;
+import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -68,6 +71,8 @@ final class XPEventHandler {
 
         // === DROP ===
 
+        // TODO not just one XP bomb ...
+
         if(settings.isDropsEnabled()) {
 
             int chance = Random.nextInt(0, 999);
@@ -77,6 +82,11 @@ final class XPEventHandler {
                 long gain = Random.nextLong(2442L, 6556L);
 
                 value = value + gain;
+
+                Module.get(NotificationsModule.class)
+                        .controller().onGuild(guild)
+                        .emit(XPModule.NOTIFICATION_XP_BOMB.create(DiscordPointer.to(event.getChannel()),
+                                Members.formatAt(guild).format(user), Long.toString(gain)));
             }
         }
 
