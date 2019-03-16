@@ -7,10 +7,8 @@
 package cynoodle.core.base.xp;
 
 import com.google.common.flogger.FluentLogger;
-import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.GEntityManager;
-import cynoodle.core.discord.MEntityManager;
-import cynoodle.core.discord.RModifier;
+import cynoodle.core.base.notifications.NotificationsModule;
+import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -30,12 +28,14 @@ public final class XPController {
 
     private final XPModule module = Module.get(XPModule.class);
 
-    private MEntityManager<XP> xpManager
+    private final MEntityManager<XP> xpManager
             = module.getXPManager();
-    private RankManager rankManager
+    private final RankManager rankManager
             = module.getRankManager();
-    private GEntityManager<XPSettings> settingsManager
+    private final GEntityManager<XPSettings> settingsManager
             = module.getSettingsManager();
+
+    private final NotificationsModule notificationsModule = Module.get(NotificationsModule.class);
 
     // ===
 
@@ -138,16 +138,18 @@ public final class XPController {
                 this.applyRanks();
 
                 if(levelPrevious < levelCurrent) {
-
-                    // TODO emmit level-up event / announcement
-
+                    notificationsModule.controller()
+                            .onGuild(this.guild)
+                            .emit(XPModule.NOTIFICATION_LEVEL_UP
+                                    .create(context, Members.formatAt(guild).format(user), String.valueOf(levelCurrent)));
                 } else {
-
-                    // TODO emmit level-down event / announcement
-
+                    notificationsModule.controller()
+                            .onGuild(this.guild)
+                            .emit(XPModule.NOTIFICATION_LEVEL_DOWN
+                                    .create(context, Members.formatAt(guild).format(user), String.valueOf(levelCurrent)));
                 }
 
-                // TODO rank-up event / announcement
+                // TODO rank notifications
             }
         }
 

@@ -9,6 +9,7 @@ package cynoodle.core.base.xp;
 import com.google.common.eventbus.Subscribe;
 import cynoodle.core.base.commands.CommandRegistry;
 import cynoodle.core.base.commands.CommandsModule;
+import cynoodle.core.base.notifications.NotificationType;
 import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
@@ -27,14 +28,22 @@ import java.util.Map;
  */
 @MIdentifier("base:xp")
 @MRequires("base:commands")
+@MRequires("base:notifications")
 public final class XPModule extends Module {
     private XPModule() {}
 
     // ===
 
-    private final static EntityType<XP> TYPE_XP = EntityType.of(XP.class);
-    private final static EntityType<Rank> TYPE_RANK = EntityType.of(Rank.class);
-    private final static EntityType<XPSettings> TYPE_SETTINGS = EntityType.of(XPSettings.class);
+    private final static EntityType<XP> ENTITY_XP = EntityType.of(XP.class);
+    private final static EntityType<Rank> ENTITY_RANK = EntityType.of(Rank.class);
+    private final static EntityType<XPSettings> ENTITY_SETTINGS = EntityType.of(XPSettings.class);
+
+    final static NotificationType NOTIFICATION_LEVEL_UP = new NotificationType("base:xp:level_up",
+            "{0} has reached **Level {1}**!");
+    final static NotificationType NOTIFICATION_LEVEL_DOWN = new NotificationType("base:xp:level_down",
+            "{0} has leveled down to **Level {1}**!");
+    final static NotificationType NOTIFICATION_RANK_UP = new NotificationType("base:xp:rank_up",
+            "{0} has reached the Rank **{1}**!");
 
     // ===
 
@@ -59,9 +68,9 @@ public final class XPModule extends Module {
     protected void start() {
         super.start();
 
-        this.xpManager = new MEntityManager<>(TYPE_XP);
-        this.rankManager = new RankManager(TYPE_RANK);
-        this.settingsManager = new GEntityManager<>(TYPE_SETTINGS);
+        this.xpManager = new MEntityManager<>(ENTITY_XP);
+        this.rankManager = new RankManager(ENTITY_RANK);
+        this.settingsManager = new GEntityManager<>(ENTITY_SETTINGS);
 
         leaderBoardManager = new LeaderBoardManager();
 
