@@ -53,6 +53,12 @@ public final class DiscordPointer {
                 .getAPI().getGuildById(this.id));
     }
 
+    @Nonnull
+    public Optional<TextChannel> asTextChannel() {
+        return Optional.ofNullable(Module.get(DiscordModule.class)
+                .getAPI().getTextChannelById(this.id));
+    }
+
     // ===
 
     @Nonnull
