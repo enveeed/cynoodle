@@ -177,10 +177,10 @@ public abstract class Module implements EventListener {
     // === UTILITIES ===
 
     /**
-     * Register the given listener(s) in the event bus.
-     * @param listeners the listeners to register
+     * Register the given listener in the event bus.
+     * @param listeners the listener to register
      */
-    protected final void registerListeners(@Nonnull EventListener... listeners) {
+    protected final void registerListener(@Nonnull EventListener listeners) {
         this.noodle.getEvents()
                 .register(listeners);
     }
