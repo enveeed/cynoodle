@@ -6,41 +6,19 @@
 
 package cynoodle.core.base.fm;
 
+import cynoodle.core.base.commands.CommandContext;
+import de.umass.lastfm.Track;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+
 import javax.annotation.Nonnull;
 
 /**
  * Formatting options for {@link FMCommand}.
  */
-public enum FMFormat {
-
-    // SIMPLE
-
-    /**
-     * Simple track info, without links or additional metadata.
-     */
-    SIMPLE("simple"),
-
-    /**
-     * Simple track info, with huge cover art.
-     */
-    SIMPLE_COVER("simple-cover"),
-
-    ;
-
-    // ===
-
-    private final String name;
-
-    //
-
-    FMFormat(@Nonnull String name) {
-        this.name = name;
-    }
-
-    //
+public interface FMFormat {
 
     @Nonnull
-    public String getName() {
-        return this.name;
-    }
+    MessageEmbed createEmbed(@Nonnull CommandContext context,
+                             @Nonnull Track track);
+
 }

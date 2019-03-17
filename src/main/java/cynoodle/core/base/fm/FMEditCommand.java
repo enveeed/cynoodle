@@ -65,10 +65,10 @@ public final class FMEditCommand extends Command {
                     "last.fm username"
             ));
 
-            FMFormat format = preferences.getPreferredFormat();
+            Optional<String> formatNameResult = preferences.getFormat();
             out.append(formatPropertyListing(
                     "format",
-                    format.getName(),
+                    formatNameResult.isPresent() ? formatNameResult.orElseThrow() : " - ",
                     "preferred `!fm` format"
             ));
 
@@ -117,29 +117,22 @@ public final class FMEditCommand extends Command {
         else if(selector.equals("format")) {
 
            if(reset) {
-               preferences.setPreferredFormat(FMPreferences.DEF_PREFERRED_FORMAT);
+               preferences.setFormat(FMPreferences.DEF_FORMAT);
                context.getChannel().sendMessage("**|** last.fm preferred format was reset.").queue();
            }
            else {
 
                String formatName = input.requireParameter(1, "format name");
 
-               FMFormat format = null;
-               for (FMFormat test : FMFormat.values()) {
-                   if(test.getName().equals(formatName)) {
-                       format = test;
-                       break;
-                   }
-               }
-
-               if(format == null) {
+               Optional<FMFormat> format = module.getFormatRegistry().find(formatName);
+               if(format.isEmpty()) {
                    context.queueError(CommandErrors.simple(this, "Unknown format: `" + formatName + "`!"));
                    return;
                }
 
-               preferences.setPreferredFormat(format);
+               preferences.setFormat(formatName);
 
-               context.getChannel().sendMessage("**|** last.fm preferred format was set to `" + format.getName() + "`.").queue();
+               context.getChannel().sendMessage("**|** last.fm preferred format was set to `" + formatName + "`.").queue();
            }
 
             preferences.persist();

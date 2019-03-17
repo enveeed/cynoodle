@@ -25,7 +25,7 @@ public final class FMPreferences extends UEntity {
     // ===
 
     public static final String      DEF_USERNAME = null;
-    public static final FMFormat    DEF_PREFERRED_FORMAT = FMFormat.SIMPLE;
+    public static final String      DEF_FORMAT = null;
     public static final boolean     DEF_PROFILE_ENABLED = false;
 
     // ===
@@ -36,9 +36,9 @@ public final class FMPreferences extends UEntity {
     private String username = null;
 
     /**
-     * The preferred format for {@link FMCommand}.
+     * The format name for {@link FMCommand}.
      */
-    private FMFormat preferredFormat = FMFormat.SIMPLE;
+    private String format = null;
 
     /**
      * If the last.fm account should be linked on the profile.
@@ -57,12 +57,12 @@ public final class FMPreferences extends UEntity {
     }
 
     @Nonnull
-    public FMFormat getPreferredFormat() {
-        return this.preferredFormat;
+    public Optional<String> getFormat() {
+        return Optional.ofNullable(this.format);
     }
 
-    public void setPreferredFormat(@Nonnull FMFormat preferredFormat) {
-        this.preferredFormat = preferredFormat;
+    public void setFormat(@Nullable String format) {
+        this.format = format;
     }
 
     public boolean isProfileEnabled() {
@@ -80,8 +80,7 @@ public final class FMPreferences extends UEntity {
         super.fromBson(source);
 
         this.username = source.getAt("username").asStringNullable().or(this.username);
-        this.preferredFormat = source.getAt("format_preferred").asInteger()
-                .map(i -> FMFormat.values()[i]).or(this.preferredFormat);
+        this.format = source.getAt("format").asStringNullable().or(this.format);
         this.profileEnabled = source.getAt("profile").asBoolean().or(this.profileEnabled);
     }
 
@@ -91,7 +90,7 @@ public final class FMPreferences extends UEntity {
         FluentDocument data = super.toBson();
 
         data.setAt("username").asStringNullable().to(this.username);
-        data.setAt("format_preferred").asInteger().map(FMFormat::ordinal).to(this.preferredFormat);
+        data.setAt("format").asStringNullable().to(this.format);
         data.setAt("profile").asBoolean().to(this.profileEnabled);
 
         return data;

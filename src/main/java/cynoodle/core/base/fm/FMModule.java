@@ -38,6 +38,8 @@ public final class FMModule extends Module {
 
     private UEntityManager<FMPreferences> preferencesManager;
 
+    private FMFormatRegistry formatRegistry;
+
     // ===
 
     @Override
@@ -51,7 +53,9 @@ public final class FMModule extends Module {
 
         //
 
-        preferencesManager = new UEntityManager<>(TYPE_PREFERENCES);
+        this.preferencesManager = new UEntityManager<>(TYPE_PREFERENCES);
+
+        this.formatRegistry = new FMFormatRegistry();
 
         //
 
@@ -59,6 +63,11 @@ public final class FMModule extends Module {
 
         registry.register(FMCommand.class);
         registry.register(FMEditCommand.class);
+
+        //
+
+        this.formatRegistry.register("simple", new SimpleFMFormat());
+        this.formatRegistry.register("simple-cover", new SimpleCoverFMFormat());
     }
 
     @Override
@@ -78,5 +87,12 @@ public final class FMModule extends Module {
     @Nonnull
     public UEntityManager<FMPreferences> getPreferencesManager() {
         return this.preferencesManager;
+    }
+
+    //
+
+    @Nonnull
+    public FMFormatRegistry getFormatRegistry() {
+        return this.formatRegistry;
     }
 }

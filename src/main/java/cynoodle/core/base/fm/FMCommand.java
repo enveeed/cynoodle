@@ -6,7 +6,6 @@
 
 package cynoodle.core.base.fm;
 
-import cynoodle.core.api.Strings;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.UEntityManager;
@@ -14,11 +13,9 @@ import cynoodle.core.module.Module;
 import de.umass.lastfm.PaginatedResult;
 import de.umass.lastfm.Track;
 import de.umass.lastfm.User;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.Optional;
 
 import static cynoodle.core.base.commands.CommandErrors.simple;
@@ -27,6 +24,8 @@ import static cynoodle.core.base.commands.CommandErrors.simple;
 @CAliases({"fm","fmi","fminfo"})
 public final class FMCommand extends Command {
     private FMCommand() {}
+
+    private static final String FALLBACK_FORMAT = "simple";
 
     private final FMModule module = Module.get(FMModule.class);
 
@@ -41,12 +40,25 @@ public final class FMCommand extends Command {
 
         FMPreferences preferences = preferencesManager.firstOrCreate(context.getUser());
 
-        //
+        // USERNAME
 
         String username = preferences.getUsername()
                 .orElseThrow(() -> simple(this, "No username defined."));
 
-        FMFormat format = preferences.getPreferredFormat();
+        // FORMAT
+
+        String preferredFormatName = preferences.getFormat()
+                .orElse(FALLBACK_FORMAT);
+
+        String formatName = input.getParameter(0)
+                .orElse(preferredFormatName);
+
+        //
+
+        Optional<FMFormat> formatResult = module.getFormatRegistry()
+                .find(formatName);
+
+        FMFormat format = formatResult.orElseThrow(() -> simple(this, "No such format: `" + formatName + "`"));
 
         // === API REQUEST ===
 
@@ -60,55 +72,8 @@ public final class FMCommand extends Command {
 
         // === DISPLAY ===
 
-        MessageEmbed embed = createEmbed(track, format);
+        MessageEmbed embed = format.createEmbed(context, track);
 
         context.getChannel().sendMessage(embed).queue();
-    }
-
-    // ===
-
-    @Nonnull
-    private static MessageEmbed createEmbed(@Nonnull Track track, @Nonnull FMFormat format) {
-        if(format == FMFormat.SIMPLE) return createEmbedSimple(track, false);
-        else if(format == FMFormat.SIMPLE_COVER) return createEmbedSimple(track, true);
-        else throw new IllegalStateException("Unknown format!");
-    }
-
-    //
-
-    @Nonnull
-    private static MessageEmbed createEmbedSimple(@Nonnull Track track, boolean cover) {
-
-        EmbedBuilder eOut = new EmbedBuilder();
-
-        // === META ===
-
-        int spacing = 70;
-
-        String description = String.format("**%s**\n\n%s\n%s",
-                Strings.box(track.getName(), spacing, Strings.NON_BREAKING_WHITESPACE),
-                Strings.box(track.getArtist(), spacing, Strings.NON_BREAKING_WHITESPACE),
-                Strings.box(track.getAlbum(), spacing, Strings.NON_BREAKING_WHITESPACE));
-
-        eOut.setDescription(description);
-
-        // === IMAGE ===
-
-        Optional<String> url = FMUtil.findImageLargest(track);
-
-        if(url.isPresent()) {
-            if(cover) eOut.setImage(url.orElseThrow());
-            else eOut.setThumbnail(url.orElseThrow());
-        }
-
-        // === COLOR ===
-
-        Optional<Color> color = FMUtil.findColor(track);
-
-        if(color.isPresent()) eOut.setColor(color.orElseThrow());
-
-        //
-
-        return eOut.build();
     }
 }
