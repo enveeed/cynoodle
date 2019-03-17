@@ -29,6 +29,8 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
+import org.bson.BsonString;
+import org.bson.BsonValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -199,8 +201,8 @@ public final class Profile extends UEntity {
 
         this.text = source.getAt("text").asStringNullable().or(this.text);
         this.birthday = source.getAt("birthday").asNullable(toLocalDate()).or(this.birthday);
-        this.pronouns = source.getAt("pronouns").asIntegerNullable()
-                .map(i -> i == null ? null : Pronouns.values()[i]).or(this.pronouns); // TODO improve nullable support in FluentDocument to avoid this
+        this.pronouns = source.getAt("pronouns")
+                .asNullable(value -> Pronouns.find(value.asString().getValue()).orElse(null)).or(this.pronouns);
         this.image = source.getAt("image").asStringNullable().or(this.image);
         this.website = source.getAt("website").asStringNullable().or(this.website);
 
@@ -217,8 +219,8 @@ public final class Profile extends UEntity {
 
         data.setAt("text").asStringNullable().to(this.text);
         data.setAt("birthday").asNullable(fromLocalDate()).to(this.birthday);
-        data.setAt("pronouns").asIntegerNullable().map((Function<Pronouns, Integer>)
-                pronouns -> pronouns == null ? null : pronouns.ordinal()).to(this.pronouns); // TODO improve nullable support in FluentDocument to avoid this
+        data.setAt("pronouns")
+                .asNullable((Function<Pronouns, BsonValue>) pronouns -> new BsonString(pronouns.key())).to(this.pronouns);
         data.setAt("image").asStringNullable().to(this.image);
         data.setAt("website").asStringNullable().to(this.website);
 
