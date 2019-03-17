@@ -7,6 +7,7 @@
 package cynoodle.core.base.xp;
 
 import com.google.common.flogger.FluentLogger;
+import cynoodle.core.api.Random;
 import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
@@ -18,6 +19,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class XPController {
@@ -34,6 +36,8 @@ public final class XPController {
             = module.getRankManager();
     private final GEntityManager<XPSettings> settingsManager
             = module.getSettingsManager();
+    private final Map<DiscordPointer, XPStatus> statusManager
+            = module.status;
 
     private final NotificationsModule notificationsModule = Module.get(NotificationsModule.class);
 
@@ -88,6 +92,55 @@ public final class XPController {
             XP xp = module.getXPManager().firstOrCreate(guild, user);
 
             return xp.get();
+        }
+
+        // ===
+
+        public void gain(@Nullable DiscordPointer context) {
+
+            XPSettings settings     = settingsManager.firstOrCreate(this.guild);
+            XPStatus status         = statusManager.computeIfAbsent(guild, XPStatus::new);
+
+            //
+
+            long value = 0L;
+
+            // === GAIN ===
+
+            if(!status.isInTimeout(user)) {
+                status.updateLastGain(user);
+
+                long gain = Random.nextLong(settings.getGainMin(), settings.getGainMax());
+
+                value = value + gain;
+            }
+
+            // === DROP ===
+
+            // TODO not just one XP bomb ...
+
+            if(settings.isDropsEnabled()) {
+
+                int chance = Random.nextInt(0, 999);
+
+                if(chance == 0) {
+
+                    long gain = Random.nextLong(2442L, 6556L);
+
+                    value = value + gain;
+
+                    Module.get(NotificationsModule.class)
+                            .controller().onGuild(guild)
+                            .emit(XPModule.NOTIFICATION_XP_BOMB.create(context,
+                                    Members.formatAt(guild).format(user), Long.toString(gain)));
+                }
+            }
+
+            // === FINALIZE ===
+
+            if(value == 0L) return; // ignore if nothing was added
+
+            modify(value, context);
         }
 
         // ===
