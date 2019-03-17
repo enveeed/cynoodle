@@ -133,7 +133,7 @@ public final class Profile extends UEntity {
         return Optional.ofNullable(this.pronouns);
     }
 
-    public void setGender(@Nullable Pronouns pronouns) {
+    public void setPronouns(@Nullable Pronouns pronouns) {
         this.pronouns = pronouns;
     }
 

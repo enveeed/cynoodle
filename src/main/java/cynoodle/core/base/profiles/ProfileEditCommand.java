@@ -19,12 +19,22 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static cynoodle.core.base.commands.CommandErrors.simple;
+
 @CIdentifier("base:profile:edit")
 @CAliases({"profileedit", "pedit", "pe"})
 public final class ProfileEditCommand extends Command {
-    private ProfileEditCommand() {}
+    private ProfileEditCommand() {
+    }
 
     private final static Options.Option OPT_RESET = Options.newFlagOption("reset", 'r');
+
+    private static final String[] VALUES_PRONOUNS_MASCULINE
+            = new String[]{"masculine", "male", "m", "he", "him", "his", "he/him"};
+    private static final String[] VALUES_PRONOUNS_FEMININE
+            = new String[]{"feminine", "female", "f", "she", "her", "she/her"};
+    private static final String[] VALUES_PRONOUNS_INDEFINITE
+            = new String[]{"indefinite", "x", "o", "other", "they", "them", "they/them"};
 
     // ===
 
@@ -48,7 +58,7 @@ public final class ProfileEditCommand extends Command {
 
         //
 
-        if(!input.hasParameter(0)) {
+        if (!input.hasParameter(0)) {
 
             StringBuilder out = new StringBuilder();
 
@@ -125,8 +135,8 @@ public final class ProfileEditCommand extends Command {
         boolean reset = input.hasOption(OPT_RESET);
         String property = input.requireParameter(0, "property");
 
-        if(property.equals("text")) {
-            if(reset) {
+        if (property.equals("text")) {
+            if (reset) {
                 profile.setText(null);
                 context.queueReply("**|** Your profile text was reset.");
             } else {
@@ -135,12 +145,28 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your profile text was set.");
             }
             profile.persist();
-        } else if(property.equals("birthday")) {
+        } else if (property.equals("birthday")) {
             // TODO
-        } else if(property.equals("pronouns")) {
-            // TODO
-        } else if(property.equals("image")) {
-            if(reset) {
+        } else if (property.equals("pronouns")) {
+            if (reset) {
+                profile.setPronouns(null);
+                context.queueReply("**|** Your pronouns were reset.");
+            } else {
+                String pronounsIn = input.requireParameter(1, "pronouns");
+                Pronouns pronouns = null;
+                for (String test : VALUES_PRONOUNS_MASCULINE)
+                    if (test.equalsIgnoreCase(pronounsIn) && pronouns == null) pronouns = Pronouns.MASCULINE;
+                for (String test : VALUES_PRONOUNS_FEMININE)
+                    if (test.equalsIgnoreCase(pronounsIn) && pronouns == null) pronouns = Pronouns.FEMININE;
+                for (String test : VALUES_PRONOUNS_INDEFINITE)
+                    if (test.equalsIgnoreCase(pronounsIn) && pronouns == null) pronouns = Pronouns.INDEFINITE;
+                if(pronouns == null) throw simple(this, "Could not find any matching pronouns for `" + pronounsIn + "`!");
+                profile.setPronouns(pronouns);
+                context.queueReply("**|** Your pronouns were set.");
+            }
+            profile.persist();
+        } else if (property.equals("image")) {
+            if (reset) {
                 profile.setImage(null);
                 context.queueReply("**|** Your profile image was reset.");
             } else {
@@ -150,8 +176,8 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your profile image was set.");
             }
             profile.persist();
-        } else if(property.equals("website")) {
-            if(reset) {
+        } else if (property.equals("website")) {
+            if (reset) {
                 profile.setWebsite(null);
                 context.queueReply("**|** Your website was reset.");
             } else {
@@ -161,8 +187,8 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your website was set.");
             }
             profile.persist();
-        } else if(property.equals("instagram")) {
-            if(reset) {
+        } else if (property.equals("instagram")) {
+            if (reset) {
                 profile.setLinkedInstagram(null);
                 context.queueReply("**|** Your linked Instagram account was reset.");
             } else {
@@ -172,8 +198,8 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your linked Instagram account was set.");
             }
             profile.persist();
-        } else if(property.equals("snapchat")) {
-            if(reset) {
+        } else if (property.equals("snapchat")) {
+            if (reset) {
                 profile.setLinkedSnapchat(null);
                 context.queueReply("**|** Your linked Snapchat account was reset.");
             } else {
@@ -183,8 +209,8 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your linked Snapchat account was set.");
             }
             profile.persist();
-        } else if(property.equals("deviantart")) {
-            if(reset) {
+        } else if (property.equals("deviantart")) {
+            if (reset) {
                 profile.setLinkedDeviantArt(null);
                 context.queueReply("**|** Your linked DeviantArt account was reset.");
             } else {
@@ -194,8 +220,8 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your linked DeviantArt account was set.");
             }
             profile.persist();
-        } else if(property.equals("github")) {
-            if(reset) {
+        } else if (property.equals("github")) {
+            if (reset) {
                 profile.setLinkedGitHub(null);
                 context.queueReply("**|** Your linked GitHub account was reset.");
             } else {
@@ -205,7 +231,7 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your linked GitHub account was set.");
             }
             profile.persist();
-        } else throw CommandErrors.simple(this, "Unknown property `" + property + "`.");
+        } else throw simple(this, "Unknown property `" + property + "`.");
 
     }
 
