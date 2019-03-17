@@ -76,7 +76,8 @@ public final class MakeMeCommand extends Command {
 
             if(otherMMs.size() > 0) {
 
-                out.append("**Other**").append("\n\n");
+                if(groups.size() > 0) out.append("**Other**"); // only display "other" if there were groups
+                out.append("\n\n");
 
                 for (MakeMe mm : otherMMs) {
 
