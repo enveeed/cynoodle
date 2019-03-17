@@ -32,6 +32,8 @@ public final class LaunchSettings {
 
     private boolean noPermissions;
 
+    private boolean setupTest;
+
     // ===
 
     private LaunchSettings(@Nonnull Parameters startParameters, @Nonnull Collector collector) {
@@ -39,6 +41,7 @@ public final class LaunchSettings {
 
         this.logLevel = collector.logLevel;
         this.noPermissions = collector.noPermissions;
+        this.setupTest = collector.setupTest;
     }
 
     // ===
@@ -58,6 +61,10 @@ public final class LaunchSettings {
         return noPermissions;
     }
 
+    public boolean isSetupTestEnabled() {
+        return this.setupTest;
+    }
+
     // ===
 
     private static final class Collector {
@@ -67,6 +74,7 @@ public final class LaunchSettings {
 
         int logLevel = Level.INFO.intValue();
         boolean noPermissions = false;
+        boolean setupTest = false;
 
     }
 
@@ -77,6 +85,9 @@ public final class LaunchSettings {
 
     private static final Options.Option OPT_NO_PERMISSIONS
             = Options.newFlagOption("no-permissions",null);
+
+    private static final Options.Option OPT_SETUP_TEST
+            = Options.newFlagOption("setup-test",null);
 
     //
 
@@ -89,7 +100,7 @@ public final class LaunchSettings {
         //
 
         Options options = Options.newBuilder()
-                .addOptions(OPT_LOG_LEVEL, OPT_NO_PERMISSIONS)
+                .addOptions(OPT_LOG_LEVEL, OPT_NO_PERMISSIONS, OPT_SETUP_TEST)
                 .build();
 
         //
@@ -101,6 +112,7 @@ public final class LaunchSettings {
         }
 
         collector.noPermissions = result.hasOption(OPT_NO_PERMISSIONS);
+        collector.setupTest = result.hasOption(OPT_SETUP_TEST);
 
         //
 
