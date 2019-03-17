@@ -16,7 +16,7 @@ import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.entities.EIndex;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
-import cynoodle.core.mongo.Bsonable;
+import cynoodle.core.mongo.IBson;
 import cynoodle.core.mongo.fluent.FluentArray;
 import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.conversions.Bson;
@@ -256,7 +256,7 @@ public final class Rank extends GEntity implements Comparable<Rank> {
 
     // ===
 
-    public static final class Role implements Bsonable {
+    public static final class Role implements IBson {
 
         /**
          * The role.

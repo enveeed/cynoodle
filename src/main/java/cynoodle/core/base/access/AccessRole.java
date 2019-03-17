@@ -8,7 +8,7 @@ package cynoodle.core.base.access;
 
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.mongo.BsonDataException;
-import cynoodle.core.mongo.Bsonable;
+import cynoodle.core.mongo.IBson;
 import cynoodle.core.mongo.fluent.FluentArray;
 import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.BsonValue;
@@ -22,7 +22,7 @@ import java.util.function.Function;
  * Access control properties for a single Role of a Guild.
  * @see AccessControl
  */
-public final class AccessRole implements Bsonable {
+public final class AccessRole implements IBson {
     private AccessRole() {}
 
     // ===

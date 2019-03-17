@@ -11,7 +11,7 @@ import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
-import cynoodle.core.mongo.Bsonable;
+import cynoodle.core.mongo.IBson;
 import cynoodle.core.mongo.fluent.FluentArray;
 import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.BsonArray;
@@ -86,7 +86,7 @@ public final class CommandSettings extends GEntity {
     /**
      * Properties for a single command.
      */
-    public final class Properties implements Bsonable {
+    public final class Properties implements IBson {
 
         private Properties() {}
 

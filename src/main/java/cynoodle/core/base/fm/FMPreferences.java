@@ -73,7 +73,7 @@ public final class FMPreferences extends UEntity {
         this.profileEnabled = profileEnabled;
     }
 
-// ===
+    // ===
 
     @Override
     public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {

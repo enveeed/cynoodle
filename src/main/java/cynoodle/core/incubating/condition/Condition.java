@@ -8,7 +8,7 @@ package cynoodle.core.incubating.condition;
 
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.mongo.BsonDataException;
-import cynoodle.core.mongo.Bsonable;
+import cynoodle.core.mongo.IBson;
 import cynoodle.core.mongo.fluent.FluentDocument;
 
 import javax.annotation.Nonnull;
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
  * which can be embedded into {@link cynoodle.core.entities.Entity Entities}.
  * Condition instances must be created via {@link ConditionType}.
  */
-public abstract class Condition implements Bsonable {
+public abstract class Condition implements IBson {
     protected Condition() {}
 
     static final String KEY_TYPE = "type";

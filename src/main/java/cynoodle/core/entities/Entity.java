@@ -7,7 +7,7 @@
 package cynoodle.core.entities;
 
 import cynoodle.core.api.Snowflake;
-import cynoodle.core.mongo.Bsonable;
+import cynoodle.core.mongo.IBson;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 /**
  * An Entity, a persistent (on MongoDB), uniquely identified (via snowflakes) and cached data object.
  */
-public abstract class Entity implements Bsonable {
+public abstract class Entity implements IBson {
 
     private EntityManager<?> manager;
     private long id;

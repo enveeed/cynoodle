@@ -11,10 +11,9 @@ import cynoodle.core.mongo.fluent.FluentDocument;
 import javax.annotation.Nonnull;
 
 /**
- * Types implementing this interface have the ability to output their state
- * as MongoDB BSON or update it from MongoDB BSON.
+ * Bson conversion interface.
  */
-public interface Bsonable {
+public interface IBson {
 
     /**
      * Update the state of this object with the state given as BSON.
