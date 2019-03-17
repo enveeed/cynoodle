@@ -83,6 +83,8 @@ public final class XPModule extends Module {
         registry.register(LeaderBoardCommand.class);
         registry.register(RanksCommand.class);
         registry.register(XPInfoCommand.class);
+        registry.register(ForXPCommand.class);
+        registry.register(ForLevelCommand.class);
 
         //
 
