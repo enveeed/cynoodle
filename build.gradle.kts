@@ -90,10 +90,12 @@ dependencies {
     implementation(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.1-beta6")
     implementation(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.1-beta6")
 
-    // base:fm
-
     implementation(group = "de.u-mass",                     name = "lastfm-java",               version = "0.1.2") // Last FM API wrapper (TODO replace with own wrapper)
-    
+
+    // GraphQL
+
+    implementation(group = "com.graphql-java",              name = "graphql-java",              version = "12.0")
+
     // Unit Testing
 
     testImplementation( group = "org.junit.jupiter", name = "junit-jupiter-api",    version = "5.3.2") // JUnit API
