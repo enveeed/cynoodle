@@ -21,7 +21,13 @@ import java.util.stream.Collectors;
 public final class MakeMeCommand extends Command {
     private MakeMeCommand() {}
 
+    private final static String SEPARATOR = Strings.chain(Strings.NON_BREAKING_WHITESPACE, 6);
+
+    // ===
+
     private final MakeMeModule module = Module.get(MakeMeModule.class);
+
+    // ===
 
     @Override
     protected void run(@Nonnull CommandContext context,
@@ -37,12 +43,15 @@ public final class MakeMeCommand extends Command {
 
             StringBuilder out = new StringBuilder();
 
+
+
             //
 
             for (MakeMeGroup group : groups) {
 
                 out.append("**").append(group.getName()).append("**")
-                        .append(" `").append(group.getKey()).append("`")
+                        .append(SEPARATOR)
+                        .append("`").append(group.getKey()).append("`")
                         .append("\n\n");
 
                 List<MakeMe> members = controller.allByGroup(group)
