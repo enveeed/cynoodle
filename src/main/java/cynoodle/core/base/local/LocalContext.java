@@ -85,10 +85,9 @@ public final class LocalContext {
     @Nonnull
     public String formatDate(@Nonnull TemporalAccessor time) {
         ZoneId val = getTimezone();
-        String out = FORMATTER_DATE.withZone(val)
+        return FORMATTER_DATE.withZone(val)
                 .format(time);
-        out = out + " " + val.getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-        return out;
+        // timezone is not really needed for a date only but maybe make this settable
     }
 
     @Nonnull
