@@ -6,18 +6,11 @@
 
 package cynoodle.core.base.profiles;
 
-import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.fm.FMPreferences;
 import cynoodle.core.base.local.LocalModule;
 import cynoodle.core.base.local.LocalPreferences;
-import cynoodle.core.base.moderation.ModerationModule;
-import cynoodle.core.base.moderation.Strike;
-import cynoodle.core.base.xp.LeaderBoard;
-import cynoodle.core.base.xp.XP;
-import cynoodle.core.base.xp.XPFormula;
-import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.UEntity;
 import cynoodle.core.entities.EIdentifier;
@@ -42,12 +35,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static cynoodle.core.mongo.fluent.FluentValues.fromLocalDate;
 import static cynoodle.core.mongo.fluent.FluentValues.toLocalDate;
@@ -433,6 +423,7 @@ public final class Profile extends UEntity {
 
         // === RIGHT ===
 
+        /*
         StringBuilder rightOut = new StringBuilder();
 
         // XP
@@ -488,7 +479,7 @@ public final class Profile extends UEntity {
 
         if(rightOut.length() > 0) {
             out.addField("Local", rightOut.toString(), true);
-        }
+        }*/
 
         // === IMAGE ===
 
