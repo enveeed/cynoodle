@@ -8,12 +8,12 @@ package cynoodle.core.base.profiles;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
-import cynoodle.core.base.fm.FMPreferences;
 import cynoodle.core.base.fm.FMModule;
-import cynoodle.core.base.local.LocalPreferences;
+import cynoodle.core.base.fm.FMPreferences;
 import cynoodle.core.base.local.LocalModule;
-import cynoodle.core.base.moderation.Strike;
+import cynoodle.core.base.local.LocalPreferences;
 import cynoodle.core.base.moderation.ModerationModule;
+import cynoodle.core.base.moderation.Strike;
 import cynoodle.core.base.xp.LeaderBoard;
 import cynoodle.core.base.xp.XP;
 import cynoodle.core.base.xp.XPFormula;
@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static cynoodle.core.mongo.fluent.FluentValues.fromLocalDate;
@@ -69,9 +70,9 @@ public final class Profile extends UEntity {
     private LocalDate birthday = null;
 
     /**
-     * The gender.
+     * The pronouns.
      */
-    private Gender gender = null;
+    private Pronouns pronouns = null;
 
     /**
      * Image URL for the profile image.
@@ -126,12 +127,12 @@ public final class Profile extends UEntity {
     }
 
     @Nonnull
-    public Optional<Gender> getGender() {
-        return Optional.ofNullable(this.gender);
+    public Optional<Pronouns> getPronouns() {
+        return Optional.ofNullable(this.pronouns);
     }
 
-    public void setGender(@Nullable Gender gender) {
-        this.gender = gender;
+    public void setGender(@Nullable Pronouns pronouns) {
+        this.pronouns = pronouns;
     }
 
     @Nonnull
@@ -198,7 +199,8 @@ public final class Profile extends UEntity {
 
         this.text = source.getAt("text").asStringNullable().or(this.text);
         this.birthday = source.getAt("birthday").asNullable(toLocalDate()).or(this.birthday);
-        this.gender = source.getAt("gender").asNullable(Gender.fromBson()).or(this.gender);
+        this.pronouns = source.getAt("pronouns").asIntegerNullable()
+                .map(i -> i == null ? null : Pronouns.values()[i]).or(this.pronouns); // TODO improve nullable support in FluentDocument to avoid this
         this.image = source.getAt("image").asStringNullable().or(this.image);
         this.website = source.getAt("website").asStringNullable().or(this.website);
 
@@ -215,7 +217,8 @@ public final class Profile extends UEntity {
 
         data.setAt("text").asStringNullable().to(this.text);
         data.setAt("birthday").asNullable(fromLocalDate()).to(this.birthday);
-        data.setAt("gender").asNullable(Gender.toBson()).to(this.gender);
+        data.setAt("pronouns").asIntegerNullable().map((Function<Pronouns, Integer>)
+                pronouns -> pronouns == null ? null : pronouns.ordinal()).to(this.pronouns); // TODO improve nullable support in FluentDocument to avoid this
         data.setAt("image").asStringNullable().to(this.image);
         data.setAt("website").asStringNullable().to(this.website);
 
@@ -322,22 +325,21 @@ public final class Profile extends UEntity {
                 personalOut.append(EMBED_SEPARATOR).append("\uD83C\uDF82"); // the cake is a lie.
         }
 
-        // GENDER / ADDRESS AS
+        // PRONOUNS
 
-        Optional<Gender> genderResult = this.getGender();
-        if(genderResult.isPresent()) {
+        Optional<Pronouns> pronounsResult = this.getPronouns();
+        if(pronounsResult.isPresent()) {
 
-            String genderOut;
+            String pronounsOut;
 
-            Gender gender = genderResult.orElseThrow();
-            Gender.Pronouns pronouns = gender.getPronouns();
+            Pronouns pronouns = pronounsResult.orElseThrow();
 
-            if(pronouns == Gender.Pronouns.MASCULINE) genderOut = "he / him";
-            else if(pronouns == Gender.Pronouns.FEMININE) genderOut = "she / her";
-            else if(pronouns == Gender.Pronouns.INDEFINITE) genderOut = "they / them";
-            else throw new IllegalStateException("Illegal Gender.Pronouns: " + pronouns);
+            if(pronouns == Pronouns.MASCULINE) pronounsOut = "he / him";
+            else if(pronouns == Pronouns.FEMININE) pronounsOut = "she / her";
+            else if(pronouns == Pronouns.INDEFINITE) pronounsOut = "they / them";
+            else throw new IllegalStateException("Invalid Pronouns: " + pronouns);
 
-            personalOut.append(" **|** ").append(genderOut);
+            personalOut.append(" **|** ").append(pronounsOut);
         }
 
         // TIME

@@ -64,14 +64,14 @@ public final class ProfileEditCommand extends Command {
             Optional<LocalDate> birthdayResult = profile.getBirthday();
             out.append(formatPropertyListing(
                     "birthday",
-                    birthdayResult.isPresent() ? local.formatDate(birthdayResult.orElseThrow()) : " - ", // TODO format birthday
+                    birthdayResult.isPresent() ? local.formatDate(birthdayResult.orElseThrow()) : " - ",
                     "Birthday"));
 
-            Optional<Gender> genderResult = profile.getGender();
+            Optional<Pronouns> pronounsResult = profile.getPronouns();
             out.append(formatPropertyListing(
-                    "gender",
-                    genderResult.isPresent() ? "(gender / pronouns are set)" : " - ", // TODO format gender
-                    "Preferred pronouns / gender"));
+                    "pronouns",
+                    pronounsResult.isPresent() ? "(pronouns are set)" : " - ", // TODO format gender
+                    "Pronouns"));
 
             Optional<String> imageResult = profile.getImage();
             out.append(formatPropertyListing(
@@ -137,7 +137,7 @@ public final class ProfileEditCommand extends Command {
             profile.persist();
         } else if(property.equals("birthday")) {
             // TODO
-        } else if(property.equals("gender")) {
+        } else if(property.equals("pronouns")) {
             // TODO
         } else if(property.equals("image")) {
             if(reset) {

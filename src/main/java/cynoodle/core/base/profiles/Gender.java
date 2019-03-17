@@ -17,7 +17,11 @@ import java.util.function.Function;
 /**
  * A gender.
  * Supports any term combined with an option for preferred pronouns.
+ *
+ * @deprecated This was supposed to be used for profiles, but now {@link cynoodle.core.base.profiles.Pronouns}
+ *  are used instead now. This may be useful for the future, that's why its still here.
  */
+@Deprecated
 public final class Gender {
 
     private final String name;
