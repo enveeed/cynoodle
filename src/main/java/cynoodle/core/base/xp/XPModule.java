@@ -6,11 +6,9 @@
 
 package cynoodle.core.base.xp;
 
-import cynoodle.core.CyNoodle;
 import cynoodle.core.base.commands.CommandRegistry;
 import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.base.notifications.NotificationType;
-import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
@@ -19,8 +17,6 @@ import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <code>base:xp</code>
@@ -56,8 +52,7 @@ public final class XPModule extends Module {
 
     private LeaderBoardManager leaderBoardManager;
 
-    // TODO replace with cache
-    final Map<DiscordPointer, XPStatus> status = new HashMap<>();
+    private XPStatusManager xpStatusManager;
 
     //
 
@@ -94,6 +89,8 @@ public final class XPModule extends Module {
         this.rankManager.ensureIndexes();
         this.settingsManager.ensureIndexes();
 
+        this.xpStatusManager = new XPStatusManager();
+
         //
 
         this.controller = new XPController();
@@ -102,9 +99,9 @@ public final class XPModule extends Module {
 
         this.handler = new XPEventHandler();
 
-        CyNoodle.get()
-                .getEvents()
-                .register(this.handler);
+        //
+
+        this.registerListener(this.handler);
 
     }
 
@@ -143,6 +140,13 @@ public final class XPModule extends Module {
     @Nonnull
     public LeaderBoardManager getLeaderBoardManager() {
         return this.leaderBoardManager;
+    }
+
+    //
+
+    @Nonnull
+    public XPStatusManager getXPStatusManager() {
+        return this.xpStatusManager;
     }
 
     //

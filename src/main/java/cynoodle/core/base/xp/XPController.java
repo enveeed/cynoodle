@@ -19,7 +19,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class XPController {
@@ -36,8 +35,8 @@ public final class XPController {
             = module.getRankManager();
     private final GEntityManager<XPSettings> settingsManager
             = module.getSettingsManager();
-    private final Map<DiscordPointer, XPStatus> statusManager
-            = module.status;
+    private final XPStatusManager statusManager
+            = module.getXPStatusManager();
 
     private final NotificationsModule notificationsModule = Module.get(NotificationsModule.class);
 
@@ -99,7 +98,7 @@ public final class XPController {
         public void gain(@Nullable DiscordPointer context) {
 
             XPSettings settings     = settingsManager.firstOrCreate(this.guild);
-            XPStatus status         = statusManager.computeIfAbsent(guild, XPStatus::new);
+            XPStatus status         = statusManager.get(this.guild);
 
             //
 
