@@ -19,10 +19,12 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Fluent controller for {@link MakeMe} assignment.
@@ -114,13 +116,21 @@ public final class MakeMeController {
         //
 
         @Nonnull
-        public Set<MakeMe> all() {
-            return makeMeManager.stream(this.guild).collect(Collectors.toSet());
+        public Stream<MakeMe> allByGroup(@Nullable MakeMeGroup group) {
+            if(group == null) return makeMeManager.stream(this.guild, MakeMe.filterGroup(null));
+            else return makeMeManager.stream(this.guild, MakeMe.filterGroup(group));
+        }
+
+        //
+
+        @Nonnull
+        public Stream<MakeMe> all() {
+            return makeMeManager.stream(this.guild);
         }
 
         @Nonnull
-        public Set<MakeMeGroup> allGroups() {
-            return groupManager.stream(this.guild).collect(Collectors.toSet());
+        public Stream<MakeMeGroup> allGroups() {
+            return groupManager.stream(this.guild);
         }
     }
 
@@ -161,6 +171,8 @@ public final class MakeMeController {
 
             status.add(mm);
             status.persist();
+
+            //
 
             this.apply();
         }

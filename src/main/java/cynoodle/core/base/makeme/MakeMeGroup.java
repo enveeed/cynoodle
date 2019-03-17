@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 /**
  * A make-me group is a collection of {@link MakeMe make-me}.
  */
-@EIdentifier("base:mm:group")
+@EIdentifier("base:makeme:group")
 @EIndex(MakeMeGroup.KEY_KEY)
 public final class MakeMeGroup extends GEntity {
     private MakeMeGroup() {}

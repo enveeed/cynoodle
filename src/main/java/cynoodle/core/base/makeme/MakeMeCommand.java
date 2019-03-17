@@ -6,13 +6,17 @@
 
 package cynoodle.core.base.makeme;
 
+import cynoodle.core.api.Strings;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@CIdentifier("base:mm:mm")
+@CIdentifier("base:makeme:makeme")
 @CAliases({"makeme","mm"})
 public final class MakeMeCommand extends Command {
     private MakeMeCommand() {}
@@ -23,6 +27,72 @@ public final class MakeMeCommand extends Command {
     protected void run(@Nonnull CommandContext context,
                        @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
+        if(!input.hasParameter(0)) {
+
+            MakeMeController.OnGuild controller = module.controller().onGuild(context.getGuildPointer());
+
+            List<MakeMeGroup> groups = controller.allGroups()
+                    .sorted(Comparator.comparing(MakeMeGroup::getName))
+                    .collect(Collectors.toList());
+
+            StringBuilder out = new StringBuilder();
+
+            //
+
+            for (MakeMeGroup group : groups) {
+
+                out.append("**").append(group.getName()).append("**")
+                        .append(" `").append(group.getKey()).append("`")
+                        .append("\n\n");
+
+                List<MakeMe> members = controller.allByGroup(group)
+                        .sorted(Comparator.comparing(MakeMe::getName))
+                        .collect(Collectors.toList());
+
+                for (MakeMe mm : members) {
+
+                    out.append("`\u200b ")
+                            .append(Strings.box(mm.getKey(), 20))
+                            .append(" \u200b` **|** ")
+                            .append(mm.getName())
+                            .append("\n");
+                }
+
+                out.append("\n");
+            }
+
+            List<MakeMe> otherMMs = controller.allByGroup(null)
+                    .sorted(Comparator.comparing(MakeMe::getName))
+                    .collect(Collectors.toList());
+
+            if(otherMMs.size() > 0) {
+
+                out.append("**Other**").append("\n\n");
+
+                for (MakeMe mm : otherMMs) {
+
+                    out.append("`\u200b ")
+                            .append(Strings.box(mm.getKey(), 20))
+                            .append(" \u200b` **|** ")
+                            .append(mm.getName())
+                            .append("\n");
+                }
+            }
+
+            //
+
+            if(out.length() == 0) {
+                context.queueReply("*There are no make-me.*");
+                return;
+            }
+
+            context.queueReply(out.toString());
+
+            return;
+        }
+
+        // ===
+
         String key = input.requireParameter(0, "key");
 
         //
@@ -30,8 +100,6 @@ public final class MakeMeCommand extends Command {
         MakeMe mm = module.controller().onGuild(context.getGuildPointer())
                 .find(key)
                 .orElseThrow(() -> CommandErrors.simple(this, "No such make-me: `" + key + "`"));
-
-        //
 
         MakeMeStatus status = module.getStatusManager().firstOrCreate(
                 context.getGuildPointer(),

@@ -25,7 +25,7 @@ import java.util.Optional;
 /**
  * Make-me (as in "make me something") are self assignable roles.
  */
-@EIdentifier("base:mm:mm")
+@EIdentifier("base:makeme:makeme")
 @EIndex(MakeMe.KEY_KEY)
 @EIndex(MakeMe.KEY_GROUP)
 public final class MakeMe extends GEntity {
@@ -107,8 +107,8 @@ public final class MakeMe extends GEntity {
     }
 
     @Nonnull
-    public static Bson filterGroup(@Nonnull MakeMeGroup group) {
-        return Filters.eq(KEY_GROUP, group.getID());
+    public static Bson filterGroup(@Nullable MakeMeGroup group) {
+        return Filters.eq(KEY_GROUP, group == null ? null : group.getID());
     }
 
     // ===

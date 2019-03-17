@@ -13,7 +13,7 @@ import cynoodle.core.module.Module;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-@CIdentifier("base:mm:")
+@CIdentifier("base:makeme:unmakeme")
 @CAliases({"unmakeme","umm"})
 public final class UnMakeMeCommand extends Command {
     private UnMakeMeCommand() {}
