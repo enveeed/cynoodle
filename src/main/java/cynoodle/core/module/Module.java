@@ -40,6 +40,8 @@ public abstract class Module implements EventListener {
 
     // === INTERNAL ===
 
+    private CyNoodle noodle;
+
     private ModuleManager manager;
 
     private ModuleIdentifier identifier;
@@ -54,8 +56,20 @@ public abstract class Module implements EventListener {
      * Internally initialize this module instance.
      */
     final void init(@Nonnull ModuleManager manager, @Nonnull ModuleIdentifier identifier) {
+        this.noodle = CyNoodle.get();
         this.manager = manager;
         this.identifier = identifier;
+    }
+
+    // ===
+
+    /**
+     * Get the cynoodle application instance.
+     * @return the cynoodle instance
+     */
+    @Nonnull
+    public final CyNoodle noodle() {
+        return this.noodle;
     }
 
     // ===
@@ -158,6 +172,17 @@ public abstract class Module implements EventListener {
     @Override
     public String toString() {
         return getIdentifier().toString();
+    }
+
+    // === UTILITIES ===
+
+    /**
+     * Register the given listener(s) in the event bus.
+     * @param listeners the listeners to register
+     */
+    protected final void registerListeners(@Nonnull EventListener... listeners) {
+        this.noodle.getEvents()
+                .register(listeners);
     }
 
     // ======
