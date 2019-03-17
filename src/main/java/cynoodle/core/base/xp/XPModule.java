@@ -6,11 +6,10 @@
 
 package cynoodle.core.base.xp;
 
-import com.google.common.eventbus.Subscribe;
+import cynoodle.core.CyNoodle;
 import cynoodle.core.base.commands.CommandRegistry;
 import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.base.notifications.NotificationType;
-import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
@@ -60,9 +59,11 @@ public final class XPModule extends Module {
     // TODO replace with cache
     final Map<DiscordPointer, XPStatus> status = new HashMap<>();
 
-    private final XPEventHandler handler = new XPEventHandler(this);
+    //
 
     private XPController controller;
+
+    private XPEventHandler handler;
 
     // ===
 
@@ -97,18 +98,19 @@ public final class XPModule extends Module {
 
         this.controller = new XPController();
 
+        //
+
+        this.handler = new XPEventHandler();
+
+        CyNoodle.get()
+                .getEvents()
+                .register(this.handler);
+
     }
 
     @Override
     protected void shutdown() {
         super.shutdown();
-    }
-
-    // ===
-
-    @Subscribe
-    private void onEvent(@Nonnull DiscordEvent event) {
-        this.handler.onEvent(event);
     }
 
     // ===
