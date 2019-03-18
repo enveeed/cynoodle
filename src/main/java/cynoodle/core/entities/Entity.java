@@ -129,12 +129,6 @@ public abstract class Entity implements IBson {
 
     // ===
 
-    public void delete() throws NoSuchElementException, EntityIOException {
-        this.manager.delete(this.id);
-    }
-
-    // ===
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
