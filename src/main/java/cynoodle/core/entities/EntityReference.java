@@ -59,6 +59,14 @@ public final class EntityReference<E extends Entity> {
         return this.manager.get(id);
     }
 
+    /**
+     * Check if the referenced Entity exists.
+     * @return true if the entity exists, false otherwise
+     */
+    public boolean exists() {
+        return this.manager.exists(id);
+    }
+
     // ===
 
     @Override
