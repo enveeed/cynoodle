@@ -36,6 +36,7 @@ public final class MakeMeCommand extends Command {
         if(!input.hasParameter(0)) {
 
             MakeMeController.OnGuild controller = module.controller().onGuild(context.getGuildPointer());
+            MakeMeController.OnMember controllerMember = module.controller().onMember(context.getGuildPointer(), context.getUserPointer());
 
             List<MakeMeGroup> groups = controller.allGroups()
                     .sorted(Comparator.comparing(MakeMeGroup::getName))
@@ -64,8 +65,12 @@ public final class MakeMeCommand extends Command {
                     out.append("`\u200b ")
                             .append(Strings.box(mm.getKey(), 20))
                             .append(" \u200b` **|** ")
-                            .append(mm.getName())
-                            .append("\n");
+                            .append(mm.getName());
+
+                    if(controllerMember.has(mm)) out.append(SEPARATOR)
+                            .append(" **`\u200b ✓ \u200b`**");
+
+                    out.append("\n");
                 }
 
                 out.append("\n");
@@ -85,8 +90,12 @@ public final class MakeMeCommand extends Command {
                     out.append("`\u200b ")
                             .append(Strings.box(mm.getKey(), 20))
                             .append(" \u200b` **|** ")
-                            .append(mm.getName())
-                            .append("\n");
+                            .append(mm.getName());
+
+                    if(controllerMember.has(mm)) out.append(SEPARATOR)
+                            .append(" **`\u200b ✓ \u200b`**");
+
+                    out.append("\n");
                 }
             }
 

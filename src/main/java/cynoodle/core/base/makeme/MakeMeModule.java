@@ -67,6 +67,9 @@ public final class MakeMeModule extends Module {
 
             MakeMeController.OnGuild controller = controller().onGuild(guild);
 
+            controller.all().forEach(MakeMe::delete);
+            controller.allGroups().forEach(MakeMeGroup::delete);
+
             MakeMe mm_a = controller.create("mm_a", "Test Make-Me A", DiscordPointer.to(555107066138591253L));
             MakeMe mm_b = controller.create("mm_b", "Test Make-Me B", DiscordPointer.to(556866896662757376L));
             MakeMe mm_c = controller.create("mm_c", "Test Make-Me C", DiscordPointer.to(556866931995443211L));

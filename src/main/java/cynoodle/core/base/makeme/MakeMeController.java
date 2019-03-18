@@ -90,10 +90,10 @@ public final class MakeMeController {
 
             boolean existingGroup = groupManager
                     .exists(Filters.and(MakeMeGroup.filterGuild(guild), MakeMeGroup.filterKey(key)));
-            boolean existingMM = makeMeManager
+            boolean existingMakeMe = makeMeManager
                     .exists(Filters.and(MakeMe.filterGuild(guild), MakeMe.filterKey(key)));
 
-            if(existingGroup || existingMM)
+            if(existingGroup || existingMakeMe)
                 throw new IllegalArgumentException("There is already a make-me group or make-me with this key: \"" + key + "\"!");
 
             //
@@ -203,6 +203,15 @@ public final class MakeMeController {
             status.persist();
 
             this.apply();
+        }
+
+        //
+
+        public boolean has(@Nonnull MakeMe makeme) {
+
+            MakeMeStatus status = statusManager.firstOrCreate(this.guild, this.user);
+
+            return status.has(makeme);
         }
 
         //
