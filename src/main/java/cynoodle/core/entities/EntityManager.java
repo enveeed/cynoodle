@@ -516,6 +516,28 @@ public class EntityManager<E extends Entity> {
 
     }
 
+    public final void delete(@Nonnull E entity) {
+        delete(entity.getID());
+    }
+
+    //
+
+    public final void deleteAll() {
+        this.entities
+                .forEachKey((LongProcedure) this::delete);
+    }
+
+    public final void deleteAll(long... ids) {
+        for (long id : ids)
+            delete(id);
+    }
+
+    @SafeVarargs
+    public final void deleteAll(@Nonnull E... entities) {
+        for (E entity : entities)
+            delete(entity);
+    }
+
     // === CACHE ===
 
     /**
