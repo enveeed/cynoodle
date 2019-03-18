@@ -129,6 +129,20 @@ public abstract class Entity implements IBson {
 
     // ===
 
+    /**
+     * Delete this Entity. This is <code>protected</code> since
+     * direct deletion should not be part of public API since it doesnt allow
+     * Entity implementations to react to deletes accordingly.
+     * In case this is desired, it should be overridden with a <code>public</code> method.
+     * @throws NoSuchElementException if the Entity does not exist
+     * @throws EntityIOException if there was an IO issue while deleting the Entity
+     */
+    protected void delete() throws NoSuchElementException, EntityIOException {
+        this.manager.delete(this.id);
+    }
+
+    // ===
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
