@@ -123,6 +123,11 @@ public final class Profile extends UEntity {
         return Optional.ofNullable(this.pronouns);
     }
 
+    @Nonnull
+    public Pronouns getEffectivePronouns() {
+        return this.getPronouns().orElse(Pronouns.INDEFINITE);
+    }
+
     public void setPronouns(@Nullable Pronouns pronouns) {
         this.pronouns = pronouns;
     }
