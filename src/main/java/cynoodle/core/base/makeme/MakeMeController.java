@@ -132,6 +132,7 @@ public final class MakeMeController {
         public Stream<MakeMeGroup> allGroups() {
             return groupManager.stream(this.guild);
         }
+
     }
 
     /**

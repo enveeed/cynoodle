@@ -23,9 +23,9 @@ import javax.annotation.Nonnull;
 public final class MakeMeModule extends Module {
     private MakeMeModule() {}
 
-    private static final EntityType<MakeMe> TYPE_MAKE_ME = EntityType.of(MakeMe.class);
-    private static final EntityType<MakeMeGroup> TYPE_GROUP = EntityType.of(MakeMeGroup.class);
-    private static final EntityType<MakeMeStatus> TYPE_STATUS = EntityType.of(MakeMeStatus.class);
+    private static final EntityType<MakeMe> ENTITY_MAKE_ME = EntityType.of(MakeMe.class);
+    private static final EntityType<MakeMeGroup> ENTITY_GROUP = EntityType.of(MakeMeGroup.class);
+    private static final EntityType<MakeMeStatus> ENTITY_STATUS = EntityType.of(MakeMeStatus.class);
 
     // ===
 
@@ -43,9 +43,9 @@ public final class MakeMeModule extends Module {
     protected void start() {
         super.start();
 
-        this.makeMeManager = new GEntityManager<>(TYPE_MAKE_ME);
-        this.groupManager = new GEntityManager<>(TYPE_GROUP);
-        this.statusManager = new MEntityManager<>(TYPE_STATUS);
+        this.makeMeManager = new GEntityManager<>(ENTITY_MAKE_ME);
+        this.groupManager = new GEntityManager<>(ENTITY_GROUP);
+        this.statusManager = new MEntityManager<>(ENTITY_STATUS);
 
         //
 

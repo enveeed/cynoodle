@@ -43,16 +43,17 @@ public final class MakeMeCommand extends Command {
 
             StringBuilder out = new StringBuilder();
 
-
-
             //
 
             for (MakeMeGroup group : groups) {
 
                 out.append("**").append(group.getName()).append("**")
                         .append(SEPARATOR)
-                        .append("`").append(group.getKey()).append("`")
-                        .append("\n\n");
+                        .append("`").append(group.getKey()).append("`");
+
+                if(group.isUniqueEnabled()) out.append(" **`U`**");
+
+                out.append("\n\n");
 
                 List<MakeMe> members = controller.allByGroup(group)
                         .sorted(Comparator.comparing(MakeMe::getName))
@@ -76,8 +77,8 @@ public final class MakeMeCommand extends Command {
 
             if(otherMMs.size() > 0) {
 
-                if(groups.size() > 0) out.append("**Other**"); // only display "other" if there were groups
-                out.append("\n\n");
+                // only display "other" if there were groups
+                if(groups.size() > 0) out.append("**Other**").append("\n\n");
 
                 for (MakeMe mm : otherMMs) {
 

@@ -10,11 +10,13 @@ import com.mongodb.client.model.Filters;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.entities.EIndex;
+import cynoodle.core.entities.EntityIOException;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
+import java.util.NoSuchElementException;
 
 /**
  * A make-me group is a collection of {@link MakeMe make-me}.
@@ -75,6 +77,13 @@ public final class MakeMeGroup extends GEntity {
     @Nonnull
     public static Bson filterKey(@Nonnull String key) {
         return Filters.eq(KEY_KEY, key);
+    }
+
+    // ===
+
+    @Override
+    public void delete() throws NoSuchElementException, EntityIOException {
+        super.delete();
     }
 
     // ===

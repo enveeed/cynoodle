@@ -12,6 +12,7 @@ import cynoodle.core.discord.GEntity;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.entities.EIndex;
+import cynoodle.core.entities.EntityIOException;
 import cynoodle.core.entities.EntityReference;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
@@ -20,6 +21,7 @@ import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -31,11 +33,14 @@ import java.util.Optional;
 public final class MakeMe extends GEntity {
     private MakeMe() {}
 
-    private GEntityManager<MakeMeGroup> groupManager
-            = Module.get(MakeMeModule.class).getGroupManager();
-
     static final String KEY_KEY = "key";
     static final String KEY_GROUP = "group";
+
+    // ===
+
+    private MakeMeModule module = Module.get(MakeMeModule.class);
+
+    private GEntityManager<MakeMeGroup> groupManager = module.getGroupManager();
 
     // ===
 
@@ -109,6 +114,13 @@ public final class MakeMe extends GEntity {
     @Nonnull
     public static Bson filterGroup(@Nullable MakeMeGroup group) {
         return Filters.eq(KEY_GROUP, group == null ? null : group.getID());
+    }
+
+    // ===
+
+    @Override
+    public void delete() throws NoSuchElementException, EntityIOException {
+        super.delete();
     }
 
     // ===
