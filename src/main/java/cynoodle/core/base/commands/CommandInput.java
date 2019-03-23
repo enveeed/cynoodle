@@ -11,6 +11,7 @@ import cynoodle.core.api.text.Parser;
 import cynoodle.core.api.text.ParsingException;
 
 import javax.annotation.Nonnull;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -101,5 +102,26 @@ public final class CommandInput {
 
     public boolean hasOption(@Nonnull Options.Option option) {
         return this.result.hasOption(option);
+    }
+
+    //
+
+    @Nonnull
+    public String getOptionValue(@Nonnull Options.Option option) throws NoSuchElementException {
+        if(!hasOption(option))
+            throw new NoSuchElementException("No such option: " + option.getLong());
+        return this.result.getOptionValue(option);
+    }
+
+    @Nonnull
+    public <T> T getOptionValueAs(@Nonnull Options.Option option, @Nonnull Parser<T> parser) throws NoSuchElementException, CommandError {
+        String value = getOptionValue(option);
+        T parsed;
+        try {
+            parsed = parser.parse(value);
+        } catch (ParsingException ex) {
+            throw CommandErrors.optionParsingFailed(command, option, ex);
+        }
+        return parsed;
     }
 }

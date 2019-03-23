@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.commands;
 
+import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.ParsingException;
 import net.dv8tion.jda.core.Permission;
 
@@ -65,6 +66,21 @@ public final class CommandErrors {
         return CommandError.builder(command)
                 .withTitle("Parameter Parsing Failed")
                 .withMessage("Failed to parse parameter `" + name + "`:\n" + message)
+                .withIcon(ICON_EXTERNAL)
+                .withColor(COLOR_MODERATE)
+                .withFlags(DISPLAY_USAGE)
+                .build();
+    }
+
+    @Nonnull
+    public static CommandError optionParsingFailed(@Nonnull Command command, @Nonnull Options.Option option, @Nonnull ParsingException exception) {
+
+        String message = exception.getMessage();
+        if(message == null) message = "Failed to parse input!";
+
+        return CommandError.builder(command)
+                .withTitle("Option Parsing Failed")
+                .withMessage("Failed to parse option `" + option.getLong() + "`:\n" + message)
                 .withIcon(ICON_EXTERNAL)
                 .withColor(COLOR_MODERATE)
                 .withFlags(DISPLAY_USAGE)
