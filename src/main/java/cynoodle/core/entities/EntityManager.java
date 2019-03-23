@@ -25,11 +25,8 @@ import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.conversions.Bson;
-import org.eclipse.collections.api.block.procedure.primitive.LongProcedure;
 import org.eclipse.collections.api.map.primitive.MutableLongLongMap;
-import org.eclipse.collections.api.map.primitive.MutableLongObjectMap;
 import org.eclipse.collections.impl.map.mutable.primitive.LongLongHashMap;
-import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
@@ -76,13 +73,13 @@ public class EntityManager<E extends Entity> {
     // ======
 
     /**
-     * Entity cache.
+     * Entity cache, weak for garbage collection.
      */
-    private final MutableLongObjectMap<E> entities = new LongObjectHashMap<>();
+    private final WeakHashMap<Long, E> entities = new WeakHashMap<>(16);
 
     //
 
-    private final Striped<Lock> locks = Striped.lock(1024);
+    private final Striped<Lock> locks = Striped.lock(16);
 
     //
 
@@ -164,7 +161,7 @@ public class EntityManager<E extends Entity> {
             // TODO his.update(id) is very much not required usually,
             //  replace this with a change stream in the future to avoid useless calls to the DB
             // update the cached entity before returning it
-            this.update(id);
+            // this.update(id); TODO this is temporarily disabled to make OnUpdate usable
 
             // update access time
             this.updateAccess(id);
@@ -415,8 +412,7 @@ public class EntityManager<E extends Entity> {
     //
 
     public final void persistAll() {
-        this.entities
-                .forEachKey((LongProcedure) this::persist);
+        this.entities.keySet().forEach(this::persist);
     }
 
     public final void persistAll(long... ids) {
@@ -523,8 +519,7 @@ public class EntityManager<E extends Entity> {
     //
 
     public final void deleteAll() {
-        this.entities
-                .forEachKey((LongProcedure) this::delete);
+        this.entities.keySet().forEach(this::delete);
     }
 
     public final void deleteAll(long... ids) {
