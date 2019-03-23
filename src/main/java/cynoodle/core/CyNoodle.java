@@ -17,6 +17,7 @@ import cynoodle.core.base.makeme.MakeMeModule;
 import cynoodle.core.base.moderation.ModerationModule;
 import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.base.profiles.ProfilesModule;
+import cynoodle.core.base.utilities.UtilitiesModule;
 import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.ModuleClassException;
@@ -354,6 +355,7 @@ public final class CyNoodle {
         this.modules.register(MakeMeModule.class);
         this.modules.register(ProfilesModule.class);
         this.modules.register(ModerationModule.class);
+        this.modules.register(UtilitiesModule.class);
 
     }
 
