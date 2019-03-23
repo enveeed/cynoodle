@@ -9,6 +9,8 @@ package cynoodle.core.base.xp;
 import cynoodle.core.base.commands.CommandRegistry;
 import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.base.notifications.NotificationType;
+import cynoodle.core.base.notifications.NotificationTypeRegistry;
+import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
@@ -33,14 +35,14 @@ public final class XPModule extends Module {
     private final static EntityType<Rank> ENTITY_RANK = EntityType.of(Rank.class);
     private final static EntityType<XPSettings> ENTITY_SETTINGS = EntityType.of(XPSettings.class);
 
-    final static NotificationType NOTIFICATION_LEVEL_UP = new NotificationType("base:xp:level_up",
-            "{0} has reached **Level {1}**!");
-    final static NotificationType NOTIFICATION_LEVEL_DOWN = new NotificationType("base:xp:level_down",
-            "{0} has leveled down to **Level {1}**!");
-    final static NotificationType NOTIFICATION_RANK_UP = new NotificationType("base:xp:rank_up",
-            "{0} has reached the Rank **{1}**!");
-    final static NotificationType NOTIFICATION_XP_BOMB = new NotificationType("base:xp:bomb",
-            "{0} got an XP Bomb of **{1} XP**!");
+    final static NotificationType NOTIFICATION_LEVEL_UP = NotificationType.of("base:xp:level_up",
+            "member", "level");
+    final static NotificationType NOTIFICATION_LEVEL_DOWN = NotificationType.of("base:xp:level_down",
+            "member", "level");
+    final static NotificationType NOTIFICATION_RANK_UP = NotificationType.of("base:xp:rank_up",
+            "member", "rank");
+    final static NotificationType NOTIFICATION_XP_BOMB = NotificationType.of("base:xp:bomb",
+            "member", "size");
 
     // ===
 
@@ -74,17 +76,26 @@ public final class XPModule extends Module {
 
         //
 
-        CommandRegistry registry = Module.get(CommandsModule.class).getRegistry();
+        CommandRegistry commandRegistry = Module.get(CommandsModule.class).getRegistry();
 
-        registry.register(XPCommand.class);
-        registry.register(XPAddCommand.class);
-        registry.register(XPRemoveCommand.class);
-        registry.register(XPTransferCommand.class);
-        registry.register(LeaderBoardCommand.class);
-        registry.register(RanksCommand.class);
-        registry.register(XPInfoCommand.class);
-        registry.register(ForXPCommand.class);
-        registry.register(ForLevelCommand.class);
+        commandRegistry.register(XPCommand.class);
+        commandRegistry.register(XPAddCommand.class);
+        commandRegistry.register(XPRemoveCommand.class);
+        commandRegistry.register(XPTransferCommand.class);
+        commandRegistry.register(LeaderBoardCommand.class);
+        commandRegistry.register(RanksCommand.class);
+        commandRegistry.register(XPInfoCommand.class);
+        commandRegistry.register(ForXPCommand.class);
+        commandRegistry.register(ForLevelCommand.class);
+
+        //
+
+        NotificationTypeRegistry notificationRegistry = Module.get(NotificationsModule.class).getRegistry();
+
+        notificationRegistry.register(NOTIFICATION_LEVEL_UP);
+        notificationRegistry.register(NOTIFICATION_LEVEL_DOWN);
+        notificationRegistry.register(NOTIFICATION_RANK_UP);
+        notificationRegistry.register(NOTIFICATION_XP_BOMB);
 
         //
 

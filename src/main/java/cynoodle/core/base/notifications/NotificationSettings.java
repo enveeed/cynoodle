@@ -6,14 +6,19 @@
 
 package cynoodle.core.base.notifications;
 
-import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.mongo.BsonDataException;
+import cynoodle.core.mongo.fluent.FluentArray;
 import cynoodle.core.mongo.fluent.FluentDocument;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static cynoodle.core.base.notifications.NotificationsModule.SUB_PROPERTIES;
 
 /**
  * Settings for a Guilds notifications.
@@ -22,55 +27,34 @@ import java.util.Optional;
 public final class NotificationSettings extends GEntity {
     private NotificationSettings() {}
 
+    // ===
+
+    private Map<String, NotificationProperties> properties = new HashMap<>();
+
     // === DEFAULTS ===
 
-    /**
-     * The default channel for notifications.
-     */
-    private DiscordPointer defaultChannel = null;
-
-    /**
-     * The default setting for if the context, if existent
-     * should be preferred to the defined channel.
-     */
-    private boolean defaultContextPreferred = true;
-
-    /**
-     * The default setting for if notifications should
-     * be discarded if there is no context.
-     * (false if contextPreferred false)
-     */
-    private boolean defaultContextOnly = true;
+    // TODO ...
 
     // ===
 
     @Nonnull
-    public Optional<DiscordPointer> getChannelDefault() {
-        return Optional.ofNullable(this.defaultChannel);
+    public Set<NotificationProperties> getProperties() {
+        return new HashSet<>(this.properties.values());
     }
-
-    public boolean isContextPreferredEnabledDefault() {
-        return this.defaultContextPreferred;
-    }
-
-    public boolean isContextOnlyEnabledDefault() {
-        return this.defaultContextOnly;
-    }
-
-    // ===
 
     @Nonnull
-    public Optional<DiscordPointer> getChannel(@Nonnull NotificationType type) {
-        return getChannelDefault(); // TODO replace with override and effective properties class
-    }
+    public NotificationProperties getOrCreateProperties(@Nonnull String identifier) {
+        if(this.properties.containsKey(identifier)) return this.properties.get(identifier);
+        else {
+            NotificationProperties properties = SUB_PROPERTIES.create(this);
+            properties.create(identifier);
 
-    public boolean isContextPreferredEnabled(@Nonnull NotificationType type) {
-        return isContextPreferredEnabledDefault(); // TODO replace with override and effective properties class
-    }
+            this.properties.put(identifier, properties);
 
-    public boolean isContextOnly(@Nonnull NotificationType type) {
-        if(!isContextPreferredEnabled(type)) return false;
-        else return isContextOnlyEnabledDefault(); // TODO replace with override and effective properties class
+            this.persist();
+
+            return properties;
+        }
     }
 
     // ===
@@ -79,9 +63,9 @@ public final class NotificationSettings extends GEntity {
     public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
         super.fromBson(source);
 
-        this.defaultChannel = source.getAt("default_channel").asNullable(DiscordPointer.fromBson()).or(this.defaultChannel);
-        this.defaultContextPreferred = source.getAt("default_context_preferred").asBoolean().or(this.defaultContextPreferred);
-        this.defaultContextOnly = source.getAt("default_context_only").asBoolean().or(this.defaultContextOnly);
+        this.properties = source.getAt("properties").asArray().or(FluentArray.wrapNew())
+                .collect().as(SUB_PROPERTIES.load(this))
+                .toMap(NotificationProperties::getIdentifier);
     }
 
     @Nonnull
@@ -89,10 +73,12 @@ public final class NotificationSettings extends GEntity {
     public FluentDocument toBson() throws BsonDataException {
         FluentDocument data = super.toBson();
 
-        data.setAt("default_channel").asNullable(DiscordPointer.toBson()).to(this.defaultChannel);
-        data.setAt("default_context_preferred").asBoolean().to(this.defaultContextPreferred);
-        data.setAt("default_context_only").asBoolean().to(this.defaultContextOnly);
+        data.setAt("properties").asArray().to(FluentArray.wrapNew()
+        .insert().as(SUB_PROPERTIES.store())
+                .atEnd(this.properties.values()));
 
         return data;
     }
+
+
 }

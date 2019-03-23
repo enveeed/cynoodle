@@ -8,6 +8,7 @@ package cynoodle.core.base.xp;
 
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.Random;
+import cynoodle.core.base.notifications.NotificationController;
 import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
@@ -38,7 +39,8 @@ public final class XPController {
     private final XPStatusManager statusManager
             = module.getXPStatusManager();
 
-    private final NotificationsModule notificationsModule = Module.get(NotificationsModule.class);
+    private final NotificationController notifications =
+            Module.get(NotificationsModule.class).controller();
 
     // ===
 
@@ -128,10 +130,11 @@ public final class XPController {
 
                     value = value + gain;
 
-                    Module.get(NotificationsModule.class)
-                            .controller().onGuild(guild)
-                            .emit(XPModule.NOTIFICATION_XP_BOMB.create(context,
-                                    Members.formatAt(guild).format(user), Long.toString(gain)));
+                    notifications.onGuild(this.guild)
+                            .emit("base:xp:bomb", context,
+                                    Members.formatAt(this.guild).format(this.user),
+                                    Long.toString(gain)
+                            );
                 }
             }
 
@@ -146,7 +149,7 @@ public final class XPController {
 
         public void modify(long change, @Nullable DiscordPointer context) {
 
-            XP xp = module.getXPManager().firstOrCreate(guild, user);
+            XP xp = xpManager.firstOrCreate(guild, user);
 
             long previous;
 
@@ -190,15 +193,17 @@ public final class XPController {
                 this.applyRanks();
 
                 if(levelPrevious < levelCurrent) {
-                    notificationsModule.controller()
-                            .onGuild(this.guild)
-                            .emit(XPModule.NOTIFICATION_LEVEL_UP
-                                    .create(context, Members.formatAt(guild).format(user), String.valueOf(levelCurrent)));
+                    notifications.onGuild(this.guild)
+                            .emit("base:xp:level_up", context,
+                                    Members.formatAt(this.guild).format(this.user),
+                                    String.valueOf(levelCurrent)
+                            );
                 } else {
-                    notificationsModule.controller()
-                            .onGuild(this.guild)
-                            .emit(XPModule.NOTIFICATION_LEVEL_DOWN
-                                    .create(context, Members.formatAt(guild).format(user), String.valueOf(levelCurrent)));
+                    notifications.onGuild(this.guild)
+                            .emit("base:xp:level_down", context,
+                                    Members.formatAt(this.guild).format(this.user),
+                                    String.valueOf(levelCurrent)
+                            );
                 }
 
                 // TODO rank notifications

@@ -6,14 +6,15 @@
 
 package cynoodle.core.base.notifications;
 
+import cynoodle.core.api.Random;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 import javax.annotation.Nonnull;
-import java.text.MessageFormat;
-import java.util.Optional;
+import javax.annotation.Nullable;
+import java.util.Set;
 
 // TODO see TODOs
 public final class NotificationController {
@@ -23,6 +24,8 @@ public final class NotificationController {
 
     private final GEntityManager<NotificationSettings> settingsManager =
             module.getSettingsManager();
+    private final NotificationTypeRegistry registry =
+            module.getRegistry();
 
     // ===
 
@@ -47,46 +50,44 @@ public final class NotificationController {
 
         public void emit(@Nonnull Notification notification) {
 
-            NotificationType type = notification.getType();
-            NotificationSettings settings = settingsManager.firstOrCreate(this.guild);
+            NotificationSettings settings       = settingsManager.firstOrCreate(this.guild);
+            NotificationProperties properties   = settings.getOrCreateProperties(notification.getIdentifier());
+            NotificationType type               = registry.find(notification.getIdentifier())
+                    .orElseThrow(() -> new IllegalArgumentException("Can't emit notification of unknown type: " + notification.getIdentifier()));
 
-            // CHANNEL
+            //
 
-            DiscordPointer channelP = null;
+            if(!properties.isEnabled()) return;
 
-            // TODO respect channel settings, not just context
+            //
 
-            Optional<DiscordPointer> contextResult = notification.getContext();
-            if(contextResult.isPresent()) channelP = contextResult.orElseThrow();
+            Set<String> messages = properties.getMessages();
+            if(messages.size() == 0) return; // TODO warn that its enabled but there are no messages ?
 
-            if(channelP == null) {
-                // TODO warn that notification was discarded cause no channel was set
-                return;
-            }
+            String message = Random.nextOf(messages);
 
-            TextChannel channel;
+            //
 
-            Optional<TextChannel> channelResult = channelP.asTextChannel();
-            if(channelResult.isPresent()) channel = channelResult.orElseThrow();
-            else {
-                // TODO warn that notification was discarded cause channel was invalid
-                return;
-            }
+            String out = notification.format(message, type.getVariableNames(), notification.getVariables());
 
-            // MESSAGE
+            //
 
-            // TODO replace with name based variables (not index)
-            // TODO use defined message instead of temporary fallback
+            DiscordPointer channelP = notification.getContext()
+                    .orElseThrow(); // TODO support non-context notifications
+            TextChannel channel = channelP.asTextChannel()
+                    .orElseThrow();// TODO warn unknown channel and discard instead
 
-            String message = type.getFallback();
-
-            String out = MessageFormat.format(message, (Object[]) notification.getVariables());
-
-            // NOTIFY
-
-            // TODO check permissions
+            //
 
             channel.sendMessage(out).queue();
+        }
+
+        public void emit(@Nonnull String identifier, @Nullable DiscordPointer context, @Nonnull String... variables) {
+            emit(Notification.of(identifier, context, variables));
+        }
+
+        public void emit(@Nonnull String identifier, @Nonnull String... variables) {
+            emit(identifier, null, variables);
         }
 
     }

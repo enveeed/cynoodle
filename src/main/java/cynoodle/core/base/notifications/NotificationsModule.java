@@ -8,6 +8,7 @@ package cynoodle.core.base.notifications;
 
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.entities.EntityType;
+import cynoodle.core.entities.SubEntityType;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.Module;
 
@@ -17,11 +18,16 @@ import javax.annotation.Nonnull;
 public final class NotificationsModule extends Module {
     private NotificationsModule() {}
 
-    private final static EntityType<NotificationSettings> TYPE_SETTINGS = EntityType.of(NotificationSettings.class);
+    final static EntityType<NotificationSettings> ENTITY_SETTINGS = EntityType.of(NotificationSettings.class);
+    final static SubEntityType<NotificationProperties> SUB_PROPERTIES = SubEntityType.of(NotificationProperties.class);
 
     //
 
     private GEntityManager<NotificationSettings> settingsManager;
+
+    //
+
+    private NotificationTypeRegistry registry;
 
     //
 
@@ -33,7 +39,11 @@ public final class NotificationsModule extends Module {
     protected void start() {
         super.start();
 
-        this.settingsManager = new GEntityManager<>(TYPE_SETTINGS);
+        this.settingsManager = new GEntityManager<>(ENTITY_SETTINGS);
+
+        //
+
+        this.registry = new NotificationTypeRegistry();
 
         //
 
@@ -48,8 +58,15 @@ public final class NotificationsModule extends Module {
     // ===
 
     @Nonnull
-    public GEntityManager<NotificationSettings> getSettingsManager() {
+    GEntityManager<NotificationSettings> getSettingsManager() {
         return this.settingsManager;
+    }
+
+    //
+
+    @Nonnull
+    public NotificationTypeRegistry getRegistry() {
+        return this.registry;
     }
 
     //

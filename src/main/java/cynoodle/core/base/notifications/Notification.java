@@ -12,20 +12,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-/**
- * Immutable notification.
- */
 public final class Notification {
 
-    private final NotificationType type;
+    private final String identifier;
 
     private final DiscordPointer context;
     private final String[] variables;
 
     // ===
 
-    Notification(@Nonnull NotificationType type, @Nullable DiscordPointer context, @Nonnull String[] variables) {
-        this.type = type;
+    private Notification(@Nonnull String identifier,
+                         @Nullable DiscordPointer context,
+                         @Nonnull String[] variables) {
+        this.identifier = identifier;
         this.context = context;
         this.variables = variables;
     }
@@ -33,8 +32,8 @@ public final class Notification {
     // ===
 
     @Nonnull
-    public NotificationType getType() {
-        return this.type;
+    public String getIdentifier() {
+        return this.identifier;
     }
 
     //
@@ -49,4 +48,34 @@ public final class Notification {
         return this.variables;
     }
 
+    // ===
+
+    @Nonnull
+    public static Notification of(@Nonnull String identifier, @Nullable DiscordPointer context, @Nonnull String... variables) {
+        return new Notification(identifier, context, variables);
+    }
+
+    @Nonnull
+    public static Notification of(@Nonnull String identifier, @Nonnull String... variables) {
+        return new Notification(identifier, null, variables);
+    }
+
+    // ===
+
+    // TODO improvements, maybe move to somewhere else
+    @Nonnull
+    public String format(@Nonnull String message,
+                         @Nonnull String[] variableNames,
+                         @Nonnull String[] variables) {
+        if(variableNames.length != variables.length)
+            throw new IllegalArgumentException("Variable names length vs. variables length mismatch!");
+
+        String out = message;
+
+        for (int i = 0; i < variableNames.length; i++) {
+            out = out.replaceAll("\\{" + variableNames[i] + "\\}", variables[i]);
+        }
+
+        return out;
+    }
 }

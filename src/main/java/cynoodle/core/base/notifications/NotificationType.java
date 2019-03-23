@@ -6,44 +6,44 @@
 
 package cynoodle.core.base.notifications;
 
-import cynoodle.core.discord.DiscordPointer;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 // TODO meta / improvements / builder / immutability?
 public final class NotificationType {
 
     private final String identifier;
-    private final String fallback; // TODO temporary / externalize
+
+    private final String[] variableNames;
 
     // ===
 
-    public NotificationType(String identifier, String fallback) {
+    private NotificationType(@Nonnull String identifier, @Nonnull String[] variableNames) {
         this.identifier = identifier;
-        this.fallback = fallback;
+        this.variableNames = variableNames;
+    }
+
+    // ===
+
+    @Nonnull
+    public String getIdentifier() {
+        return this.identifier;
+    }
+
+    @Nonnull
+    public String[] getVariableNames() {
+        return this.variableNames;
     }
 
     //
 
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public String getFallback() {
-        return fallback;
+    public int getVariableCount() {
+        return this.variableNames.length;
     }
 
     // ===
 
     @Nonnull
-    public Notification create(@Nullable DiscordPointer context, @Nonnull String... variables) {
-        return new Notification(this, context, variables);
+    public static NotificationType of(@Nonnull String identifier, @Nonnull String... variableNames) {
+        return new NotificationType(identifier, variableNames);
     }
-
-    @Nonnull
-    public Notification create(@Nonnull String... variables) {
-        return new Notification(this, null, variables);
-    }
-
 }
