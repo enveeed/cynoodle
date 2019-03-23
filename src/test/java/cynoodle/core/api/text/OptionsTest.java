@@ -31,7 +31,7 @@ class OptionsTest {
         Options.Option y = Options.newFlagOption("flag2", 'y');
         Options.Option z = Options.newValueOption("flag-with-value", 'z');
 
-        builder.addOptions(a, b, c, d, e, x, y, z);
+        builder.add(a, b, c, d, e, x, y, z);
 
         Options options = builder.build();
 
@@ -74,7 +74,7 @@ class OptionsTest {
 
         Options.Option a = Options.newFlagOption("option-a", 'a');
 
-        builder.addOptions(a);
+        builder.add(a);
 
         Options options = builder.build();
 
@@ -117,7 +117,7 @@ class OptionsTest {
         Options.Option b = Options.newFlagOption("option-b", 'b');
         Options.Option d = Options.newFlagOption("option-d", 'd');
 
-        builder.addOptions(a, b, d);
+        builder.add(a, b, d);
 
         Options options = builder.build();
 
@@ -140,7 +140,7 @@ class OptionsTest {
         Options.Option b = Options.newFlagOption("option-b", 'b');
         Options.Option d = Options.newFlagOption("option-d", 'd');
 
-        builder.addOptions(a, b, d);
+        builder.add(a, b, d);
 
         Options options = builder.build();
 
@@ -165,7 +165,7 @@ class OptionsTest {
 
         Options.Option v = Options.newValueOption("option-v", 'v');
 
-        builder.addOptions(a, b, c, v);
+        builder.add(a, b, c, v);
 
         Options options = builder.build();
 
@@ -185,7 +185,7 @@ class OptionsTest {
 
         Options.Option v = Options.newValueOption("option-v", 'v');
 
-        builder.addOptions(v);
+        builder.add(v);
 
         Options options = builder.build();
 

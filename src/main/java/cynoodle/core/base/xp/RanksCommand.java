@@ -37,9 +37,9 @@ public final class RanksCommand extends Command {
 
     //
 
-    @Override
-    protected void onInit() {
-        this.options.addOptions(OPT_XP);
+    {
+        this.getOptionsBuilder()
+                .add(OPT_XP);
     }
 
     //

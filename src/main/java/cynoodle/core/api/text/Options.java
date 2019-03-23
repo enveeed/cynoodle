@@ -529,7 +529,7 @@ public final class Options {
         //
 
         @Nonnull
-        public Builder addOptions(@Nonnull Option... options) {
+        public Builder add(@Nonnull Option... options) {
             this.options.addAll(Arrays.asList(options));
             return this;
         }

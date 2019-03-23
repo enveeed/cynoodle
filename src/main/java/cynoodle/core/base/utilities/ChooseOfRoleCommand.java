@@ -30,7 +30,8 @@ public final class ChooseOfRoleCommand extends Command {
     // ===
 
     {
-        options.addOptions(OPT_COUNTDOWN);
+        this.getOptionsBuilder()
+                .add(OPT_COUNTDOWN);
     }
 
     // ===

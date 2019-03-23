@@ -42,9 +42,9 @@ public final class ProfileEditCommand extends Command {
 
     // ===
 
-    @Override
-    protected void onInit() {
-        this.options.addOptions(OPT_RESET);
+    {
+        this.getOptionsBuilder()
+                .add(OPT_RESET);
     }
 
     // ===

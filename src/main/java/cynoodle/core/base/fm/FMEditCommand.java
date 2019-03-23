@@ -33,13 +33,10 @@ public final class FMEditCommand extends Command {
 
     //
 
-    @Override
-    protected void onInit() {
-        super.options.addOptions(
-                OPT_RESET
-        );
+    {
+        this.getOptionsBuilder()
+                .add(OPT_RESET);
     }
-
     //
 
     @Override

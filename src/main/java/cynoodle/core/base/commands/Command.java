@@ -48,9 +48,9 @@ public abstract class Command {
     /**
      * Options builder for the command options.
      */
-    protected final Options.Builder options = Options.newBuilder()
-            .addOptions(OPT_DEBUG)
-            .addOptions(OPT_LOCALIZE);
+    private final Options.Builder optionsBuilder = Options.newBuilder()
+            .add(OPT_DEBUG)
+            .add(OPT_LOCALIZE);
 
     // ===
 
@@ -59,18 +59,9 @@ public abstract class Command {
      */
     final void init(@Nonnull CommandDescriptor descriptor) {
         this.descriptor = descriptor;
-
-        this.onInit();
     }
 
     // === CALLBACKS ===
-
-    /**
-     * Called when this command class is initialized.
-     */
-    protected void onInit() {}
-
-    // ===
 
     @Nonnull
     public CommandDescriptor getDescriptor() {
@@ -86,6 +77,13 @@ public abstract class Command {
     @Nonnull
     public String getIdentifier() {
         return this.descriptor.getIdentifier();
+    }
+
+    // ===
+
+    @Nonnull
+    protected Options.Builder getOptionsBuilder() {
+        return this.optionsBuilder;
     }
 
     // ===
@@ -120,7 +118,7 @@ public abstract class Command {
 
         // === OPTIONS ===
 
-        Options options = this.options.build();
+        Options options = this.optionsBuilder.build();
 
         Options.Result input;
 

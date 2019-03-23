@@ -100,7 +100,7 @@ public final class LaunchSettings {
         //
 
         Options options = Options.newBuilder()
-                .addOptions(OPT_LOG_LEVEL, OPT_NO_PERMISSIONS, OPT_SETUP_TEST)
+                .add(OPT_LOG_LEVEL, OPT_NO_PERMISSIONS, OPT_SETUP_TEST)
                 .build();
 
         //
