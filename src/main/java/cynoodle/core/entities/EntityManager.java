@@ -167,7 +167,7 @@ public class EntityManager<E extends Entity> {
             // TODO his.update(id) is very much not required usually,
             //  replace this with a change stream in the future to avoid useless calls to the DB
             // update the cached entity before returning it
-            // this.update(id); TODO this is temporarily disabled to make OnUpdate usable
+            this.update(id);
 
             // update access time
             this.updateAccess(id);
