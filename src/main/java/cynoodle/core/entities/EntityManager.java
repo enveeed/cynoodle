@@ -7,6 +7,7 @@
 package cynoodle.core.entities;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Streams;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.util.concurrent.Striped;
@@ -31,6 +32,7 @@ import org.eclipse.collections.impl.map.mutable.primitive.LongLongHashMap;
 import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -75,7 +77,11 @@ public class EntityManager<E extends Entity> {
     /**
      * Entity cache, weak for garbage collection.
      */
-    private final WeakHashMap<Long, E> entities = new WeakHashMap<>(16);
+    private final ConcurrentMap<Long, E> entities = new MapMaker()
+            .concurrencyLevel(1) // TODO this may needs to be looking into ...
+            .initialCapacity(16)
+            .weakValues()
+            .makeMap();
 
     //
 
