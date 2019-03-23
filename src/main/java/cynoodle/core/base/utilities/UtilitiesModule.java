@@ -30,6 +30,7 @@ public final class UtilitiesModule extends Module {
         CommandRegistry commandRegistry = Module.get(CommandsModule.class).getRegistry();
 
         commandRegistry.register(VersionCommand.class);
+        commandRegistry.register(ChooseOfRoleCommand.class);
     }
 
     @Override
