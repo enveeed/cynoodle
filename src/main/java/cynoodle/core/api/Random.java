@@ -6,6 +6,7 @@
 
 package cynoodle.core.api;
 
+import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -52,6 +53,32 @@ public final class Random {
      */
     public static boolean nextBoolean() {
         return ThreadLocalRandom.current().nextBoolean();
+    }
+
+    /**
+     * Get a pseudo-randomly selected value from the given collection.
+     * @param collection the collection
+     * @param <T> the collections type
+     * @return randomly selected value
+     */
+    public static <T> T nextOf(Collection<T> collection) {
+        if(collection.size() == 0) throw new IllegalArgumentException();
+        int index = nextInt(0, collection.size() - 1);
+        for(T entry : collection) if (--index < 0) return entry;
+        throw new AssertionError();
+    }
+
+    /**
+     * Get a pseudo-randomly selected value from the given array.
+     * @param array the array
+     * @param <T> the collections type
+     * @return randomly selected value
+     */
+    public static <T> T nextOf(T[] array) {
+        if(array.length == 0) throw new IllegalArgumentException();
+        int index = nextInt(0, array.length - 1);
+        for(T entry : array) if (--index < 0) return entry;
+        throw new AssertionError();
     }
 
 }
