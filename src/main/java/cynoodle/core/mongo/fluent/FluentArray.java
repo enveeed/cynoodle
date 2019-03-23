@@ -319,6 +319,23 @@ public final class FluentArray implements FluentValue {
         public Set<T> toSetOr(Set<T> fallback) {
             return intoOr(new HashSet<>(), fallback);
         }
+
+        //
+
+        public <K> Map<K, T> toMap(Function<T, K> keyExtractor) {
+            Map<K, T> map = new HashMap<>();
+            array.forEach(value -> {
+                T data = function.apply(value);
+                K key = keyExtractor.apply(data);
+                map.put(key, data);
+            });
+            return map;
+        }
+
+        public <K> Map<K, T> toMapOr(Function<T, K> keyExtractor, Map<K, T> fallback) {
+            if(size() == 0) return fallback;
+            else return toMap(keyExtractor);
+        }
     }
 
     // === SET / GET ===
