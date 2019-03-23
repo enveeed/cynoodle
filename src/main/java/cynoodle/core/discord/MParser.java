@@ -8,7 +8,6 @@ package cynoodle.core.discord;
 
 import cynoodle.core.api.text.Parser;
 import cynoodle.core.api.text.ParsingException;
-import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 
@@ -19,8 +18,6 @@ import javax.annotation.Nullable;
  * Parser for a {@link Member}.
  */
 public final class MParser implements Parser<DiscordPointer> {
-
-    private final DiscordModule discord = Module.get(DiscordModule.class);
 
     private final DiscordPointer guild;
 
@@ -45,9 +42,8 @@ public final class MParser implements Parser<DiscordPointer> {
             else throw new IllegalArgumentException("`~me` cannot be used here.");
         }
 
-        Guild guild = discord.getAPI().getGuildById(this.guild.getID());
-
-        if(guild == null) throw new IllegalArgumentException("Guild not available!");
+        Guild guild = this.guild.asGuild()
+                .orElseThrow(IllegalStateException::new);
 
         for (Member member : guild.getMembers()) {
             if(member.getUser().getId().equalsIgnoreCase(input))
@@ -55,6 +51,8 @@ public final class MParser implements Parser<DiscordPointer> {
             if(member.getNickname() != null && input.toLowerCase().contains(member.getNickname().toLowerCase()))
                 return DiscordPointer.to(member.getUser());
             if(member.getUser().getName().toLowerCase().contains(input.toLowerCase()))
+                return DiscordPointer.to(member.getUser());
+            if(member.getUser().getAsMention().equals(input))
                 return DiscordPointer.to(member.getUser());
         }
 
