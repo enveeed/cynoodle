@@ -29,6 +29,8 @@ public final class CharacterChainAnalyzer implements SpamAnalyzer {
 
         String content = event.getMessage().getContentRaw();
 
+        if(content.length() == 0) return 0d;
+
         Matcher matcher = pattern.matcher(content);
 
         int count = 0;
