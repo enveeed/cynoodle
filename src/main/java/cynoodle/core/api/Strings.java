@@ -105,9 +105,10 @@ public final class Strings {
      * using {@link #levenshteinDistance(String, String)}.
      * @param a first string
      * @param b second string
+     * @param limit the limit for the distance (over which the value is always 0)
      * @return similarity value, between 0 and 1
      */
-    public static double similarity(@Nonnull String a, @Nonnull String b) {
+    public static double similarity(@Nonnull String a, @Nonnull String b, int limit) {
 
         // a should always be greater or equal
         if (a.length() < b.length()) {
@@ -120,8 +121,22 @@ public final class Strings {
 
         if (al == 0) return 1.0;
 
-        return (al - levenshteinDistance(a, b)) / (double) al;
+        al = Math.min(al, limit);
 
+        return (al - levenshteinDistance(a, b, limit)) / (double) al;
+
+    }
+
+    /**
+     * Calculates the similarity between two strings as a value between 0 and 1,
+     * using {@link #levenshteinDistance(String, String)}.
+     * The limit is Integer.MAX_VALUE.
+     * @param a first string
+     * @param b second string
+     * @return similarity value, between 0 and 1
+     */
+    public static double similarity(@Nonnull String a, @Nonnull String b) {
+        return similarity(a, b, Integer.MAX_VALUE);
     }
 
     /**
@@ -130,9 +145,10 @@ public final class Strings {
      * this is not the case both are switched.
      * @param a first string
      * @param b second string
+     * @param limit the limit for the distance (after which the algorithm is aborted)
      * @return the Levenshtein distance
      */
-    public static int levenshteinDistance(@Nonnull String a, @Nonnull String b) {
+    public static int levenshteinDistance(@Nonnull String a, @Nonnull String b, int limit) {
 
         a = a.toLowerCase(Locale.ENGLISH);
         b = b.toLowerCase(Locale.ENGLISH);
@@ -156,6 +172,7 @@ public final class Strings {
                         if (a.charAt(i - 1) != b.charAt(j - 1))
                             newValue = Math.min(Math.min(newValue, lastValue),
                                     costs[j]) + 1;
+                        if(newValue > limit) return limit;
                         costs[j - 1] = lastValue;
                         lastValue = newValue;
                     }
@@ -165,5 +182,18 @@ public final class Strings {
                 costs[b.length()] = lastValue;
         }
         return costs[b.length()];
+    }
+
+    /**
+     * Calculates the Levenshtein distance between two strings.
+     * Ideally, a should be greater or equal length than b. If
+     * this is not the case both are switched.
+     * The limit is Integer.MAX_VALUE.
+     * @param a first string
+     * @param b second string
+     * @return the Levenshtein distance
+     */
+    public static int levenshteinDistance(@Nonnull String a, @Nonnull String b) {
+        return levenshteinDistance(a, b, Integer.MAX_VALUE);
     }
 }
