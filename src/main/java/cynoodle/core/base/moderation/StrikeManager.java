@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public final class StrikeManager extends MEntityManager<Strike> {
 
     StrikeManager() {
-        super(ModerationModule.TYPE_STRIKE);
+        super(ModerationModule.ENTITY_STRIKE);
     }
 
     //

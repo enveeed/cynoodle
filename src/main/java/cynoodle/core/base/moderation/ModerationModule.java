@@ -6,8 +6,10 @@
 
 package cynoodle.core.base.moderation;
 
-import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.base.commands.CommandRegistry;
+import cynoodle.core.base.commands.CommandsModule;
+import cynoodle.core.concurrent.Schedules;
+import cynoodle.core.concurrent.Service;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
@@ -15,6 +17,7 @@ import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
+import java.time.temporal.ChronoUnit;
 
 @MIdentifier("base:moderation")
 @MRequires("base:commands")
@@ -23,13 +26,25 @@ public final class ModerationModule extends Module {
 
     // ===
 
-    public final static EntityType<Strike> TYPE_STRIKE = EntityType.of(Strike.class);
-    public final static EntityType<StrikeSettings> TYPE_STRIKE_SETTINGS = EntityType.of(StrikeSettings.class);
+    final static EntityType<Strike> ENTITY_STRIKE = EntityType.of(Strike.class);
+    final static EntityType<StrikeSettings> ENTITY_STRIKE_SETTINGS = EntityType.of(StrikeSettings.class);
+    final static EntityType<MuteSettings> ENTITY_MUTE_SETTINGS = EntityType.of(MuteSettings.class);
 
     //
 
     private StrikeManager strikeManager;
     private GEntityManager<StrikeSettings> strikeSettingsManager;
+    private GEntityManager<MuteSettings> muteSettingsManager;
+
+    private MuteManager muteManager;
+
+    //
+
+    private Service muteApplyService;
+
+    //
+
+    private ModerationController controller;
 
     // ===
 
@@ -40,7 +55,10 @@ public final class ModerationModule extends Module {
         //
 
         this.strikeManager = new StrikeManager();
-        this.strikeSettingsManager = new GEntityManager<>(TYPE_STRIKE_SETTINGS);
+        this.strikeSettingsManager = new GEntityManager<>(ENTITY_STRIKE_SETTINGS);
+        this.muteSettingsManager = new GEntityManager<>(ENTITY_MUTE_SETTINGS);
+
+        this.muteManager = new MuteManager();
 
         //
 
@@ -55,24 +73,53 @@ public final class ModerationModule extends Module {
 
         //
 
-        this.strikeManager.ensureIndexes();
-        this.strikeSettingsManager.ensureIndexes();
+        this.controller = new ModerationController();
+
+        //
+
+        this.muteApplyService = Service.of(() -> controller().applyMutes(),
+                        Schedules.delay(1, ChronoUnit.MINUTES), noodle().pool());
+
+        this.muteApplyService.start();
+        this.muteApplyService.awaitStart();
     }
 
     @Override
     protected void shutdown() {
         super.shutdown();
+
+        this.muteApplyService.stop();
+        this.muteApplyService.awaitStop();
     }
 
     // ===
 
     @Nonnull
-    public StrikeManager getStrikeManager() {
+    StrikeManager getStrikeManager() {
         return this.strikeManager;
     }
 
     @Nonnull
-    public GEntityManager<StrikeSettings> getStrikeSettingsManager() {
+    GEntityManager<StrikeSettings> getStrikeSettingsManager() {
         return this.strikeSettingsManager;
+    }
+
+    @Nonnull
+    GEntityManager<MuteSettings> getMuteSettingsManager() {
+        return this.muteSettingsManager;
+    }
+
+    //
+
+    @Nonnull
+    MuteManager getMuteManager() {
+        return this.muteManager;
+    }
+
+    // ===
+
+    @Nonnull
+    public ModerationController controller() {
+        return this.controller;
     }
 }

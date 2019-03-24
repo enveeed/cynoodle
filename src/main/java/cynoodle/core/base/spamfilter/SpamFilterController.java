@@ -8,12 +8,18 @@ package cynoodle.core.base.spamfilter;
 
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.Numbers;
+import cynoodle.core.base.moderation.ModerationController;
+import cynoodle.core.base.moderation.ModerationModule;
+import cynoodle.core.base.notifications.NotificationController;
+import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
+import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
+import java.time.Duration;
 import java.util.Map;
 
 public final class SpamFilterController {
@@ -30,6 +36,11 @@ public final class SpamFilterController {
             module.getRegistry();
     private final SpamFilterCache cache =
             module.getCache();
+
+    private final NotificationController notifications =
+            Module.get(NotificationsModule.class).controller();
+    private final ModerationController moderation =
+            Module.get(ModerationModule.class).controller();
 
     // ===
 
@@ -54,6 +65,7 @@ public final class SpamFilterController {
 
     // ===
 
+    // TODO move this elsewhere (e.g. OnGuild / OnMember)
     public void handle(@Nonnull GuildMessageReceivedEvent event) {
 
         if(event.getAuthor().isBot()) return; // TODO replace with self check
@@ -71,8 +83,6 @@ public final class SpamFilterController {
 
         //
 
-        LOG.atFinest().log("Analyzing %s from %s", event.getMessage(), user);
-
         double delta = 0d;
 
         for (Map.Entry<String, SpamAnalyzer> entry : registry.all()) {
@@ -85,11 +95,6 @@ public final class SpamFilterController {
             double result = analyzer.analyze(event);
             double adjustedResult = result * analyzerSettings.getIntensity();
 
-            LOG.atFinest().log("Analyzer %s: %s%% (adjusted %s%%)",
-                    identifier,
-                    Numbers.format(result * 100, 0),
-                    Numbers.format(adjustedResult * 100, 0));
-
             delta += adjustedResult;
         }
 
@@ -99,18 +104,21 @@ public final class SpamFilterController {
 
         double modified = this.cache.modify(guild, user, delta);
 
-        LOG.atFinest().log("analyzing finished: + %s >> %s ",
-                Numbers.format(delta, 2),
-                Numbers.format(modified, 2));
-
         // take action
 
         double threshold = settings.getMuteThreshold();
 
         if(modified >= threshold) {
-            LOG.atFinest().log("Threshold %s was reached, member should be muted! (TODO)",
-                    Numbers.format(threshold,2));
-            // TODO mute member
+
+            moderation.onMember(DiscordPointer.to(event.getGuild()), DiscordPointer.to(event.getAuthor()))
+                    .muteFinite(Duration.ofMinutes(1));
+
+            notifications.onGuild(DiscordPointer.to(event.getGuild()))
+                    .emit("base:spamfilter:muted",
+                            DiscordPointer.to(event.getChannel()),
+                            Members.formatAt(DiscordPointer.to(event.getGuild())).format(DiscordPointer.to(event.getAuthor())),
+                            Numbers.format(modified, 3));
+
         }
     }
 }

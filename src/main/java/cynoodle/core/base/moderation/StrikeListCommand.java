@@ -32,11 +32,11 @@ public final class StrikeListCommand extends Command {
      */
     private final static Options.Option OPT_ALL = Options.newFlagOption("all", 'a');
 
-    // ===
+    //
 
-    @Override
-    protected void onInit() {
-        this.options.addOptions(OPT_ALL);
+    {
+        this.getOptionsBuilder()
+                .add(OPT_ALL);
     }
 
     // ===

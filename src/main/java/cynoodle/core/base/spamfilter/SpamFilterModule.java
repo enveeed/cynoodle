@@ -7,22 +7,30 @@
 package cynoodle.core.base.spamfilter;
 
 import com.google.common.eventbus.Subscribe;
+import cynoodle.core.base.notifications.NotificationType;
+import cynoodle.core.base.notifications.NotificationTypeRegistry;
+import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.entities.SubEntityType;
 import cynoodle.core.module.MIdentifier;
+import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 
 @MIdentifier("base:spamfilter")
+@MRequires("base:notifications")
 public final class SpamFilterModule extends Module {
     private SpamFilterModule() {}
 
-    final static EntityType<SpamFilterSettings> ENTITY_SETTINGS = EntityType.of(SpamFilterSettings.class);
-    final static SubEntityType<SpamAnalyzerSettings> SUB_ANALYZER_SETTINGS = SubEntityType.of(SpamAnalyzerSettings.class);
+    final static EntityType<SpamFilterSettings>         ENTITY_SETTINGS         = EntityType.of(SpamFilterSettings.class);
+    final static SubEntityType<SpamAnalyzerSettings>    SUB_ANALYZER_SETTINGS   = SubEntityType.of(SpamAnalyzerSettings.class);
+
+    final static NotificationType NOTIFICATION_MUTED
+            = NotificationType.of("base:spamfilter:muted", "member", "score");
 
     // ===
 
@@ -55,6 +63,13 @@ public final class SpamFilterModule extends Module {
         this.registry.register("base.last_similarity", new LastSimilarityAnalyzer());
 
         //this.registry.register("base.last_equality", new EqualityAnalyzer());
+
+        //
+
+        NotificationTypeRegistry notificationRegistry = Module.get(NotificationsModule.class)
+                .getRegistry();
+
+        notificationRegistry.register(NOTIFICATION_MUTED);
     }
 
     @Override
