@@ -32,6 +32,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -78,6 +80,9 @@ public final class CyNoodle {
 
     // TODO replace Guava EventBus with a more specific self-made implementation for cynoodle
     private final EventBus events = new EventBus("cynoodle");
+
+    private final ScheduledThreadPoolExecutor pool =
+            new ScheduledThreadPoolExecutor(16); // TODO customize
 
     //
 
@@ -257,6 +262,17 @@ public final class CyNoodle {
 
         // ===
 
+        LOG.atInfo().log("Shutting down system thread pool ...");
+
+        this.pool.shutdown();
+        try {
+            this.pool.awaitTermination(15, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LOG.atSevere().withCause(e).log("Failed to shut down system thread pool!");
+        }
+
+        // ===
+
         LOG.atInfo().log("Stopped.");
     }
 
@@ -400,6 +416,13 @@ public final class CyNoodle {
     @Nonnull
     public EventBus getEvents() {
         return events;
+    }
+
+    // ======
+
+    @Nonnull
+    public ScheduledThreadPoolExecutor pool() {
+        return this.pool;
     }
 
     // ======
