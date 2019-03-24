@@ -7,6 +7,8 @@
 package cynoodle.core.base.spamfilter;
 
 import cynoodle.core.entities.SubEntity;
+import cynoodle.core.mongo.BsonDataException;
+import cynoodle.core.mongo.fluent.FluentDocument;
 
 import javax.annotation.Nonnull;
 
@@ -50,5 +52,27 @@ public final class SpamAnalyzerSettings extends SubEntity {
     public void setIntensity(double intensity) {
         // TODO validate
         this.intensity = intensity;
+    }
+
+    // ===
+
+    @Override
+    public void fromBson(@Nonnull FluentDocument data) throws BsonDataException {
+
+        this.identifier = data.getAt("identifier").asString().value();
+
+        this.intensity = data.getAt("intensity").asDouble().or(this.intensity);
+    }
+
+    @Nonnull
+    @Override
+    public FluentDocument toBson() throws BsonDataException {
+        FluentDocument data = FluentDocument.wrapNew();
+
+        data.setAt("identifier").asString().to(this.identifier);
+
+        data.setAt("intensity").asDouble().to(this.intensity);
+
+        return data;
     }
 }

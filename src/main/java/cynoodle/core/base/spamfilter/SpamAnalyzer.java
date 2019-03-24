@@ -14,8 +14,8 @@ public interface SpamAnalyzer {
 
     /**
      * Analyze the given event and return the spam value for it, between 0 and 1.
-     * If the event is very unlikely to be spam, zero should be returned.
-     * If the event is very likely to be spam, one should be returned.
+     * If the event is very unlikely to be spam or if the message contains 0% spam, zero should be returned.
+     * If the event is very likely to be spam or if the message contains 100% spam, one should be returned.
      * @param event the event to analyze
      * @return the spam value for the event, between 0 and 1.
      */

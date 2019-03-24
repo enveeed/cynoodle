@@ -35,10 +35,14 @@ final class SpamFilterCache {
         AtomicDouble val = status.computeIfAbsent(key, k -> new AtomicDouble(0d));
 
         if(times.containsKey(key)) {
+
             Instant instant = times.get(key);
             long age = Duration.between(instant, Instant.now())
                     .toMinutes();
-            if(age > 0) val.addAndGet(-age);
+
+            double updated = val.addAndGet(-age);
+            if(updated < 0) val.set(0);
+
             LOG.atFinest().log("spam status for %s decreased by %s (minutes)", key, age);
         }
 
