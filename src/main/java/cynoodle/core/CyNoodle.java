@@ -17,6 +17,7 @@ import cynoodle.core.base.makeme.MakeMeModule;
 import cynoodle.core.base.moderation.ModerationModule;
 import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.base.profiles.ProfilesModule;
+import cynoodle.core.base.spamfilter.SpamFilterModule;
 import cynoodle.core.base.utilities.UtilitiesModule;
 import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordModule;
@@ -106,6 +107,9 @@ public final class CyNoodle {
 
         Carambola carambola = Carambola.get();
         carambola.getHandlers().register(new StandardHandler());
+        carambola.getConfiguration().setMinimumLevel(settings.getLogLevel());
+
+        LOG.atInfo().log("Logging all output with level > %s", settings.getLogLevel());
 
         // create the cynoodle instance
         noodle = new CyNoodle(settings);
@@ -356,6 +360,7 @@ public final class CyNoodle {
         this.modules.register(ProfilesModule.class);
         this.modules.register(ModerationModule.class);
         this.modules.register(UtilitiesModule.class);
+        this.modules.register(SpamFilterModule.class);
 
     }
 
