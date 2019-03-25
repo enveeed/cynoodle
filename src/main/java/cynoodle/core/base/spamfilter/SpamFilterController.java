@@ -110,15 +110,19 @@ public final class SpamFilterController {
 
         if(modified >= threshold) {
 
-            moderation.onMember(DiscordPointer.to(event.getGuild()), DiscordPointer.to(event.getAuthor()))
-                    .muteFinite(Duration.ofMinutes(1));
+            ModerationController.OnMember onMember =
+                    moderation.onMember(DiscordPointer.to(event.getGuild()), DiscordPointer.to(event.getAuthor()));
 
-            notifications.onGuild(DiscordPointer.to(event.getGuild()))
-                    .emit("base:spamfilter:muted",
-                            DiscordPointer.to(event.getChannel()),
-                            Members.formatAt(DiscordPointer.to(event.getGuild())).format(DiscordPointer.to(event.getAuthor())),
-                            Numbers.format(modified, 3));
+            if(!onMember.isMuted()) {
+                onMember.muteFinite(Duration.ofMinutes(10));
 
+
+                notifications.onGuild(DiscordPointer.to(event.getGuild()))
+                        .emit("base:spamfilter:muted",
+                                DiscordPointer.to(event.getChannel()),
+                                Members.formatAt(DiscordPointer.to(event.getGuild())).format(DiscordPointer.to(event.getAuthor())),
+                                Numbers.format(modified, 3));
+            }
         }
     }
 }

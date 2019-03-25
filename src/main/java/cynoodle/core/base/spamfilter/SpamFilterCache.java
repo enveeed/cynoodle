@@ -6,7 +6,6 @@
 
 package cynoodle.core.base.spamfilter;
 
-import com.google.common.flogger.FluentLogger;
 import com.google.common.util.concurrent.AtomicDouble;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.MemberKey;
@@ -19,8 +18,6 @@ import java.util.Map;
 
 final class SpamFilterCache {
     SpamFilterCache() {}
-
-    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     private final Map<MemberKey, AtomicDouble> status = new HashMap<>();
     private final Map<MemberKey, Instant> times = new HashMap<>();
@@ -42,15 +39,11 @@ final class SpamFilterCache {
 
             double updated = val.addAndGet(-age);
             if(updated < 0) val.set(0);
-
-            LOG.atFinest().log("spam status for %s decreased by %s (minutes)", key, age);
         }
 
         times.put(key, Instant.now());
 
         double mod = val.addAndGet(delta);
-
-        LOG.atFiner().log("spam status for %s is now %s", key, mod);
 
         return mod;
     }
