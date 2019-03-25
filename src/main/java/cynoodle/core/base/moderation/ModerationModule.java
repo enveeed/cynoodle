@@ -74,6 +74,8 @@ public final class ModerationModule extends Module {
         registry.register(MuteCommand.class);
         registry.register(UnMuteCommand.class);
 
+        registry.register(BulkDeleteCommand.class);
+
         //
 
         this.muteApplyService = Service.of(() -> controller().applyMutes(),
