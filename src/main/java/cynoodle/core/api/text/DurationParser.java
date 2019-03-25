@@ -12,7 +12,7 @@ import java.time.Duration;
 /**
  * Parser for {@link Duration Durations}.
  */
-public final class DurationParser {
+public final class DurationParser implements Parser<Duration> {
 
     private final static DurationParser instance = new DurationParser();
 
