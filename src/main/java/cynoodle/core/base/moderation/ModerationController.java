@@ -6,20 +6,15 @@
 
 package cynoodle.core.base.moderation;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.GEntityManager;
-import cynoodle.core.discord.RModifier;
+import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public final class ModerationController {
     ModerationController() {}
@@ -31,11 +26,13 @@ public final class ModerationController {
             module.getStrikeManager();
     private final GEntityManager<StrikeSettings> strikeSettingsManager =
             module.getStrikeSettingsManager();
+    private final MEntityManager<MuteStatus> muteStatusManager =
+            module.getMuteStatusManager();
     private final GEntityManager<MuteSettings> muteSettingsManager =
             module.getMuteSettingsManager();
 
-    private final MuteManager muteManager =
-            module.getMuteManager();
+    private final DiscordModule discord =
+            Module.get(DiscordModule.class);
 
     // ===
 
@@ -147,59 +144,46 @@ public final class ModerationController {
 
         // === MUTES ===
 
-        @Nonnull
-        @CanIgnoreReturnValue
-        public Mute muteFinite(@Nonnull Duration duration) {
+        public void muteFinite(@Nonnull Duration duration) {
 
-            Mute mute = Mute.finite(this.guild, this.user, duration);
+            MuteStatus status = muteStatusManager.firstOrCreate(this.guild, this.user);
 
-            muteManager.mute(mute);
+            status.setFinite(duration);
+            status.persist();
 
             this.applyMute();
-
-            return mute;
         }
 
-        @Nonnull
-        @CanIgnoreReturnValue
-        public Mute muteInfinite() {
+        public void muteInfinite() {
 
-            Mute mute = Mute.infinite(this.guild, this.user);
+            MuteStatus status = muteStatusManager.firstOrCreate(this.guild, this.user);
 
-            muteManager.mute(mute);
+            status.setInfinite();
+            status.persist();
 
             this.applyMute();
-
-            return mute;
         }
 
         public void unmute() {
-            muteManager.unmute(this.guild, user);
-        }
 
-        //
+            MuteStatus status = muteStatusManager.firstOrCreate(this.guild, this.user);
 
-        @Nonnull
-        public Optional<Mute> getMute() {
-            return muteManager.get(this.guild, user);
-        }
-
-        @Nonnull
-        public Optional<Mute> getEffectiveMute() {
-            return muteManager.getEffective(this.guild, user);
+            status.unset();
+            status.persist();
         }
 
         //
 
         public boolean isMuted() {
-            return getEffectiveMute().isPresent();
+
+            MuteStatus status = muteStatusManager.firstOrCreate(this.guild, this.user);
+
+            return status.isEffectivelyMuted();
         }
 
         //
 
         public void applyMute(boolean ensureEnvironment) {
-
-            System.out.println("applying mute ...");
 
             OnGuild onGuild = onGuild(this.guild);
 
@@ -220,22 +204,29 @@ public final class ModerationController {
 
             //
 
-            RModifier modifier = RModifier.on(this.user.asMember(guild.asGuild().orElseThrow()).orElseThrow());
+            MuteStatus status = muteStatusManager.firstOrCreate(this.guild, this.user);
 
-            if(isMuted()) {
-                modifier.add(role);
-            }
-            else {
-                modifier.remove(role);
+            // check if mute has expired, unset if this is the case
+
+            if(status.hasExpired()) {
+                status.unset();
+                status.persist();
             }
 
             //
 
-            modifier.done()
-                    .reason("Applied mute")
-                    .queue();
+            RModifier modifier = RModifier.on(this.user.asMember(guild.asGuild().orElseThrow()).orElseThrow());
 
-            System.out.println("mute applied (muted = "+isMuted()+")");
+            if(status.isEffectivelyMuted())
+                modifier.add(role);
+            else
+                modifier.remove(role);
+
+            //
+
+            modifier.done()
+                    .reason("Muting applied")
+                    .queue();
         }
 
         public void applyMute() {
@@ -247,23 +238,26 @@ public final class ModerationController {
 
     void applyMutes() {
 
-        Set<DiscordPointer> affected = new HashSet<>();
+        // apply mutes for each muted status
+        muteStatusManager.stream(MuteStatus.filterMuted())
+                .forEach(status -> {
 
-        // TODO currently this tracks past and current mutes, this needs to be more efficient
+            DiscordPointer guild = status.requireGuild();
+            DiscordPointer user = status.requireUser();
 
-        // apply mutes for all members
-        muteManager.all().forEach(mute -> {
+            onMember(guild, user).applyMute(false);
 
-            DiscordPointer guild = mute.getGuild();
-
-            affected.add(guild);
-
-            onMember(guild, mute.getUser())
-                    .applyMute(false);
         });
 
-        // ensure mute environments for all affected guilds
-        affected.forEach(guild -> onGuild(guild).ensureMuteEnvironment());
+
+        // ensure mute environment for every guild
+        for (Guild g : discord.getAPI().getGuilds()) {
+
+            DiscordPointer guild = DiscordPointer.to(g);
+
+            onGuild(guild).ensureMuteEnvironment();
+        }
+
     }
 
 }

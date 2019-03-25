@@ -11,6 +11,7 @@ import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.concurrent.Schedules;
 import cynoodle.core.concurrent.Service;
 import cynoodle.core.discord.GEntityManager;
+import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MRequires;
@@ -26,23 +27,19 @@ public final class ModerationModule extends Module {
 
     // ===
 
-    final static EntityType<Strike> ENTITY_STRIKE = EntityType.of(Strike.class);
-    final static EntityType<StrikeSettings> ENTITY_STRIKE_SETTINGS = EntityType.of(StrikeSettings.class);
-    final static EntityType<MuteSettings> ENTITY_MUTE_SETTINGS = EntityType.of(MuteSettings.class);
+    final static EntityType<Strike>         ENTITY_STRIKE           = EntityType.of(Strike.class);
+    final static EntityType<StrikeSettings> ENTITY_STRIKE_SETTINGS  = EntityType.of(StrikeSettings.class);
+    final static EntityType<MuteStatus>     ENTITY_MUTE_STATUS      = EntityType.of(MuteStatus.class);
+    final static EntityType<MuteSettings>   ENTITY_MUTE_SETTINGS    = EntityType.of(MuteSettings.class);
 
-    //
+    // ===
 
-    private StrikeManager strikeManager;
-    private GEntityManager<StrikeSettings> strikeSettingsManager;
-    private GEntityManager<MuteSettings> muteSettingsManager;
-
-    private MuteManager muteManager;
-
-    //
+    private StrikeManager                   strikeManager;
+    private GEntityManager<StrikeSettings>  strikeSettingsManager;
+    private MEntityManager<MuteStatus>      muteStatusManager;
+    private GEntityManager<MuteSettings>    muteSettingsManager;
 
     private Service muteApplyService;
-
-    //
 
     private ModerationController controller;
 
@@ -56,9 +53,8 @@ public final class ModerationModule extends Module {
 
         this.strikeManager = new StrikeManager();
         this.strikeSettingsManager = new GEntityManager<>(ENTITY_STRIKE_SETTINGS);
+        this.muteStatusManager = new MEntityManager<>(ENTITY_MUTE_STATUS);
         this.muteSettingsManager = new GEntityManager<>(ENTITY_MUTE_SETTINGS);
-
-        this.muteManager = new MuteManager();
 
         //
 
@@ -105,15 +101,13 @@ public final class ModerationModule extends Module {
     }
 
     @Nonnull
-    GEntityManager<MuteSettings> getMuteSettingsManager() {
-        return this.muteSettingsManager;
+    MEntityManager<MuteStatus> getMuteStatusManager() {
+        return this.muteStatusManager;
     }
 
-    //
-
     @Nonnull
-    MuteManager getMuteManager() {
-        return this.muteManager;
+    GEntityManager<MuteSettings> getMuteSettingsManager() {
+        return this.muteSettingsManager;
     }
 
     // ===
