@@ -170,6 +170,8 @@ public final class ModerationController {
 
             status.unset();
             status.persist();
+
+            this.applyMute();
         }
 
         //

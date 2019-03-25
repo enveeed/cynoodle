@@ -58,6 +58,10 @@ public final class ModerationModule extends Module {
 
         //
 
+        this.controller = new ModerationController();
+
+        //
+
         CommandRegistry registry = Module.get(CommandsModule.class).getRegistry();
 
         registry.register(StrikeListCommand.class);
@@ -67,9 +71,8 @@ public final class ModerationModule extends Module {
         registry.register(StrikeEditCommand.class);
         registry.register(StrikeViewCommand.class);
 
-        //
-
-        this.controller = new ModerationController();
+        registry.register(MuteCommand.class);
+        registry.register(UnMuteCommand.class);
 
         //
 
