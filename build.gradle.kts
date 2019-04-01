@@ -85,10 +85,10 @@ dependencies {
 
     implementation(group = "com.github.jillesvangurp",      name = "jsonj",                     version = "v2.56") // JsonJ fluent JSON API
 
-    implementation(group = "enveeed.carambola",             name = "carambola-core",            version = "0.0.1-beta6")
+    implementation(group = "enveeed.carambola",             name = "carambola-core",            version = "0.0.1-beta12")
 
-    implementation(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.1-beta6")
-    implementation(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.1-beta6")
+    implementation(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.1-beta12")
+    implementation(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.1-beta12")
 
     implementation(group = "de.u-mass",                     name = "lastfm-java",               version = "0.1.2") // Last FM API wrapper (TODO replace with own wrapper)
 
@@ -96,8 +96,12 @@ dependencies {
 
     implementation(group = "com.graphql-java",              name = "graphql-java",              version = "12.0")
 
+    // TODO temporary, for legacy imports
+    implementation(group = "com.google.protobuf",           name = "protobuf-java",             version = "+")
+
     // Unit Testing
 
     testImplementation( group = "org.junit.jupiter", name = "junit-jupiter-api",    version = "5.3.2") // JUnit API
     testRuntime(        group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.3.2") // JUnit Engine
+
 }
