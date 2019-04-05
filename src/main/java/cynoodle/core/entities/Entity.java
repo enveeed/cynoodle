@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 /**
  * An Entity, a persistent (on MongoDB), uniquely identified (via snowflakes) and cached data object.
  */
-public abstract class Entity implements IBson {
+public abstract class Entity implements IEntity, IBson {
 
     private EntityManager<?> manager;
     private long id;

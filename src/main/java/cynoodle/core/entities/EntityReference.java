@@ -15,6 +15,7 @@ import java.util.function.Function;
 
 /**
  * Immutable reference to any Entity with a snowflake ID.
+ * EntityReferences should not be part of public API and rather be used internally.
  * @param <E> the entity type
  */
 public final class EntityReference<E extends Entity> {
@@ -44,7 +45,7 @@ public final class EntityReference<E extends Entity> {
      * Get the referenced snowflake ID.
      * @return the snowflake ID
      */
-    public long getId() {
+    public long getID() {
         return this.id;
     }
 
@@ -57,6 +58,11 @@ public final class EntityReference<E extends Entity> {
     @Nonnull
     public Optional<E> get() {
         return this.manager.get(id);
+    }
+
+    @Nonnull
+    public E require() throws IllegalStateException {
+        return get().orElseThrow(() -> new IllegalStateException("No such Entity: " + this.id));
     }
 
     /**
@@ -91,7 +97,7 @@ public final class EntityReference<E extends Entity> {
 
     @Nonnull
     public static <E extends Entity> Function<EntityReference<E>, BsonValue> store() {
-        return ref -> new BsonInt64(ref.getId());
+        return ref -> new BsonInt64(ref.getID());
     }
 
     @Nonnull

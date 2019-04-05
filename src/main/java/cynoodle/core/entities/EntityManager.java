@@ -41,6 +41,7 @@ import java.util.stream.Stream;
 
 /**
  * A manager for {@link Entity Entities} of a specific type, using MongoDB.
+ * EntityManagers are mainly intended for internal use.
  * @param <E> the entity type
  * @see Entity
  */

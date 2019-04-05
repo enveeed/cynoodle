@@ -11,14 +11,14 @@ import cynoodle.core.mongo.IBson;
 import javax.annotation.Nonnull;
 
 /**
- * A sub-document for {@link Entity Entities}.
+ * A nested document for {@link Entity Entities}.
  */
-public abstract class SubEntity implements IBson {
-    protected SubEntity() {}
+public abstract class NestedEntity implements IBson {
+    protected NestedEntity() {}
 
     // ===
 
-    private SubEntityType<?> type;
+    private NestedEntityType<?> type;
 
     private Entity parent;
 
@@ -29,7 +29,7 @@ public abstract class SubEntity implements IBson {
      * @param type the type
      * @param parent the parent entity
      */
-    final void init(@Nonnull SubEntityType<?> type, @Nonnull Entity parent) {
+    final void init(@Nonnull NestedEntityType<?> type, @Nonnull Entity parent) {
         this.type = type;
         this.parent = parent;
     }
@@ -37,15 +37,15 @@ public abstract class SubEntity implements IBson {
     // ===
 
     @Nonnull
-    public final SubEntityType<?> getType() {
+    public final NestedEntityType<?> getType() {
         return this.type;
     }
 
     @SuppressWarnings("unchecked")
     @Nonnull
-    public final <E extends SubEntity> SubEntityType<E> getType(@Nonnull Class<E> eClass) {
-        if(eClass == this.getType().getSubEntityClass())
-            return (SubEntityType<E>) this.getType();
+    public final <E extends NestedEntity> NestedEntityType<E> getType(@Nonnull Class<E> eClass) {
+        if(eClass == this.getType().getNestedEntityClass())
+            return (NestedEntityType<E>) this.getType();
         else throw new IllegalArgumentException("Class does not equal the actual SubEntity class!");
     }
 

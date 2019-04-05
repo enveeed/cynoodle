@@ -14,25 +14,26 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Type information for a {@link SubEntity} class.
+ * Type information for a {@link NestedEntity} class.
  */
-public final class SubEntityType<E extends SubEntity> {
+public final class NestedEntityType<E extends NestedEntity> {
 
     private final Class<E> eClass;
 
     // ===
 
-    private SubEntityType(@Nonnull Class<E> eClass) {
+    private NestedEntityType(@Nonnull Class<E> eClass) {
         this.eClass = eClass;
     }
 
     // ===
 
     @Nonnull
-    public Class<E> getSubEntityClass() {
+    public Class<E> getNestedEntityClass() {
         return this.eClass;
     }
 
@@ -45,7 +46,7 @@ public final class SubEntityType<E extends SubEntity> {
 
         try {
             // get the constructor and make sure its accessible
-            constructor = this.getSubEntityClass().getDeclaredConstructor();
+            constructor = this.getNestedEntityClass().getDeclaredConstructor();
 
             constructor.setAccessible(true);
 
@@ -73,6 +74,13 @@ public final class SubEntityType<E extends SubEntity> {
     }
 
     @Nonnull
+    public E create(@Nonnull Entity parent, @Nonnull Consumer<E> action) {
+        E entity = create(parent);
+        action.accept(entity);
+        return entity;
+    }
+
+    @Nonnull
     public E createOf(@Nonnull Entity parent, @Nonnull FluentDocument source) throws BsonDataException {
 
         E instance = create(parent);
@@ -80,6 +88,13 @@ public final class SubEntityType<E extends SubEntity> {
         instance.fromBson(source);
 
         return instance;
+    }
+
+    @Nonnull
+    public E createOf(@Nonnull Entity parent, @Nonnull FluentDocument source, @Nonnull Consumer<E> action) {
+        E entity = createOf(parent, source);
+        action.accept(entity);
+        return entity;
     }
 
     //
@@ -97,7 +112,7 @@ public final class SubEntityType<E extends SubEntity> {
     // ===
 
     @Nonnull
-    public static <E extends SubEntity> SubEntityType<E> of(@Nonnull Class<E> eClass) throws EntityClassException {
+    public static <E extends NestedEntity> NestedEntityType<E> of(@Nonnull Class<E> eClass) throws EntityClassException {
 
         if(!Modifier.isFinal(eClass.getModifiers())) throw new EntityClassException("SubEntity class is not final!");
 
@@ -107,7 +122,7 @@ public final class SubEntityType<E extends SubEntity> {
         try {
 
             // try to get the constructor, fail otherwise
-            Constructor<? extends SubEntity> constructor = eClass.getDeclaredConstructor();
+            Constructor<? extends NestedEntity> constructor = eClass.getDeclaredConstructor();
 
             // check if the constructor is private
             if(!Modifier.isPrivate(constructor.getModifiers()))
@@ -121,6 +136,6 @@ public final class SubEntityType<E extends SubEntity> {
 
         //
 
-        return new SubEntityType<>(eClass);
+        return new NestedEntityType<>(eClass);
     }
 }
