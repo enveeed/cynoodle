@@ -16,9 +16,12 @@ import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.utils.JDALogger;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * This module manages all Discord API (JDA) functionality.
@@ -55,6 +58,14 @@ public final class DiscordModule extends Module {
     @Override
     protected void start() {
         super.start();
+
+        LOG.atFine().log("Modifying JDA logging ...");
+
+        try {
+            setupJDALogging();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         LOG.atInfo().log("Connecting to Discord ...");
 
@@ -126,6 +137,21 @@ public final class DiscordModule extends Module {
     private void relayEvent(@Nonnull Event event) {
         CyNoodle.get().getEvents()
                 .post(DiscordEvent.wrap(event));
+    }
+
+    // === UTIL ===
+
+    private static void setupJDALogging() throws Exception {
+
+        Field field = JDALogger.class.getDeclaredField("SLF4J_ENABLED");
+
+        field.setAccessible(true);
+
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+        field.set(null, true);
     }
 
 }
