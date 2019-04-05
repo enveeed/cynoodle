@@ -109,9 +109,10 @@ public final class CommandSettings extends GEntity {
         private Set<String> aliases = new HashSet<>();
 
         /**
-         * The command access list.
+         * The command access list
+         * (status is DENY by default to ensure that if new commands are added, nobody has permissions to them.)
          */
-        private AccessList access = AccessLists.create(CommandSettings.this);
+        private AccessList access = AccessLists.create(CommandSettings.this, AccessList.Status.DENY);
 
         // ===
 

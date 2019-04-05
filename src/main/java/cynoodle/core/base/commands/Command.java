@@ -103,9 +103,7 @@ public abstract class Command {
 
         AccessList access = properties.getAccess();
 
-        AccessList.PermissionFlag result = access.test(context.getUserPointer());
-
-        if(result != AccessList.PermissionFlag.ALLOW && !override) {
+        if(!access.checkAccess(context.getUserPointer()) && !override) {
             context.queueError(CommandErrors.permissionInsufficient(this));
             return;
         }

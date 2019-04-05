@@ -125,13 +125,18 @@ public final class CommandErrors {
     // === PERMISSIONS ===
 
     @Nonnull
-    public static CommandError permissionInsufficient(@Nonnull Command command) {
+    public static CommandError permissionInsufficient(@Nonnull Command command, @Nonnull String message) {
         return CommandError.builder(command)
                 .withTitle("Insufficient Permissions")
-                .withMessage("You are not allowed to access this.")
+                .withMessage(message)
                 .withIcon(ICON_PERMISSION)
                 .withColor(COLOR_SEVERE)
                 .build();
+    }
+
+    @Nonnull
+    public static CommandError permissionInsufficient(@Nonnull Command command) {
+        return permissionInsufficient(command, "You are not allowed to access this.");
     }
 
     @Nonnull
