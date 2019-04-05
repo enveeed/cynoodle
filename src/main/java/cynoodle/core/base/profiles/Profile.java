@@ -6,6 +6,7 @@
 
 package cynoodle.core.base.profiles;
 
+import com.google.common.base.Joiner;
 import cynoodle.core.api.Strings;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.fm.FMPreferences;
@@ -35,6 +36,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
@@ -97,6 +100,16 @@ public final class Profile extends UEntity {
      * linked GitHub username / organization name.
      */
     private String linkedGitHub = null;
+
+    /**
+     * linked rate your music username.
+     */
+    private String linkedRateYourMusic = null;
+
+    /**
+     * linked letterboxd username.
+     */
+    private String linkedLetterboxd = null;
 
     // ===
 
@@ -188,6 +201,24 @@ public final class Profile extends UEntity {
         this.linkedGitHub = linkedGitHub;
     }
 
+    @Nonnull
+    public Optional<String> getLinkedRateYourMusic() {
+        return Optional.ofNullable(this.linkedRateYourMusic);
+    }
+
+    public void setLinkedRateYourMusic(@Nullable String linkedRateYourMusic) {
+        this.linkedRateYourMusic = linkedRateYourMusic;
+    }
+
+    @Nonnull
+    public Optional<String> getLinkedLetterboxd() {
+        return Optional.ofNullable(this.linkedLetterboxd);
+    }
+
+    public void setLinkedLetterboxd(@Nullable String linkedLetterboxd) {
+        this.linkedLetterboxd = linkedLetterboxd;
+    }
+
     // ===
 
     @Override
@@ -205,6 +236,8 @@ public final class Profile extends UEntity {
         this.linkedSnapchat = source.getAt("linked_snapchat").asStringNullable().or(this.linkedSnapchat);
         this.linkedDeviantArt = source.getAt("linked_deviant_art").asStringNullable().or(this.linkedDeviantArt);
         this.linkedGitHub = source.getAt("linked_github").asStringNullable().or(this.linkedGitHub);
+        this.linkedRateYourMusic = source.getAt("linked_rateyourmusic").asStringNullable().or(this.linkedRateYourMusic);
+        this.linkedLetterboxd = source.getAt("linked_letterboxd").asStringNullable().or(this.linkedLetterboxd);
     }
 
     @Nonnull
@@ -223,6 +256,8 @@ public final class Profile extends UEntity {
         data.setAt("linked_snapchat").asStringNullable().to(this.linkedSnapchat);
         data.setAt("linked_deviant_art").asStringNullable().to(this.linkedDeviantArt);
         data.setAt("linked_github").asStringNullable().to(this.linkedGitHub);
+        data.setAt("linked_rateyourmusic").asStringNullable().to(this.linkedRateYourMusic);
+        data.setAt("linked_letterboxd").asStringNullable().to(this.linkedLetterboxd);
 
         return data;
     }
@@ -267,12 +302,9 @@ public final class Profile extends UEntity {
 
         out.setAuthor(title, null, user.getAvatarUrl());
 
-        // === DESC ===
-
-        StringBuilder descOut = new StringBuilder();
-
         // === TOP ===
 
+        StringBuilder topOut = new StringBuilder();
         // TEXT
 
         Optional<String> textResult = this.getText();
@@ -280,7 +312,7 @@ public final class Profile extends UEntity {
 
             String text = textResult.orElseThrow();
 
-            descOut.append(Strings.ZERO_WIDTH_WHITESPACE + "\n").append(text);
+            topOut.append(Strings.ZERO_WIDTH_WHITESPACE + "\n").append(text);
         }
 
         Optional<String> websiteResult = this.getWebsite();
@@ -298,13 +330,13 @@ public final class Profile extends UEntity {
 
             String host = uri.getHost();
 
-            descOut.append("\n\n")
+            topOut.append("\n\n")
                     .append("[").append(host).append("](").append(uri.toString()).append(")");
         }
 
-        //
+        // TOP / PERSONAL
 
-        StringBuilder personalOut = new StringBuilder();
+        List<String> personalOut = new ArrayList<>();
 
         // BIRTHDAY / AGE
 
@@ -316,10 +348,14 @@ public final class Profile extends UEntity {
 
             long age = ChronoUnit.YEARS.between(birthday, now);
 
-            personalOut.append("**").append(age).append("**").append(" ");
+            StringBuilder birthdayOut = new StringBuilder();
+
+            birthdayOut.append("**").append(age).append("**").append(" ");
 
             if(birthday.getDayOfYear() == now.getDayOfYear())
-                personalOut.append(EMBED_SEPARATOR).append("\uD83C\uDF82"); // the cake is a lie.
+                birthdayOut.append(EMBED_SEPARATOR).append("\uD83C\uDF82"); // the cake is (not) a lie.
+
+            personalOut.add(birthdayOut.toString());
         }
 
         // PRONOUNS
@@ -336,7 +372,7 @@ public final class Profile extends UEntity {
             else if(pronouns == Pronouns.INDEFINITE) pronounsOut = "they / them";
             else throw new IllegalStateException("Invalid Pronouns: " + pronouns);
 
-            personalOut.append(" **|** ").append(pronounsOut);
+            personalOut.add(pronounsOut);
         }
 
         // TIME
@@ -347,22 +383,29 @@ public final class Profile extends UEntity {
             ZoneId timezone = timezoneResult.orElseThrow();
             ZonedDateTime time = Instant.now().atZone(timezone);
 
-            String timeOut = String.format("%02d:%02d %s", time.getHour(), time.getMinute(),
+            String timeOut = String.format("`%02d:%02d %s`", time.getHour(), time.getMinute(),
                     timezone.getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
 
-            personalOut.append(" **|** `").append(timeOut).append("`");
+            personalOut.add(timeOut);
         }
 
         // BADGES
 
-        // TODO automate badges
+        // TODO automate badges (add to personalOut list)
         // personalOut.append(" **|** ").append("<:developer:551816523304534037>").append("<:patron:551824439558537236>");
 
-        descOut.append("\n\n").append(personalOut.toString());
+        if(personalOut.size() > 0) {
+
+            String personal = Joiner.on(" **|** ")
+                    .join(personalOut);
+
+            topOut.append("\n\n").append(personal);
+        }
 
         // ===
 
-        out.setDescription(descOut.toString());
+        if(topOut.length() > 0) out.setDescription(topOut.toString());
+        else out.setDescription("*alright then, keep your secrets ...*");
 
         // === LEFT ===
 
@@ -391,6 +434,8 @@ public final class Profile extends UEntity {
         Optional<String> linkedSnapchatResult = this.getLinkedSnapchat();
         Optional<String> linkedDeviantArtResult = this.getLinkedDeviantArt();
         Optional<String> linkedGitHubResult = this.getLinkedGitHub();
+        Optional<String> linkedRateYourMusicResult = this.getLinkedRateYourMusic();
+        Optional<String> linkedLetterboxdResult = this.getLinkedLetterboxd();
 
         if(linkedInstagramResult.isPresent())
             leftOut.append("<:instagram:551807327653724160>")
@@ -419,6 +464,20 @@ public final class Profile extends UEntity {
                     .append("[GitHub](https://github.com/")
                     .append(linkedGitHubResult.orElseThrow())
                     .append("/)\n");
+
+        if(linkedRateYourMusicResult.isPresent())
+            leftOut.append("<:rateyourmusic:561995619959439362>")
+                    .append(EMBED_SEPARATOR)
+                    .append("[RYM](https://rateyourmusic.com/~")
+                    .append(linkedRateYourMusicResult.orElseThrow())
+                    .append(")\n");
+
+        if(linkedLetterboxdResult.isPresent())
+            leftOut.append("<:letterboxd:561995619791798302>")
+                    .append(EMBED_SEPARATOR)
+                    .append("[Letterboxd](https://letterboxd.com/")
+                    .append(linkedLetterboxdResult.orElseThrow())
+                    .append(")\n");
 
         //
 
