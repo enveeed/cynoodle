@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static cynoodle.core.base.commands.CommandErrors.simple;
 
-@CIdentifier("base:strikes:remove")
+@CIdentifier("base:moderation:strike_remove")
 @CAliases({"strikeremove","strike-","str-","strr"})
 public final class StrikeRemoveCommand extends Command {
     private StrikeRemoveCommand() {}

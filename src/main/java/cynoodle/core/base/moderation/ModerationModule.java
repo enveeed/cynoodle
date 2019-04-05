@@ -95,8 +95,9 @@ public final class ModerationModule extends Module {
 
     // ===
 
+    // TODO public for legacy
     @Nonnull
-    StrikeManager getStrikeManager() {
+    public StrikeManager getStrikeManager() {
         return this.strikeManager;
     }
 

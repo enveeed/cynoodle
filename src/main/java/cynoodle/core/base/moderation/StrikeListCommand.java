@@ -20,7 +20,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CIdentifier("base:strikes:list")
+@CIdentifier("base:moderation:strike_list")
 @CAliases({"strikes","strikeslist","strikelist","strlist","strl"})
 public final class StrikeListCommand extends Command {
     private StrikeListCommand() {}

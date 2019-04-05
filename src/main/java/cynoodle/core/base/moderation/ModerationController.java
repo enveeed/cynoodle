@@ -13,8 +13,10 @@ import net.dv8tion.jda.core.entities.*;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public final class ModerationController {
     ModerationController() {}
@@ -90,7 +92,7 @@ public final class ModerationController {
             }
 
             Role role = rolePResult.orElseThrow()
-                    .asRole(guild)
+                    .asRole()
                     .orElseThrow(); // TODO warn role not exists
 
             // check role
@@ -196,7 +198,7 @@ public final class ModerationController {
             }
 
             Role role = rolePResult.orElseThrow()
-                    .asRole(guild.asGuild().orElseThrow())
+                    .asRole()
                     .orElseThrow(); // TODO warn role not exists
 
             //
@@ -240,6 +242,8 @@ public final class ModerationController {
 
     void applyMutes() {
 
+        Set<DiscordPointer> affectedGuilds = new HashSet<>();
+
         // apply mutes for each muted status
         muteStatusManager.stream(MuteStatus.filterMuted())
                 .forEach(status -> {
@@ -249,13 +253,13 @@ public final class ModerationController {
 
             onMember(guild, user).applyMute(false);
 
+            affectedGuilds.add(guild);
+
         });
 
 
-        // ensure mute environment for every guild
-        for (Guild g : discord.getAPI().getGuilds()) {
-
-            DiscordPointer guild = DiscordPointer.to(g);
+        // ensure mute environment for every affected guild
+        for (DiscordPointer guild : affectedGuilds) {
 
             onGuild(guild).ensureMuteEnvironment();
         }

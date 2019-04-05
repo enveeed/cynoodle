@@ -15,7 +15,7 @@ import cynoodle.core.module.Module;
 import javax.annotation.Nonnull;
 import java.time.Instant;
 
-@CIdentifier("base:strikes:add")
+@CIdentifier("base:moderation:strike_add")
 @CAliases({"strike","strikeadd", "strike+", "str+","stra"})
 public final class StrikeAddCommand extends Command {
     private StrikeAddCommand() {}

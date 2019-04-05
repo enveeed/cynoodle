@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static cynoodle.core.base.commands.CommandErrors.simple;
 
-@CIdentifier("base:strikes:restore")
+@CIdentifier("base:moderation:strike_restore")
 @CAliases({"strikerestore","strikere","strre","strre"})
 public final class StrikeRestoreCommand extends Command {
     private StrikeRestoreCommand() {}

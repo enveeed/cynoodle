@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static cynoodle.core.base.commands.CommandErrors.simple;
 
-@CIdentifier("base:strikes:view")
+@CIdentifier("base:moderation:strike_view")
 @CAliases({"strikeview","strview","strv"})
 public final class StrikeViewCommand extends Command {
     private StrikeViewCommand() {}

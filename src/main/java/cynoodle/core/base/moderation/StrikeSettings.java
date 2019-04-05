@@ -14,7 +14,7 @@ import cynoodle.core.mongo.fluent.FluentDocument;
 import javax.annotation.Nonnull;
 import java.time.Duration;
 
-@EIdentifier("base:strikes:settings")
+@EIdentifier("base:moderation:strike_settings")
 public final class StrikeSettings extends GEntity {
     private StrikeSettings() {}
 

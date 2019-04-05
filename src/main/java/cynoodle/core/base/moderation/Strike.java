@@ -21,7 +21,7 @@ import java.util.Optional;
 import static cynoodle.core.mongo.fluent.FluentValues.fromInstant;
 import static cynoodle.core.mongo.fluent.FluentValues.toInstant;
 
-@EIdentifier("base:strikes:strike")
+@EIdentifier("base:moderation:strike")
 public final class Strike extends MEntity implements Comparable<Strike> {
     private Strike() {}
 
