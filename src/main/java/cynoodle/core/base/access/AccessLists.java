@@ -22,18 +22,23 @@ public final class AccessLists {
 
     @Nonnull
     public static AccessList create(@Nonnull GEntity parent) {
-        return AccessList.TYPE.create(parent);
+        return EAccessList.TYPE.create(parent);
+    }
+
+    @Nonnull
+    public static AccessList create(@Nonnull GEntity parent, @Nonnull AccessList.Status defaultStatus) {
+        return EAccessList.TYPE.create(parent, list -> list.setDefaultStatus(defaultStatus));
     }
 
     // === BSON ===
 
     @Nonnull
     public static Function<BsonValue, AccessList> load(@Nonnull GEntity parent) {
-        return AccessList.TYPE.load(parent);
+        return EAccessList.TYPE.load(parent).andThen(x -> x);
     }
 
     @Nonnull
     public static Function<AccessList, BsonValue> store() {
-        return AccessList.TYPE.store();
+        return EAccessList.TYPE.store().compose(x -> (EAccessList) x);
     }
 }
