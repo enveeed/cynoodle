@@ -127,6 +127,12 @@ public final class MakeMeCommand extends Command {
 
         //
 
+        if(!mm.canAccess(context.getUserPointer())) {
+            context.queueError(CommandErrors.permissionInsufficient(this,
+                    "You are now allowed to access this make-me!"));
+            return;
+        }
+
         if(status.has(mm)) {
             context.queueReply("You already have the make-me **" + mm.getName() + "**.");
             return;

@@ -62,9 +62,9 @@ public final class MakeMe extends GEntity {
     private DiscordPointer role;
 
     /**
-     * The access list for this make-me.
+     * The access list for this make-me (default status is ALLOW)
      */
-    private AccessList access = AccessLists.create(this);
+    private AccessList access = AccessLists.create(this, AccessList.Status.ALLOW);
 
     /**
      * The group this make-me belongs to.
@@ -116,6 +116,24 @@ public final class MakeMe extends GEntity {
     @Nonnull
     public AccessList getAccess() {
         return this.access;
+    }
+
+    //
+
+    /**
+     * Check if the given user can access this make-me.
+     * @param user the user
+     * @return true if accessible, false otherwise.
+     */
+    public boolean canAccess(@Nonnull DiscordPointer user) {
+
+        Optional<MakeMeGroup> groupO = getGroup();
+        if(groupO.isPresent()) {
+            MakeMeGroup group = groupO.get();
+            if(!group.getAccess().checkAccess(user)) return false;
+        }
+
+        return this.getAccess().checkAccess(user);
     }
 
     // ===

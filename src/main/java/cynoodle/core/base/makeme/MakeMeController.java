@@ -237,6 +237,11 @@ public final class MakeMeController {
 
             for (MakeMe mm : all) {
 
+                if(!mm.canAccess(user)) {
+                    // TODO remove it from storage as well
+                    continue;
+                }
+
                 Optional<Role> roleResult = mm.getRole().asRole();
                 if(roleResult.isEmpty()) {
                     // TODO warn non-existing role
