@@ -7,8 +7,8 @@
 package cynoodle.core.mongo.fluent;
 
 import org.bson.*;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -60,7 +60,7 @@ public final class FluentDocument implements FluentValue, Iterable<String> {
 
     // ===
 
-    @NotNull
+    @Nonnull
     @Override
     public Iterator<String> iterator() {
         return this.document.keySet().iterator();
