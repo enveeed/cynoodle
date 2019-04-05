@@ -7,6 +7,8 @@
 package cynoodle.core.base.makeme;
 
 import com.mongodb.client.model.Filters;
+import cynoodle.core.base.access.AccessList;
+import cynoodle.core.base.access.AccessLists;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.discord.GEntityManager;
@@ -60,6 +62,11 @@ public final class MakeMe extends GEntity {
     private DiscordPointer role;
 
     /**
+     * The access list for this make-me.
+     */
+    private AccessList access = AccessLists.create(this);
+
+    /**
      * The group this make-me belongs to.
      */
     private EntityReference<MakeMeGroup> group = null;
@@ -104,6 +111,13 @@ public final class MakeMe extends GEntity {
         this.group = group == null ? null : group.reference(MakeMeGroup.class);
     }
 
+    //
+
+    @Nonnull
+    public AccessList getAccess() {
+        return this.access;
+    }
+
     // ===
 
     @Nonnull
@@ -132,6 +146,7 @@ public final class MakeMe extends GEntity {
         this.key = source.getAt(KEY_KEY).asString().or(this.key);
         this.name = source.getAt("name").asString().or(this.name);
         this.role = source.getAt("role").as(DiscordPointer.fromBson()).or(this.role);
+        this.access = source.getAt("access").as(AccessLists.load(this)).or(this.access);
         this.group = source.getAt(KEY_GROUP).asNullable(EntityReference.load(groupManager)).or(this.group);
     }
 
@@ -143,6 +158,7 @@ public final class MakeMe extends GEntity {
         data.setAt(KEY_KEY).asString().to(this.key);
         data.setAt("name").asString().to(this.name);
         data.setAt("role").as(DiscordPointer.toBson()).to(this.role);
+        data.setAt("access").as(AccessLists.store()).to(this.access);
         data.setAt(KEY_GROUP).asNullable(EntityReference.<MakeMeGroup>store()).to(this.group);
 
         return data;

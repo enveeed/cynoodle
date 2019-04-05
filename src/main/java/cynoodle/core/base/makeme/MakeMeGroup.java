@@ -7,6 +7,8 @@
 package cynoodle.core.base.makeme;
 
 import com.mongodb.client.model.Filters;
+import cynoodle.core.base.access.AccessList;
+import cynoodle.core.base.access.AccessLists;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.entities.EIndex;
@@ -40,6 +42,11 @@ public final class MakeMeGroup extends GEntity {
      */
     private String name;
 
+    /**
+     * The access list for this group.
+     */
+    private AccessList access = AccessLists.create(this);
+
     //
 
     /**
@@ -64,6 +71,17 @@ public final class MakeMeGroup extends GEntity {
     @Nonnull
     public String getName() {
         return this.name;
+    }
+
+    public void setName(@Nonnull String name) {
+        this.name = name;
+    }
+
+    //
+
+    @Nonnull
+    public AccessList getAccess() {
+        return this.access;
     }
 
     //
@@ -94,6 +112,7 @@ public final class MakeMeGroup extends GEntity {
 
         this.key = source.getAt(KEY_KEY).asString().or(this.key);
         this.name = source.getAt("name").asString().or(this.name);
+        this.access = source.getAt("access").as(AccessLists.load(this)).or(this.access);
 
         this.unique = source.getAt("unique").asBoolean().or(this.unique);
     }
@@ -105,6 +124,7 @@ public final class MakeMeGroup extends GEntity {
 
         data.setAt(KEY_KEY).asString().to(this.key);
         data.setAt("name").asString().to(this.name);
+        data.setAt("access").as(AccessLists.store()).to(this.access);
 
         data.setAt("unique").asBoolean().to(this.unique);
 
