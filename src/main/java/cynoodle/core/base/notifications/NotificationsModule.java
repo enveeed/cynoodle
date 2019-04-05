@@ -8,7 +8,7 @@ package cynoodle.core.base.notifications;
 
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.entities.EntityType;
-import cynoodle.core.entities.SubEntityType;
+import cynoodle.core.entities.NestedEntityType;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.Module;
 
@@ -19,7 +19,7 @@ public final class NotificationsModule extends Module {
     private NotificationsModule() {}
 
     final static EntityType<NotificationSettings> ENTITY_SETTINGS = EntityType.of(NotificationSettings.class);
-    final static SubEntityType<NotificationProperties> SUB_PROPERTIES = SubEntityType.of(NotificationProperties.class);
+    final static NestedEntityType<NotificationProperties> SUB_PROPERTIES = NestedEntityType.of(NotificationProperties.class);
 
     //
 

@@ -7,7 +7,7 @@
 package cynoodle.core.base.notifications;
 
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.entities.SubEntity;
+import cynoodle.core.entities.NestedEntity;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentArray;
 import cynoodle.core.mongo.fluent.FluentDocument;
@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Properties for a notification type, within {@link NotificationSettings}.
  */
-public final class NotificationProperties extends SubEntity {
+public final class NotificationProperties extends NestedEntity {
     private NotificationProperties() {}
 
     /**

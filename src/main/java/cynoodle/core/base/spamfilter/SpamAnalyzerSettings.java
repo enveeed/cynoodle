@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.spamfilter;
 
-import cynoodle.core.entities.SubEntity;
+import cynoodle.core.entities.NestedEntity;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
 
@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 /**
  * Settings for {@link SpamAnalyzer}, within {@link SpamFilterSettings}.
  */
-public final class SpamAnalyzerSettings extends SubEntity {
+public final class SpamAnalyzerSettings extends NestedEntity {
     private SpamAnalyzerSettings() {}
 
     // ===
