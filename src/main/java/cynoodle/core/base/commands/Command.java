@@ -10,11 +10,10 @@ import com.google.common.flogger.FluentLogger;
 import cynoodle.core.CyNoodle;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.ParsingException;
-import cynoodle.core.base.access.AccessModule;
-import cynoodle.core.base.access.AccessControl;
-import cynoodle.core.base.local.LocalPreferences;
+import cynoodle.core.base.access.AccessList;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.base.local.LocalModule;
+import cynoodle.core.base.local.LocalPreferences;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
@@ -102,16 +101,11 @@ public abstract class Command {
 
         boolean override = CyNoodle.get().getLaunchSettings().isNoPermissionsEnabled();
 
-        //
+        AccessList access = properties.getAccess();
 
-        AccessControl ac = Module.get(AccessModule.class).getSettingsManager()
-                .firstOrCreate(context.getGuildPointer());
+        AccessList.PermissionFlag result = access.test(context.getUserPointer());
 
-        String permission = descriptor.getPermission();
-
-        boolean passedPermissions = ac.test(context.getUser(), permission) || override;
-
-        if(!passedPermissions) {
+        if(result != AccessList.PermissionFlag.ALLOW && !override) {
             context.queueError(CommandErrors.permissionInsufficient(this));
             return;
         }

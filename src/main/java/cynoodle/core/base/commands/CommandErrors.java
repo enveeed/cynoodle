@@ -128,7 +128,17 @@ public final class CommandErrors {
     public static CommandError permissionInsufficient(@Nonnull Command command) {
         return CommandError.builder(command)
                 .withTitle("Insufficient Permissions")
-                .withMessage("I'm afraid I can't do that, Dave.")
+                .withMessage("You are not allowed to access this.")
+                .withIcon(ICON_PERMISSION)
+                .withColor(COLOR_SEVERE)
+                .build();
+    }
+
+    @Nonnull
+    public static CommandError permissionMissing(@Nonnull Command command) {
+        return CommandError.builder(command)
+                .withTitle("Permissions Error")
+                .withMessage("This command has no permission set.")
                 .withIcon(ICON_PERMISSION)
                 .withColor(COLOR_SEVERE)
                 .build();

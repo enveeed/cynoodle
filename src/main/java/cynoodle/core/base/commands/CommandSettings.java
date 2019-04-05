@@ -7,6 +7,8 @@
 package cynoodle.core.base.commands;
 
 import cynoodle.core.api.Checks;
+import cynoodle.core.base.access.AccessList;
+import cynoodle.core.base.access.AccessLists;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.module.Module;
@@ -106,6 +108,11 @@ public final class CommandSettings extends GEntity {
          */
         private Set<String> aliases = new HashSet<>();
 
+        /**
+         * The command access list.
+         */
+        private AccessList access = AccessLists.create(CommandSettings.this);
+
         // ===
 
         /**
@@ -124,6 +131,8 @@ public final class CommandSettings extends GEntity {
             return this.identifier;
         }
 
+        //
+
         @Nonnull
         public Set<String> getAliases() {
             return this.aliases;
@@ -131,6 +140,13 @@ public final class CommandSettings extends GEntity {
 
         public void setAliases(@Nonnull Set<String> aliases) {
             this.aliases = aliases;
+        }
+
+        //
+
+        @Nonnull
+        public AccessList getAccess() {
+            return this.access;
         }
 
         // ===
@@ -149,6 +165,7 @@ public final class CommandSettings extends GEntity {
             this.identifier = source.getAt("identifier").asString().value();
             this.aliases = source.getAt("aliases").asArray().or(FluentArray.wrapNew())
                     .collect().asString().toSetOr(this.aliases);
+            this.access = source.getAt("access").as(AccessLists.load(CommandSettings.this)).or(this.access);
 
         }
 
@@ -160,6 +177,7 @@ public final class CommandSettings extends GEntity {
             data.setAt("identifier").asString().to(this.identifier);
             data.setAt("aliases").asArray()
                     .to(FluentArray.wrapNew().insert().asString().atEnd(this.aliases));
+            data.setAt("access").as(AccessLists.store()).to(this.access);
 
             return data;
         }
