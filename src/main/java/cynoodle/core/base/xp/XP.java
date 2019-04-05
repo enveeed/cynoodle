@@ -13,7 +13,6 @@ import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,6 +50,13 @@ public final class XP extends MEntity implements Comparable<XP> {
             if (next < 0L) next = 0L;
             return next;
         });
+    }
+
+    // TODO temporary for legacy data
+    public long set(long value) {
+        Checks.notNegative(value, "value");
+
+        return this.xp.getAndUpdate(x -> value);
     }
 
     //
@@ -93,7 +99,7 @@ public final class XP extends MEntity implements Comparable<XP> {
     // ===
 
     @Override
-    public int compareTo(@NotNull XP o) {
+    public int compareTo(@Nonnull XP o) {
 
         // this is the reverse order, that means more XP comes first
         // (natural order for XP)

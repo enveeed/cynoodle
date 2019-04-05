@@ -20,7 +20,6 @@ import cynoodle.core.mongo.IBson;
 import cynoodle.core.mongo.fluent.FluentArray;
 import cynoodle.core.mongo.fluent.FluentDocument;
 import org.bson.conversions.Bson;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -250,7 +249,7 @@ public final class Rank extends GEntity implements Comparable<Rank> {
     //
 
     @Override
-    public int compareTo(@NotNull Rank o) {
+    public int compareTo(@Nonnull Rank o) {
         return Longs.compare(this.getLevel(), o.getLevel());
     }
 
