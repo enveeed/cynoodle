@@ -123,6 +123,21 @@ public final class ProfileEditCommand extends Command {
                     gitHubResult.isPresent() ? gitHubResult.orElseThrow() : " - ",
                     "GitHub account"));
 
+            Optional<String> rateYourMusicResult = profile.getLinkedRateYourMusic();
+            out.append(formatPropertyListing(
+                    "rym",
+                    rateYourMusicResult.isPresent() ? rateYourMusicResult.orElseThrow() : " - ",
+                    "RateYourMusic account"));
+
+            Optional<String> letterboxdResult = profile.getLinkedLetterboxd();
+            out.append(formatPropertyListing(
+                    "letterboxd",
+                    letterboxdResult.isPresent() ? letterboxdResult.orElseThrow() : " - ",
+                    "Letterboxd account"));
+
+            out.append("\n")
+                    .append("`!pedit [property] (--reset) (value)`");
+
             //
 
             context.queueReply(out.toString());
@@ -229,6 +244,28 @@ public final class ProfileEditCommand extends Command {
                 // TODO verify name
                 profile.setLinkedGitHub(name);
                 context.queueReply("**|** Your linked GitHub account was set.");
+            }
+            profile.persist();
+        } else if (property.equals("rym")) {
+            if (reset) {
+                profile.setLinkedRateYourMusic(null);
+                context.queueReply("**|** Your linked RateYourMusic account was reset.");
+            } else {
+                String name = input.requireParameter(1, "name");
+                // TODO verify name
+                profile.setLinkedRateYourMusic(name);
+                context.queueReply("**|** Your linked RateYourMusic account was set.");
+            }
+            profile.persist();
+        } else if (property.equals("letterboxd")) {
+            if (reset) {
+                profile.setLinkedLetterboxd(null);
+                context.queueReply("**|** Your linked Letterboxd account was reset.");
+            } else {
+                String name = input.requireParameter(1, "name");
+                // TODO verify name
+                profile.setLinkedLetterboxd(name);
+                context.queueReply("**|** Your linked Letterboxd account was set.");
             }
             profile.persist();
         } else throw simple(this, "Unknown property `" + property + "`.");
