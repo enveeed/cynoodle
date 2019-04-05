@@ -31,6 +31,7 @@ public final class UtilitiesModule extends Module {
 
         commandRegistry.register(VersionCommand.class);
         commandRegistry.register(ChooseOfRoleCommand.class);
+        commandRegistry.register(TemporaryHelpCommand.class);
     }
 
     @Override
