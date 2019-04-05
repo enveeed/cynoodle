@@ -3,14 +3,15 @@
 type AccessList {
     roles: [AccessListRoleEntry!]!
     users: [AccessListUserEntry!]!
+    default: Int!
 }
 
 type AccessListRoleEntry {
     role: String! # ID
-    flag: Int!
+    status: Int!
 }
 
 type AccessListUserEntry {
     user: String! # ID
-    flag: Int!
+    status: Int!
 }
