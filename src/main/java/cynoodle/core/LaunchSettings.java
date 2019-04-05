@@ -18,21 +18,32 @@ import java.util.logging.Level;
  */
 public final class LaunchSettings {
 
+    // === RAW ===
+
     /**
      * Raw input parameters.
      */
     private final Parameters parameters;
 
-    //
+    // === LOGGING ===
 
     /**
      * The logging level.
      */
     private final int logLevel;
 
+
+    // === PERMISSIONS ===
+
     private boolean noPermissions;
 
+    // === DEBUGGING ===
+
     private boolean setupTest;
+
+    // ===
+
+    private boolean convertLegacy;
 
     // ===
 
@@ -42,6 +53,7 @@ public final class LaunchSettings {
         this.logLevel = collector.logLevel;
         this.noPermissions = collector.noPermissions;
         this.setupTest = collector.setupTest;
+        this.convertLegacy = collector.convertLegacy;
     }
 
     // ===
@@ -65,6 +77,10 @@ public final class LaunchSettings {
         return this.setupTest;
     }
 
+    public boolean isConvertLegacyEnabled() {
+        return this.convertLegacy;
+    }
+
     // ===
 
     private static final class Collector {
@@ -75,6 +91,7 @@ public final class LaunchSettings {
         int logLevel = Level.INFO.intValue();
         boolean noPermissions = false;
         boolean setupTest = false;
+        boolean convertLegacy = false;
 
     }
 
@@ -89,6 +106,9 @@ public final class LaunchSettings {
     private static final Options.Option OPT_SETUP_TEST
             = Options.newFlagOption("setup-test",null);
 
+    private static final Options.Option OPT_CONVERT_LEGACY
+            = Options.newFlagOption("convert-legacy",null);
+
     //
 
     @Nonnull
@@ -100,7 +120,7 @@ public final class LaunchSettings {
         //
 
         Options options = Options.newBuilder()
-                .add(OPT_LOG_LEVEL, OPT_NO_PERMISSIONS, OPT_SETUP_TEST)
+                .add(OPT_LOG_LEVEL, OPT_NO_PERMISSIONS, OPT_SETUP_TEST, OPT_CONVERT_LEGACY)
                 .build();
 
         //
@@ -113,6 +133,7 @@ public final class LaunchSettings {
 
         collector.noPermissions = result.hasOption(OPT_NO_PERMISSIONS);
         collector.setupTest = result.hasOption(OPT_SETUP_TEST);
+        collector.convertLegacy = result.hasOption(OPT_CONVERT_LEGACY);
 
         //
 
