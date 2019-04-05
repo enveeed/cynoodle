@@ -42,7 +42,7 @@ public final class ChooseOfRoleCommand extends Command {
                        @Nonnull LocalContext local) throws Exception {
 
         DiscordPointer roleP = input.requireParameterAs(0, "role", Roles.parserAt(context.getGuildPointer()));
-        Role role = roleP.asRole(context.getGuild())
+        Role role = roleP.asRole()
                 .orElseThrow(() -> CommandErrors.simple(this, "Unknown Role `" + roleP.getID() + "`!"));
 
         //

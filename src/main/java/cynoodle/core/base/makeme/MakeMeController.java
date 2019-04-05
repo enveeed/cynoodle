@@ -237,7 +237,7 @@ public final class MakeMeController {
 
             for (MakeMe mm : all) {
 
-                Optional<Role> roleResult = mm.getRole().asRole(guild);
+                Optional<Role> roleResult = mm.getRole().asRole();
                 if(roleResult.isEmpty()) {
                     // TODO warn non-existing role
                     continue;
