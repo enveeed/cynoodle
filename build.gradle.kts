@@ -67,41 +67,33 @@ delegateClosureOf<Test> {
 dependencies {
 
     // APIs
-
-    implementation(group = "net.dv8tion",                   name = "JDA",                       version = "3.8.3_460") // JDA (Discord API)
-    implementation(group = "org.mongodb",                   name =  "mongo-java-driver",        version = "3.10.1") // MongoDB Java Driver (MongoDB API)
+    implementation(group = "net.dv8tion",                   name = "JDA",                       version = "3.8.3_460")  // JDA (Discord)
+    implementation(group = "org.mongodb",                   name =  "mongo-java-driver",        version = "3.10.1")     // MongoDB Java Driver
+    implementation(group = "de.u-mass",                     name = "lastfm-java",               version = "0.1.2")      // last.fm
 
     // Utilities / Libraries
+    implementation(group = "com.google.guava",              name = "guava",                     version = "27.0.1-jre") // Google Guava
+    implementation(group = "com.google.flogger",            name = "flogger",                   version = "0.3.1")      // Google Flogger API
+    implementation(group =  "org.eclipse.collections",      name = "eclipse-collections",       version = "9.2.0")      // Eclipse Collections
+    implementation(group =  "org.eclipse.collections",      name = "eclipse-collections-api",   version = "9.2.0")      // Eclipse Collections API
+    implementation(group = "com.fasterxml.jackson.core",    name = "jackson-core",              version = "2.9.8")      // Jackson (JSON)
+    implementation(group = "com.github.jillesvangurp",      name = "jsonj",                     version = "v2.56")      // JsonJ (JSON)
 
-    implementation(group = "com.google.guava",              name = "guava",                     version = "27.0.1-jre") // Google Guava (Common Java Utils)
-    implementation(group = "com.google.flogger",            name = "flogger",                   version = "0.3.1") // Google Flogger API (Fluent Logging)
-    implementation(group = "com.google.flogger",            name = "flogger-system-backend",    version = "0.3.1") // TODO Google Flogger System Backend (Fluent Logging)
-    implementation(group = "com.google.code.gson",          name = "gson",                      version = "2.8.5") // Google GSON (JSON library)
 
-    implementation(group =  "org.eclipse.collections",      name = "eclipse-collections",       version = "9.2.0")
-    implementation(group =  "org.eclipse.collections",      name = "eclipse-collections-api",   version = "9.2.0")
+    // Logging
+    implementation(group = "enveeed.carambola",             name = "carambola-core",            version = "0.0.10")      // carambola
+    implementation(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.10")      // carambola (Flogger)
+    implementation(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.10")      // carambola (SLF4J)
+    implementation(group = "enveeed.carambola",             name = "carambola-jul",             version = "0.0.10")      // carambola (JUL)
 
-    implementation(group = "com.fasterxml.jackson.core",    name = "jackson-core",              version = "2.9.8") // Jackson JSON API
+    // API
+    implementation(group = "com.graphql-java",              name = "graphql-java",              version = "12.0")       // GraphQL
 
-    implementation(group = "com.github.jillesvangurp",      name = "jsonj",                     version = "v2.56") // JsonJ fluent JSON API
+    // Legacy TODO This is for legacy imports only
+    implementation(group = "com.google.protobuf",           name = "protobuf-java",             version = "+")          // Google Protobuf
 
-    implementation(group = "enveeed.carambola",             name = "carambola-core",            version = "0.0.1-beta12")
-
-    implementation(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.1-beta12")
-    implementation(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.1-beta12")
-
-    implementation(group = "de.u-mass",                     name = "lastfm-java",               version = "0.1.2") // Last FM API wrapper (TODO replace with own wrapper)
-
-    // GraphQL
-
-    implementation(group = "com.graphql-java",              name = "graphql-java",              version = "12.0")
-
-    // TODO temporary, for legacy imports
-    implementation(group = "com.google.protobuf",           name = "protobuf-java",             version = "+")
-
-    // Unit Testing
-
-    testImplementation( group = "org.junit.jupiter", name = "junit-jupiter-api",    version = "5.3.2") // JUnit API
-    testRuntime(        group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.3.2") // JUnit Engine
+    // Testing
+    testImplementation( group = "org.junit.jupiter", name = "junit-jupiter-api",    version = "5.3.2")  // JUnit API
+    testRuntime(        group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.3.2")  // JUnit Engine
 
 }
