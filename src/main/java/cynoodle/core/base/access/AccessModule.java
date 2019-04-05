@@ -6,12 +6,8 @@
 
 package cynoodle.core.base.access;
 
-import cynoodle.core.discord.GEntityManager;
-import cynoodle.core.entities.EntityType;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.Module;
-
-import javax.annotation.Nonnull;
 
 /**
  * Access Control.
@@ -20,32 +16,15 @@ import javax.annotation.Nonnull;
 public final class AccessModule extends Module {
     private AccessModule() {}
 
-    static final EntityType<AccessControl> TYPE_SETTINGS = EntityType.of(AccessControl.class);
-
-    // ===
-
-    private GEntityManager<AccessControl> settingsManager;
-
     // ===
 
     @Override
     protected void start() {
         super.start();
-
-        //
-
-        settingsManager = new GEntityManager<>(TYPE_SETTINGS);
     }
 
     @Override
     protected void shutdown() {
         super.shutdown();
-    }
-
-    // ===
-
-    @Nonnull
-    public GEntityManager<AccessControl> getSettingsManager() {
-        return this.settingsManager;
     }
 }
