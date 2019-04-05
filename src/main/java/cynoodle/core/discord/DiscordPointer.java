@@ -53,6 +53,11 @@ public final class DiscordPointer {
                 .getAPI().getGuildById(this.id));
     }
 
+    public Optional<Role> asRole() {
+        return Optional.ofNullable(Module.get(DiscordModule.class)
+                .getAPI().getRoleById(this.id));
+    }
+
     @Nonnull
     public Optional<TextChannel> asTextChannel() {
         return Optional.ofNullable(Module.get(DiscordModule.class)
@@ -67,8 +72,8 @@ public final class DiscordPointer {
     }
 
     @Nonnull
-    public Optional<Role> asRole(@Nonnull Guild guild) {
-        return Optional.ofNullable(guild.getRoleById(getID()));
+    public Optional<Member> asMember(@Nonnull DiscordPointer guild) {
+        return guild.asGuild().flatMap(this::asMember);
     }
 
     // ===
