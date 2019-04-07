@@ -14,6 +14,7 @@ import cynoodle.core.base.access.AccessList;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.base.local.LocalModule;
 import cynoodle.core.base.local.LocalPreferences;
+import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
@@ -42,6 +43,11 @@ public abstract class Command {
      */
     private static final Options.Option OPT_LOCALIZE = Options.newFlagOption("localize",'l');
 
+    /**
+     * If the test instance is also present on a guild, this will force this instance to execute the command instead.
+     */
+    private static final Options.Option OPT_IGNORE_TEST = Options.newFlagOption("ignore-test", null);
+
     // ===
 
     /**
@@ -49,7 +55,8 @@ public abstract class Command {
      */
     private final Options.Builder optionsBuilder = Options.newBuilder()
             .add(OPT_DEBUG)
-            .add(OPT_LOCALIZE);
+            .add(OPT_LOCALIZE)
+            .add(OPT_IGNORE_TEST);
 
     // ===
 
@@ -93,21 +100,6 @@ public abstract class Command {
      */
     final void execute(@Nonnull CommandContext context) {
 
-        // require the settings for this guild
-        CommandSettings.Properties properties = module.getSettings().firstOrCreate(context.getGuildPointer())
-                .getProperties().findOrCreate(this.getIdentifier());
-
-        // === PERMISSIONS ===
-
-        boolean override = CyNoodle.get().getLaunchSettings().isNoPermissionsEnabled();
-
-        AccessList access = properties.getAccess();
-
-        if(!access.checkAccess(context.getUserPointer()) && !override) {
-            context.queueError(CommandErrors.permissionInsufficient(this));
-            return;
-        }
-
         // === OPTIONS ===
 
         Options options = this.optionsBuilder.build();
@@ -121,6 +113,34 @@ public abstract class Command {
 
         } catch (ParsingException e) {
             context.queueError(CommandErrors.commandParsingFailed(this, e));
+            return;
+        }
+
+        // === TEST ACCOUNT ==
+
+        // check if this is the test account
+        boolean isTestAccount = Module.get(DiscordModule.class).isTestAccount();
+        boolean ignoreTestAccount = input.hasOption(OPT_IGNORE_TEST);
+
+        if(isTestAccount) {
+            // do not execute the command because the normal instance will do it instead
+            if(ignoreTestAccount) return;
+        }
+
+        // ===
+
+        // require the settings for this guild
+        CommandSettings.Properties properties = module.getSettings().firstOrCreate(context.getGuildPointer())
+                .getProperties().findOrCreate(this.getIdentifier());
+
+        // === PERMISSIONS ===
+
+        boolean override = CyNoodle.get().getLaunchSettings().isNoPermissionsEnabled();
+
+        AccessList access = properties.getAccess();
+
+        if(!access.checkAccess(context.getUserPointer()) && !override) {
+            context.queueError(CommandErrors.permissionInsufficient(this));
             return;
         }
 
