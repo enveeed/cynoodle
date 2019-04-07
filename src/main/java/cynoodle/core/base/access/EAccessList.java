@@ -7,7 +7,7 @@
 package cynoodle.core.base.access;
 
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.GHolder;
+import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.NestedEntity;
 import cynoodle.core.entities.NestedEntityType;
 import cynoodle.core.mongo.BsonDataException;
@@ -113,7 +113,7 @@ final class EAccessList extends NestedEntity implements AccessList {
     @Nonnull
     public Status check(@Nonnull DiscordPointer user) {
 
-        DiscordPointer guildP = ((GHolder) getParent()).getGuild()
+        DiscordPointer guildP = ((GEntity) getParent()).getGuild()
                 .orElseThrow(() -> new IllegalStateException("No Guild!"));
 
         Member member = user.asMember(guildP)
