@@ -8,6 +8,7 @@ package cynoodle.core.base.moderation;
 
 import cynoodle.core.base.commands.CommandRegistry;
 import cynoodle.core.base.commands.CommandsModule;
+import cynoodle.core.base.moderation.commands.*;
 import cynoodle.core.concurrent.Schedules;
 import cynoodle.core.concurrent.Service;
 import cynoodle.core.discord.GEntityManager;
@@ -34,14 +35,19 @@ public final class ModerationModule extends Module {
 
     // ===
 
-    private StrikeManager                   strikeManager;
-    private GEntityManager<StrikeSettings>  strikeSettingsManager;
-    private MEntityManager<MuteStatus>      muteStatusManager;
-    private GEntityManager<MuteSettings>    muteSettingsManager;
+    private MEntityManager<Strike>         strikeEntityManager;
+    private GEntityManager<StrikeSettings>  strikeSettingsEntityManager;
+    private MEntityManager<MuteStatus>      muteStatusEntityManager;
+    private GEntityManager<MuteSettings>    muteSettingsEntityManager;
 
     private Service muteApplyService;
 
+    //
+
     private ModerationController controller;
+
+    private StrikeManager strikeManager;
+    private StrikeSettingsManager strikeSettingsManager;
 
     // ===
 
@@ -51,14 +57,17 @@ public final class ModerationModule extends Module {
 
         //
 
-        this.strikeManager = new StrikeManager();
-        this.strikeSettingsManager = new GEntityManager<>(ENTITY_STRIKE_SETTINGS);
-        this.muteStatusManager = new MEntityManager<>(ENTITY_MUTE_STATUS);
-        this.muteSettingsManager = new GEntityManager<>(ENTITY_MUTE_SETTINGS);
+        this.strikeEntityManager            = new MEntityManager<>(ENTITY_STRIKE);
+        this.strikeSettingsEntityManager    = new GEntityManager<>(ENTITY_STRIKE_SETTINGS);
+        this.muteStatusEntityManager        = new MEntityManager<>(ENTITY_MUTE_STATUS);
+        this.muteSettingsEntityManager      = new GEntityManager<>(ENTITY_MUTE_SETTINGS);
 
         //
 
-        this.controller = new ModerationController();
+        this.controller                     = new ModerationController();
+
+        this.strikeManager                  = new StrikeManager(this.strikeEntityManager);
+        this.strikeSettingsManager          = new StrikeSettingsManager(this.strikeSettingsEntityManager);
 
         //
 
@@ -93,33 +102,51 @@ public final class ModerationModule extends Module {
         this.muteApplyService.awaitStop();
     }
 
-    // ===
+    // === MANAGERS ===
 
-    // TODO public for legacy
+    @Nonnull
+    MEntityManager<Strike> getStrikeEntities() {
+        return this.strikeEntityManager;
+    }
+
+    @Nonnull
+    GEntityManager<StrikeSettings> getStrikeSettingsEntities() {
+        return this.strikeSettingsEntityManager;
+    }
+
+    @Nonnull
+    MEntityManager<MuteStatus> getMuteStatusEntities() {
+        return this.muteStatusEntityManager;
+    }
+
+    @Nonnull
+    GEntityManager<MuteSettings> getMuteSettingsEntities() {
+        return this.muteSettingsEntityManager;
+    }
+
+    // === PUBLIC ===
+
+    @Nonnull
+    public ModerationController controller() {
+        return this.controller;
+    }
+
+    //
+
+    /**
+     * Get the manager for {@link Strike Strikes}.
+     * @return the strike manager
+     */
     @Nonnull
     public StrikeManager getStrikeManager() {
         return this.strikeManager;
     }
 
-    @Nonnull
-    GEntityManager<StrikeSettings> getStrikeSettingsManager() {
-        return this.strikeSettingsManager;
-    }
-
-    @Nonnull
-    MEntityManager<MuteStatus> getMuteStatusManager() {
-        return this.muteStatusManager;
-    }
-
-    @Nonnull
-    GEntityManager<MuteSettings> getMuteSettingsManager() {
-        return this.muteSettingsManager;
-    }
-
-    // ===
-
-    @Nonnull
-    public ModerationController controller() {
-        return this.controller;
+    /**
+     * Get the manager for {@link StrikeSettings}.
+     * @return the strike settings manager
+     */
+    public StrikeSettingsManager getStrikeSettingsManager() {
+        return strikeSettingsManager;
     }
 }

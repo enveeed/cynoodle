@@ -4,11 +4,12 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.moderation;
+package cynoodle.core.base.moderation.commands;
 
 import cynoodle.core.api.text.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
+import cynoodle.core.base.moderation.*;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
@@ -33,14 +34,16 @@ public final class StrikeEditCommand extends Command {
 
         //
 
-        DiscordPointer member = input.requireParameterAs(0, "member", Members.parserOf(context));
-        int index = input.requireParameterAs(1, "index", PrimitiveParsers.parseInteger());
-        String selector = input.requireParameter(2, "selector");
+        DiscordPointer user =
+                input.requireParameterAs(0, "user", Members.parserOf(context));
+        int index =
+                input.requireParameterAs(1, "index", PrimitiveParsers.parseInteger());
+        String selector =
+                input.requireParameter(2, "selector");
 
         //
 
-        List<Strike> strikes = manager
-                .stream(Strike.filterMember(DiscordPointer.to(context.getGuild()), member))
+        List<Strike> strikes = manager.allOfMember(context.getGuildPointer(), user)
                 .sorted()
                 .collect(Collectors.toList());
 
@@ -74,12 +77,12 @@ public final class StrikeEditCommand extends Command {
         }
         else if(selector.equalsIgnoreCase("time")) {
             // TODO edit timestamp
-            throw simple(this,"TODO");
+            throw simple(this,"timestamp editing is not supported yet");
 
         }
         else {
             // TODO throw useful exception
-            throw simple(this, "TODO");
+            throw simple(this, "not sure what you want me to do, what do you want to edit?");
         }
 
         //

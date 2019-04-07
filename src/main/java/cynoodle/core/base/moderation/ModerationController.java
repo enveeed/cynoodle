@@ -24,14 +24,10 @@ public final class ModerationController {
     private final ModerationModule module =
             Module.get(ModerationModule.class);
 
-    private final StrikeManager strikeManager =
-            module.getStrikeManager();
-    private final GEntityManager<StrikeSettings> strikeSettingsManager =
-            module.getStrikeSettingsManager();
     private final MEntityManager<MuteStatus> muteStatusManager =
-            module.getMuteStatusManager();
+            module.getMuteStatusEntities();
     private final GEntityManager<MuteSettings> muteSettingsManager =
-            module.getMuteSettingsManager();
+            module.getMuteSettingsEntities();
 
     private final DiscordModule discord =
             Module.get(DiscordModule.class);

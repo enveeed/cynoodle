@@ -8,32 +8,62 @@ package cynoodle.core.base.moderation;
 
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.MEntityManager;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
+import java.time.Instant;
+import java.util.stream.Stream;
 
-public final class StrikeManager extends MEntityManager<Strike> {
+/**
+ * Manager for {@link Strike Strikes}.
+ */
+public final class StrikeManager {
 
-    StrikeManager() {
-        super(ModerationModule.ENTITY_STRIKE);
+    private final MEntityManager<Strike> entities;
+
+    // ===
+
+    StrikeManager(@Nonnull MEntityManager<Strike> entities) {
+        this.entities = entities;
     }
 
-    //
+    // ===
 
     @Nonnull
-    public Strike create(@Nonnull Member member, @Nonnull String reason) {
-        return this.create(member, strike -> strike.create(reason));
+    public Strike create(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user,
+                         @Nonnull String reason) {
+        return this.entities.create(guild, user, strike -> {
+            strike.setReason(reason);
+        });
     }
 
     @Nonnull
-    public Strike create(@Nonnull Guild guild, @Nonnull User user, @Nonnull String reason) {
-        return this.create(guild, user, strike -> strike.create(reason));
+    public Strike create(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user,
+                         @Nonnull String reason, @Nonnull Decay decay) {
+        return this.entities.create(guild, user, strike -> {
+            strike.setReason(reason);
+            strike.setDecay(decay);
+        });
     }
 
     @Nonnull
-    public Strike create(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user, @Nonnull String reason) {
-        return this.create(guild, user, strike -> strike.create(reason));
+    public Strike create(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user,
+                         @Nonnull String reason, @Nonnull Decay decay, @Nonnull Instant timestamp) {
+        return this.entities.create(guild, user, strike -> {
+            strike.setReason(reason);
+            strike.setDecay(decay);
+            strike.setTimestamp(timestamp);
+        });
+    }
+
+    // ===
+
+    @Nonnull
+    public Stream<Strike> all(@Nonnull DiscordPointer guild) {
+        return this.entities.stream(Strike.filterGuild(guild));
+    }
+
+    @Nonnull
+    public Stream<Strike> allOfMember(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user) {
+        return this.entities.stream(Strike.filterMember(guild, user));
     }
 }

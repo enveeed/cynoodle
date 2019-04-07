@@ -9,13 +9,14 @@ package cynoodle.core.base.moderation;
 import cynoodle.core.api.Checks;
 import cynoodle.core.discord.MEntity;
 import cynoodle.core.entities.EIdentifier;
-import cynoodle.core.module.Module;
+import cynoodle.core.entities.EntityIOException;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static cynoodle.core.mongo.fluent.FluentValues.fromInstant;
@@ -24,8 +25,6 @@ import static cynoodle.core.mongo.fluent.FluentValues.toInstant;
 @EIdentifier("base:moderation:strike")
 public final class Strike extends MEntity implements Comparable<Strike> {
     private Strike() {}
-
-    private final ModerationModule module = Module.get(ModerationModule.class);
 
     /**
      * The reason of the strike
@@ -46,13 +45,6 @@ public final class Strike extends MEntity implements Comparable<Strike> {
      * Flags the strike as removed
      */
     private boolean removed = false;
-
-    // ===
-
-    void create(@Nonnull String reason) {
-        setReason(reason);
-        setTimestamp(getCreationTime());
-    }
 
     // == METADATA ==
 
@@ -123,6 +115,13 @@ public final class Strike extends MEntity implements Comparable<Strike> {
         return !isRemoved() && !isDecayed();
     }
 
+    // ===
+
+    @Override
+    public void delete() throws NoSuchElementException, EntityIOException {
+        super.delete();
+    }
+
     // === DATA ===
 
     @Override
@@ -153,16 +152,5 @@ public final class Strike extends MEntity implements Comparable<Strike> {
     @Override
     public int compareTo(@Nonnull Strike o) {
         return this.getTimestamp().compareTo(o.getTimestamp());
-    }
-
-    // ===
-
-    /**
-     * Create a new {@link StrikeFormatter}.
-     * @return a new StrikeFormatter
-     */
-    @Nonnull
-    public static StrikeFormatter format() {
-        return new StrikeFormatter();
     }
 }

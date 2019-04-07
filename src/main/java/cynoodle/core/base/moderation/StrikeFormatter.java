@@ -52,7 +52,7 @@ public final class StrikeFormatter {
             out.append(" | **Removed**");
         }
 
-        long amount = module.getStrikeManager()
+        long amount = module.getStrikeEntities()
                 .stream(Strike.filterMember(strike.requireGuild(), strike.requireUser()))
                 .filter(Strike::isEffective)
                 .count();

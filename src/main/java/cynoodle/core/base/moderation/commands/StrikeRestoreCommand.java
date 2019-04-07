@@ -4,11 +4,12 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.moderation;
+package cynoodle.core.base.moderation.commands;
 
 import cynoodle.core.api.text.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
+import cynoodle.core.base.moderation.*;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
@@ -33,13 +34,14 @@ public final class StrikeRestoreCommand extends Command {
 
         //
 
-        DiscordPointer member = input.requireParameterAs(0, "member", Members.parserOf(context));
-        int index = input.requireParameterAs(1, "index", PrimitiveParsers.parseInteger());
+        DiscordPointer user =
+                input.requireParameterAs(0, "user", Members.parserOf(context));
+        int index =
+                input.requireParameterAs(1, "index", PrimitiveParsers.parseInteger());
 
         //
 
-        List<Strike> strikes = manager
-                .stream(Strike.filterMember(DiscordPointer.to(context.getGuild()), member))
+        List<Strike> strikes = manager.allOfMember(context.getGuildPointer(), user)
                 .sorted()
                 .collect(Collectors.toList());
 

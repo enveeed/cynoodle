@@ -4,11 +4,13 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.moderation;
+package cynoodle.core.base.moderation.commands;
 
 
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
+import cynoodle.core.base.moderation.ModerationController;
+import cynoodle.core.base.moderation.ModerationModule;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
@@ -26,11 +28,12 @@ public final class UnMuteCommand extends Command {
     @Override
     protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
-        DiscordPointer member = input.requireParameterAs(0, "member", Members.parserOf(context));
+        DiscordPointer user =
+                input.requireParameterAs(0, "user", Members.parserOf(context));
 
         //
 
-        ModerationController.OnMember onMember = controller.onMember(context.getGuildPointer(), member);
+        ModerationController.OnMember onMember = controller.onMember(context.getGuildPointer(), user);
 
         // ensure mute state so we can safely say member is not muted if that's the case
         onMember.applyMute(false);
@@ -41,6 +44,6 @@ public final class UnMuteCommand extends Command {
 
         onMember.unmute();
 
-        context.queueReply("**|** **" + Members.formatOf(context).format(member) + "** was unmuted.");
+        context.queueReply("**|** **" + Members.formatOf(context).format(user) + "** was unmuted.");
     }
 }

@@ -4,11 +4,13 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.moderation;
+package cynoodle.core.base.moderation.commands;
 
 import cynoodle.core.api.text.DurationParser;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
+import cynoodle.core.base.moderation.ModerationController;
+import cynoodle.core.base.moderation.ModerationModule;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;

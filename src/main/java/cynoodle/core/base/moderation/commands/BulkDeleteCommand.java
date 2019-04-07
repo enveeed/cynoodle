@@ -4,7 +4,7 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.moderation;
+package cynoodle.core.base.moderation.commands;
 
 import cynoodle.core.api.text.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
