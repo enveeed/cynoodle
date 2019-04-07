@@ -35,6 +35,13 @@ public final class DiscordModule extends Module {
 
     // ===
 
+    /**
+     * The account ID of the test account.
+     */
+    public static final long ID_TEST_ACCOUNT = 401357678053556225L;
+
+    // ===
+
     private ShardManager api;
 
     private DiscordConfiguration configuration;
@@ -131,6 +138,11 @@ public final class DiscordModule extends Module {
         this.api.shutdown();
     }
 
+    // ===
+
+    public boolean isTestAccount() {
+        return this.api.getShardById(0).getSelfUser().getIdLong() == ID_TEST_ACCOUNT;
+    }
 
     // === EVENTS ===
 

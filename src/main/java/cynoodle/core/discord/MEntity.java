@@ -24,11 +24,10 @@ import static cynoodle.core.discord.DiscordPointer.*;
 
 /**
  * An Entity which belongs to a {@link Member}.
- * Is both a {@link GHolder} and {@link UHolder} implementation.
  */
 @EIndex(MEntity.KEY_GUILD)
 @EIndex(MEntity.KEY_USER)
-public abstract class MEntity extends Entity implements GHolder, UHolder {
+public abstract class MEntity extends Entity implements IMEntity {
     protected MEntity() {}
 
     // ===

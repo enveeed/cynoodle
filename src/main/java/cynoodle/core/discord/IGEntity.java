@@ -6,20 +6,25 @@
 
 package cynoodle.core.discord;
 
+import cynoodle.core.entities.IEntity;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
- * Entity or Embed which holds a Guild.
- * @see GEntity
- * @see GEmbed
+ * superinterface for public interfaces to {@link GEntity}.
  */
-public interface GHolder {
+public interface IGEntity extends IEntity {
 
     @Nonnull
     Optional<DiscordPointer> getGuild();
 
     void setGuild(@Nullable DiscordPointer guild);
+
+    @Nonnull
+    default DiscordPointer requireGuild() throws IllegalStateException {
+        return getGuild().orElseThrow(() -> new IllegalStateException("No Guild set."));
+    }
 
 }

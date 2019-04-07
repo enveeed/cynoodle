@@ -24,7 +24,7 @@ import static cynoodle.core.discord.DiscordPointer.*;
  * An Entity which belongs to a {@link User}.
  */
 @EIndex(UEntity.KEY_USER)
-public abstract class UEntity extends Entity implements UHolder {
+public abstract class UEntity extends Entity implements IUEntity {
     protected UEntity() {}
 
     // ===

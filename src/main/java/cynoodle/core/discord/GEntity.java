@@ -24,7 +24,7 @@ import static cynoodle.core.discord.DiscordPointer.*;
  * An Entity which belongs to a {@link Guild}.
  */
 @EIndex(GEntity.KEY_GUILD)
-public abstract class GEntity extends Entity implements GHolder {
+public abstract class GEntity extends Entity implements IGEntity {
     protected GEntity() {}
 
     // ===
