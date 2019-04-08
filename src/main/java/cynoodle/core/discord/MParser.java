@@ -54,6 +54,8 @@ public final class MParser implements Parser<DiscordPointer> {
                 return DiscordPointer.to(member.getUser());
             if(member.getUser().getAsMention().equals(input))
                 return DiscordPointer.to(member.getUser());
+            if(member.getUser().getAsTag().equals(input))
+                return DiscordPointer.to(member.getUser());
         }
 
         throw new ParsingException("No Member found.");

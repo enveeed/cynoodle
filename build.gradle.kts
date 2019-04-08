@@ -46,7 +46,6 @@ repositories {
     jcenter()
 
     maven("https://jitpack.io") // Jitpack.io
-    maven("https://dl.bintray.com/enveeed/carambola")
 }
 
 // ===
@@ -74,8 +73,8 @@ dependencies {
     // Utilities / Libraries
     implementation(group = "com.google.guava",              name = "guava",                     version = "27.0.1-jre") // Google Guava
     implementation(group = "com.google.flogger",            name = "flogger",                   version = "0.3.1")      // Google Flogger API
-    implementation(group =  "org.eclipse.collections",      name = "eclipse-collections",       version = "9.2.0")      // Eclipse Collections
-    implementation(group =  "org.eclipse.collections",      name = "eclipse-collections-api",   version = "9.2.0")      // Eclipse Collections API
+    implementation(group = "org.eclipse.collections",       name = "eclipse-collections",       version = "9.2.0")      // Eclipse Collections
+    implementation(group = "org.eclipse.collections",       name = "eclipse-collections-api",   version = "9.2.0")      // Eclipse Collections API
     implementation(group = "com.fasterxml.jackson.core",    name = "jackson-core",              version = "2.9.8")      // Jackson (JSON)
     implementation(group = "com.github.jillesvangurp",      name = "jsonj",                     version = "v2.56")      // JsonJ (JSON)
 
