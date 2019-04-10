@@ -66,7 +66,7 @@ delegateClosureOf<Test> {
 dependencies {
 
     // APIs
-    implementation(group = "net.dv8tion",                   name = "JDA",                       version = "3.8.3_460")  // JDA (Discord)
+    implementation(group = "net.dv8tion",                   name = "JDA",                       version = "3.8.3_462")  // JDA (Discord)
     implementation(group = "org.mongodb",                   name =  "mongo-java-driver",        version = "3.10.1")     // MongoDB Java Driver
     implementation(group = "de.u-mass",                     name = "lastfm-java",               version = "0.1.2")      // last.fm
 
