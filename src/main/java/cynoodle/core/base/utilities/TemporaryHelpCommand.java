@@ -45,7 +45,7 @@ public final class TemporaryHelpCommand extends Command {
         out.append("`!strike+ (member) (\"reason\") (decay day amount | never)` **|** ").append("Add a strike").append("\n");
         out.append("`!strike- (member) (index)` **|** ").append("Remove a strike").append("\n");
         out.append("`!strikerestore (member) (index)` **|** ").append("Restore a strike").append("\n");
-        out.append("`!strikeedit (member) (...)` **|** ").append("Edit a strike").append("\n");
+        out.append("`!strikeedit (member) (reason (\"new reason\") | decay (decay day amount | never))` **|** ").append("Edit a strike").append("\n");
         out.append("`!strikeview (member) (index)` **|** ").append("View a strike in detail").append("\n");
         out.append("`!mute (member) (amount of days)` **|** ").append("Mute a member infinitely or with a time").append("\n");
         out.append("`!unmute (member)` **|** ").append("Unmute a member").append("\n");
