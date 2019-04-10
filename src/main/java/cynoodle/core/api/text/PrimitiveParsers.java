@@ -9,31 +9,82 @@ package cynoodle.core.api.text;
 import javax.annotation.Nonnull;
 
 /**
- * Static utility for parsing functions for primitive types.
+ * Static utility for parsing of primitive types.
  */
 public final class PrimitiveParsers {
     private PrimitiveParsers() {}
 
     // ===
 
+    /**
+     * Case-insensitive values for boolean <code>true</code>.
+     */
+    private static final String[] VALUES_TRUE
+            = new String[]{"true","1","yes","y","on","enable","enabled"};
+    /**
+     * Case-insensitive values for boolean <code>false</code>.
+     */
+    private static final String[] VALUES_FALSE
+            = new String[]{"false","0","no","n","off","disable","disabled"};
+
+    // ===
+
+    /**
+     * Return a parser for {@link Boolean Booleans}.
+     * @return a boolean parser
+     */
     @Nonnull
     public static Parser<Boolean> parseBoolean() {
-        return BooleanParser.get()::parse;
+        return input -> {
+            for (String val : VALUES_TRUE) if(input.equalsIgnoreCase(val)) return true;
+            for (String val : VALUES_FALSE) if(input.equalsIgnoreCase(val)) return false;
+            throw new ParsingException("Invalid boolean value: `" + input + "`.");
+        };
     }
 
+    /**
+     * Return a parser for {@link Double Doubles}.
+     * @return a double parser
+     */
     @Nonnull
     public static Parser<Double> parseDouble() {
-        return DoubleParser.get()::parse;
+        return input -> {
+            try {
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                throw new ParsingException("Invalid decimal number: `" + input + "`", e);
+            }
+        };
     }
 
+    /**
+     * Return a parser for {@link Integer Integers}.
+     * @return an int parser
+     */
     @Nonnull
     public static Parser<Integer> parseInteger() {
-        return IntegerParser.get()::parse;
+        return input -> {
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                throw new ParsingException("Invalid integer number (32-bit number): `" + input + "`", e);
+            }
+        };
     }
 
+    /**
+     * Return a parser for {@link Long Longs}.
+     * @return a long parser
+     */
     @Nonnull
     public static Parser<Long> parseLong() {
-        return LongParser.get()::parse;
+        return input -> {
+            try {
+                return Long.parseLong(input);
+            } catch (NumberFormatException e) {
+                throw new ParsingException("Invalid integer number (64-bit number): `" + input + "`", e);
+            }
+        };
     }
 
 }

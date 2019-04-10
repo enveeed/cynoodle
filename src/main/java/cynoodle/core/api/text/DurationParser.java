@@ -21,7 +21,7 @@ public final class DurationParser implements Parser<Duration> {
     @Nonnull
     public Duration parse(@Nonnull String input) throws ParsingException {
         // TODO replace this with actual duration parsing as right now its only parsing days
-        return Duration.ofDays(LongParser.get().parse(input));
+        return Duration.ofDays(PrimitiveParsers.parseLong().parse(input));
     }
 
     // ===

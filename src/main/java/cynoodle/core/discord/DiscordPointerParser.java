@@ -6,8 +6,8 @@
 
 package cynoodle.core.discord;
 
-import cynoodle.core.api.text.LongParser;
 import cynoodle.core.api.text.ParsingException;
+import cynoodle.core.api.text.PrimitiveParsers;
 
 import javax.annotation.Nonnull;
 
@@ -26,7 +26,7 @@ public final class DiscordPointerParser {
         long id;
 
         try {
-            id = LongParser.get().parse(input);
+            id = PrimitiveParsers.parseLong().parse(input);
             if(id <= 0) throw new ParsingException("Discord snowflake IDs cannot be less or equal than zero!");
         } catch (ParsingException e) {
             throw new ParsingException("Invalid snowflake ID: " + e.getMessage(), e);

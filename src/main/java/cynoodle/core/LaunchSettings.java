@@ -6,9 +6,9 @@
 
 package cynoodle.core;
 
-import cynoodle.core.api.text.IntegerParser;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
+import cynoodle.core.api.text.PrimitiveParsers;
 
 import javax.annotation.Nonnull;
 import java.util.logging.Level;
@@ -139,7 +139,7 @@ public final class LaunchSettings {
         Options.Result result = options.parse(parameters);
 
         if(result.hasOption(OPT_LOG_LEVEL)) {
-            collector.logLevel = IntegerParser.get().parse(result.getOptionValue(OPT_LOG_LEVEL));
+            collector.logLevel = PrimitiveParsers.parseInteger().parse(result.getOptionValue(OPT_LOG_LEVEL));
         }
 
         collector.noPermissions = result.hasOption(OPT_NO_PERMISSIONS);
