@@ -179,7 +179,7 @@ public final class CyNoodle {
         // === CONFIGURATION ===
 
         try {
-            this.configuration = Configuration.read(Paths.get("./config.json"));
+            this.configuration = Configuration.read(Paths.get(getLaunchSettings().getConfigPath()));
         } catch (IOException e) {
             throw new StartException(e);
         }
