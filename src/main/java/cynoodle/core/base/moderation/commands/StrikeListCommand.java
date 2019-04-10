@@ -50,7 +50,8 @@ public final class StrikeListCommand extends Command {
         boolean displayAll = input.hasOption(OPT_ALL);
 
         DiscordPointer user =
-                input.requireParameterAs(0, "user", Members.parserOf(context));
+                input.getParameterAs(0, "user", Members.parserOf(context))
+                        .orElse(context.getUserPointer());
 
         // ===
 
