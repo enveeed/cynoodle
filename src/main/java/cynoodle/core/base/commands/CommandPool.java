@@ -6,11 +6,10 @@
 
 package cynoodle.core.base.commands;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -77,7 +76,35 @@ public final class CommandPool {
      * @param context the context for this execution.
      */
     void submit(@Nonnull Command command, @Nonnull CommandContext context) {
-        this.executor.submit(() -> command.execute(context));
+        this.executor.submit(new CommandTask(command, context));
+    }
+
+    private final class CommandTask implements Callable<Void>, Comparable<CommandTask> {
+
+        private final Command command;
+        private final CommandContext context;
+
+        // ===
+
+        private CommandTask(Command command, CommandContext context) {
+            this.command = command;
+            this.context = context;
+        }
+
+        // ===
+
+        @Override
+        public Void call() throws Exception {
+            command.execute(this.context);
+            return null;
+        }
+
+        //
+
+        @Override
+        public int compareTo(@NotNull CommandPool.CommandTask o) {
+            return 0;
+        }
     }
 
     // ===
