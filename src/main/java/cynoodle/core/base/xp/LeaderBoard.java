@@ -7,8 +7,6 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.MEntityManager;
-import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
@@ -137,21 +135,17 @@ public final class LeaderBoard {
     @Nonnull
     public static LeaderBoard generate(@Nonnull DiscordPointer guild) {
 
-        XPModule module = Module.get(XPModule.class);
-
-        MEntityManager<XP> xpManager = module.getXPManager();
-
-        //
+        XPModule module = XPModule.get();
 
         List<Entry> entries = new ArrayList<>();
 
-        List<XP> xpList = xpManager
-                .stream(XP.filterGuild(guild))
+        List<XPStatus> xpList = module.getXPStatusEntityManager()
+                .stream(XPStatus.filterGuild(guild))
                 .sorted()
                 .collect(Collectors.toList());
 
         for (int i = 0; i < xpList.size(); i++) {
-            XP xp = xpList.get(i);
+            XPStatus xp = xpList.get(i);
             int rank = i + 1;
             entries.add(new Entry(xp.requireUser(), xp.get(), rank));
         }

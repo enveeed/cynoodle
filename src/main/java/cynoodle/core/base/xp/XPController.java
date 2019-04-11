@@ -18,6 +18,7 @@ import net.dv8tion.jda.core.entities.Role;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,14 +31,12 @@ public final class XPController {
 
     private final XPModule module = Module.get(XPModule.class);
 
-    private final MEntityManager<XP> xpManager
-            = module.getXPManager();
-    private final RankManager rankManager
-            = module.getRankManager();
-    private final GEntityManager<XPSettings> settingsManager
-            = module.getSettingsManager();
-    private final XPStatusManager statusManager
-            = module.getXPStatusManager();
+    private final MEntityManager<XPStatus> xpStatusEntityManager
+            = module.getXPStatusEntityManager();
+    private final GEntityManager<Rank> rankEntityManager
+            = module.getRankEntityManager();
+    private final GEntityManager<XPSettings> xpSettingsEntityManager
+            = module.getXPSettingsEntityManager();
 
     private final NotificationController notifications =
             Module.get(NotificationsModule.class).controller();
@@ -89,18 +88,15 @@ public final class XPController {
         // ===
 
         public long get() {
-
-            XP xp = module.getXPManager().firstOrCreate(guild, user);
-
-            return xp.get();
+            return module.getStatus(guild, user).get();
         }
 
         // ===
 
         public void gain(@Nullable DiscordPointer context) {
 
-            XPSettings settings     = settingsManager.firstOrCreate(this.guild);
-            XPStatus status         = statusManager.get(this.guild);
+            XPSettings settings = module.getSettings(guild);
+            XPStatus status = module.getStatus(guild, user);
 
             //
 
@@ -108,8 +104,9 @@ public final class XPController {
 
             // === GAIN ===
 
-            if(!status.isInTimeout(user)) {
-                status.updateLastGain(user);
+            if(!status.isInTimeout()) {
+
+                status.setTimeout(Instant.now().plus(settings.getGainTimeout()));
 
                 long gain = Random.nextLong(settings.getGainMin(), settings.getGainMax());
 
@@ -149,7 +146,7 @@ public final class XPController {
 
         public void modify(long change, @Nullable DiscordPointer context) {
 
-            XP xp = xpManager.firstOrCreate(guild, user);
+            XPStatus xp = xpStatusEntityManager.firstOrCreate(guild, user);
 
             long previous;
 
@@ -219,22 +216,23 @@ public final class XPController {
          */
         public void applyRanks() {
 
-            XP xp = module.getXPManager().firstOrCreate(guild, user);
+            XPStatus status = module.getStatus(guild, user);
             XPFormula formula = module.getFormula();
 
-            Guild guild = xp.requireGuild().asGuild()
+            Guild guild = status.requireGuild().asGuild()
                     .orElseThrow(() -> new IllegalStateException("No Guild!"));
 
-            Member member = xp.requireUser().asMember(guild)
+            Member member = status.requireUser().asMember(guild)
                     .orElseThrow(() -> new IllegalStateException("No Member!"));
 
             //
 
-            int level = formula.getReachedLevel(xp.get());
+            int level = formula.getReachedLevel(status.get());
 
             //
 
-            List<Rank> allRanks = rankManager.list(Rank.filterGuild(xp.requireGuild()));
+            List<Rank> allRanks = rankEntityManager.stream(guild)
+                    .collect(Collectors.toList());
 
             List<Rank> previousAndThisRanks = allRanks.stream()
                     .sorted()

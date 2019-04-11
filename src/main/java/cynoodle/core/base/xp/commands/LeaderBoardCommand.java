@@ -4,15 +4,16 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.xp;
+package cynoodle.core.base.xp.commands;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
-import cynoodle.core.discord.GEntityManager;
-import cynoodle.core.discord.MEntityManager;
+import cynoodle.core.base.xp.LeaderBoard;
+import cynoodle.core.base.xp.LeaderBoardManager;
+import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 
@@ -24,8 +25,11 @@ import java.util.Optional;
 
 import static cynoodle.core.base.commands.CommandErrors.simple;
 
-@CIdentifier("base:xp:lb")
-@CAliases({"leaderboard","lb","toplist","tl","levels","lvls"})
+/**
+ * Command to display the {@link LeaderBoard} of the context guild.
+ */
+@CIdentifier("base:xp:leaderboard")
+@CAliases({"leaderboard","lb","levels","lvls"})
 public final class LeaderBoardCommand extends Command {
     private LeaderBoardCommand() {}
 
@@ -34,14 +38,10 @@ public final class LeaderBoardCommand extends Command {
     @Override
     protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
-        MEntityManager<XP> xpManager = module.getXPManager();
-        GEntityManager<XPSettings> settingsManager = module.getSettingsManager();
-        LeaderBoardManager leaderBoardManager = module.getLeaderBoardManager();
-
-        //
-
-        int from = input.getParameterAs(0, "from", PrimitiveParsers.parseInteger()).orElse(1);
-        int to = input.getParameterAs(1, "to", PrimitiveParsers.parseInteger()).orElse((from - 1) + 25);
+        int from = input.getParameterAs(0, "from",
+                PrimitiveParsers.parseInteger()).orElse(1);
+        int to = input.getParameterAs(1, "to",
+                PrimitiveParsers.parseInteger()).orElse((from - 1) + 25);
 
         //
 
@@ -55,14 +55,16 @@ public final class LeaderBoardCommand extends Command {
 
         //
 
-        Optional<LeaderBoard> boardOpt = leaderBoardManager.get(context.getGuildPointer());
+        LeaderBoardManager leaderboards = module.getLeaderBoardManager();
+
+        Optional<LeaderBoard> boardOpt = leaderboards.get(context.getGuildPointer());
 
         LeaderBoard board;
 
         // TODO temporary
         if(boardOpt.isEmpty()) {
             context.getChannel().sendMessage("**|** Updating leader board, this may take a few moments ...").complete();
-            board = leaderBoardManager.generate(context.getGuildPointer());
+            board = leaderboards.generate(context.getGuildPointer());
         }
         else board = boardOpt.orElseThrow();
 

@@ -4,23 +4,25 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.xp;
+package cynoodle.core.base.xp.commands;
 
-import com.google.common.primitives.Longs;
-import com.mongodb.client.model.Filters;
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
+import cynoodle.core.base.xp.Rank;
+import cynoodle.core.base.xp.RankManager;
+import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static cynoodle.core.base.commands.CommandErrors.*;
-
+/**
+ * Command to display a table of all available {@link Rank Ranks} on the context guild.
+ */
 @CIdentifier("base:xp:ranks")
 @CAliases("ranks")
 public final class RanksCommand extends Command {
@@ -47,17 +49,21 @@ public final class RanksCommand extends Command {
     @Override
     protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
-        RankManager rankManager = module.getRankManager();
+        RankManager manager = module.getRanks();
+        //
 
         boolean displayXP = input.hasOption(OPT_XP);
 
         // ===
 
-        List<Rank> ranks = rankManager.stream(Filters.and(Rank.filterGuild(context.getGuild())))
-                .sorted((o1, o2) -> Longs.compare(o1.getLevel(), o2.getLevel()))
+        List<Rank> ranks = manager.all(context.getGuildPointer())
+                .sorted()
                 .collect(Collectors.toList());
 
-        if(ranks.isEmpty()) throw simple("There are no Ranks.");
+        if(ranks.isEmpty()) {
+            context.queueReply("**|** There are currently no Ranks on this server.");
+            return;
+        }
 
         //
 
@@ -89,6 +95,6 @@ public final class RanksCommand extends Command {
 
         //
 
-        context.getChannel().sendMessage(out.toString()).queue();
+        context.queueReply(out.toString());
     }
 }

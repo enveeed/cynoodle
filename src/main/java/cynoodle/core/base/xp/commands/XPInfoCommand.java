@@ -4,14 +4,19 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.xp;
+package cynoodle.core.base.xp.commands;
 
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
+import cynoodle.core.base.xp.XPModule;
+import cynoodle.core.base.xp.XPSettings;
 import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Command to display general XP info for the context guild.
+ */
 @CIdentifier("base:xp:info")
 @CAliases({"xpinfo","xinfo","xpi","xi"})
 public final class XPInfoCommand extends Command {
@@ -26,7 +31,7 @@ public final class XPInfoCommand extends Command {
                        @Nonnull CommandInput input,
                        @Nonnull LocalContext local) throws Exception {
 
-        XPSettings settings = module.getSettingsManager().firstOrCreate(context.getGuild());
+        XPSettings settings = module.getSettings(context.getGuildPointer());
 
         //
 

@@ -4,54 +4,50 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.xp;
+package cynoodle.core.base.xp.commands;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.text.ProgressFormatter;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
+import cynoodle.core.base.xp.*;
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.GEntityManager;
-import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.discord.Members;
-import cynoodle.core.module.Module;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-import static cynoodle.core.base.commands.CommandErrors.internalError;
-import static cynoodle.core.base.commands.CommandErrors.simple;
-
+/**
+ * Display the current {@link XPStatus} of the context member, as well as their rank on
+ * the context guilds {@link LeaderBoard}.
+ */
 @CIdentifier("base:xp:xp")
 @CAliases({"xp", "rank", "r"})
 public final class XPCommand extends Command {
     private XPCommand() {}
 
-    private final XPModule module = Module.get(XPModule.class);
+    private final XPModule module = XPModule.get();
 
     @Override
     protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
-        MEntityManager<XP> xpManager = module.getXPManager();
-        GEntityManager<XPSettings> settingsManager = module.getSettingsManager();
-        RankManager rankManager = module.getRankManager();
+        RankManager ranks = module.getRanks();
 
-        DiscordPointer member = input.getParameterAs(0, "member", Members.parserOf(context))
+        //
+
+        DiscordPointer user = input.getParameterAs(0, "user", Members.parserOf(context))
                 .orElse(context.getUserPointer());
 
         // ===
 
-        XP xp = xpManager.first(XP.filterMember(DiscordPointer.to(context.getGuild()), member))
-                .orElseThrow(() -> simple("There is no XP for this Member!"));
-
-        XPSettings settings = settingsManager.first(XP.filterGuild(context.getGuild()))
-                .orElseThrow(() -> internalError());
+        XPStatus status         = module.getStatus(context.getGuildPointer(), user);
+        XPSettings settings     = module.getSettings(context.getGuildPointer());
 
         // === XP DATA ===
 
         XPFormula formula = module.getFormula();
 
-        long xp_current = xp.get();
+        long xp_current = status.get();
 
         int level_current = formula.getReachedLevel(xp_current);
 
@@ -69,7 +65,7 @@ public final class XPCommand extends Command {
 
         // === RANK ===
 
-        Optional<Rank> level_next_rank = rankManager.firstByLevel(context.getGuildPointer(), level_next);
+        Optional<Rank> level_next_rank = ranks.getOnLevel(level_next);
 
         String level_next_rank_out;
 
@@ -85,7 +81,7 @@ public final class XPCommand extends Command {
         String rank_current_out;
 
         if(board.isPresent())
-            rank_current_out = String.format(" | `# %s\u200b`", board.orElseThrow().findByMember(member)
+            rank_current_out = String.format(" | `# %s\u200b`", board.orElseThrow().findByMember(user)
                             .map(entry -> Numbers.format(entry.getRank()))
                             .orElse("- "));
         else
@@ -94,7 +90,7 @@ public final class XPCommand extends Command {
         // === FORMATTING ===
 
         String out = String.format("**%s:** `%s` XP | Level `%s` **>>** `\u200b%s\u200b` `%s %%` `%s` **>>** %s %s",
-                Members.formatAt(context.getGuildPointer()).format(member),
+                Members.formatAt(context.getGuildPointer()).format(user),
                 Numbers.format(xp_current),
                 Numbers.format(level_current),
                 ProgressFormatter.create().setLength(20).format(level_next_fraction),
@@ -106,7 +102,7 @@ public final class XPCommand extends Command {
 
         //
 
-        context.getChannel().sendMessage(out).queue();
+        context.queueReply(out);
 
     }
 

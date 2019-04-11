@@ -11,6 +11,8 @@ import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.base.notifications.NotificationType;
 import cynoodle.core.base.notifications.NotificationTypeRegistry;
 import cynoodle.core.base.notifications.NotificationsModule;
+import cynoodle.core.base.xp.commands.*;
+import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.entities.EntityType;
@@ -31,9 +33,12 @@ public final class XPModule extends Module {
 
     // ===
 
-    private final static EntityType<XP> ENTITY_XP = EntityType.of(XP.class);
-    private final static EntityType<Rank> ENTITY_RANK = EntityType.of(Rank.class);
-    private final static EntityType<XPSettings> ENTITY_SETTINGS = EntityType.of(XPSettings.class);
+    private final static EntityType<XPStatus> ENTITY_XP_STATUS
+            = EntityType.of(XPStatus.class);
+    private final static EntityType<Rank> ENTITY_RANK
+            = EntityType.of(Rank.class);
+    private final static EntityType<XPSettings> ENTITY_XP_SETTINGS
+            = EntityType.of(XPSettings.class);
 
     final static NotificationType NOTIFICATION_LEVEL_UP = NotificationType.of("base:xp:level_up",
             "member", "level");
@@ -46,20 +51,26 @@ public final class XPModule extends Module {
 
     // ===
 
-    private final XPFormula formula = new StandardXPFormula(); // TODO configurable
+    /**
+     * The XP formula (in the future, this will be replaced with a registry)
+     */
+    private final XPFormula formula = new StandardXPFormula();
 
-    private MEntityManager<XP> xpManager;
+    private MEntityManager<XPStatus> xpStatusEntityManager;
+    private GEntityManager<XPSettings> xpSettingsEntityManager;
+    private GEntityManager<Rank> rankEntityManager;
+
+    //
+
     private RankManager rankManager;
-    private GEntityManager<XPSettings> settingsManager;
+
+    //
 
     private LeaderBoardManager leaderBoardManager;
-
-    private XPStatusManager xpStatusManager;
 
     //
 
     private XPController controller;
-
     private XPEventHandler handler;
 
     // ===
@@ -68,9 +79,15 @@ public final class XPModule extends Module {
     protected void start() {
         super.start();
 
-        this.xpManager = new MEntityManager<>(ENTITY_XP);
-        this.rankManager = new RankManager(ENTITY_RANK);
-        this.settingsManager = new GEntityManager<>(ENTITY_SETTINGS);
+        this.xpStatusEntityManager = new MEntityManager<>(ENTITY_XP_STATUS);
+        this.xpSettingsEntityManager = new GEntityManager<>(ENTITY_XP_SETTINGS);
+        this.rankEntityManager = new GEntityManager<>(ENTITY_RANK);
+
+        //
+
+        this.rankManager = new RankManager(this.rankEntityManager);
+
+        //
 
         leaderBoardManager = new LeaderBoardManager();
 
@@ -99,14 +116,6 @@ public final class XPModule extends Module {
 
         //
 
-        this.xpManager.ensureIndexes();
-        this.rankManager.ensureIndexes();
-        this.settingsManager.ensureIndexes();
-
-        this.xpStatusManager = new XPStatusManager();
-
-        //
-
         this.controller = new XPController();
 
         //
@@ -124,9 +133,25 @@ public final class XPModule extends Module {
         super.shutdown();
     }
 
+    // === ENTITIES ===
+
+    @Nonnull
+    MEntityManager<XPStatus> getXPStatusEntityManager() {
+        return this.xpStatusEntityManager;
+    }
+
+    @Nonnull
+    GEntityManager<XPSettings> getXPSettingsEntityManager() {
+        return this.xpSettingsEntityManager;
+    }
+
+    @Nonnull
+    GEntityManager<Rank> getRankEntityManager() {
+        return this.rankEntityManager;
+    }
+
     // ===
 
-    // TODO configurable
     @Nonnull
     public XPFormula getFormula() {
         return this.formula;
@@ -134,19 +159,36 @@ public final class XPModule extends Module {
 
     //
 
+    /**
+     * Get the XP status for the given member.
+     * @param guild the guild
+     * @param user the user
+     * @return the XP status
+     */
     @Nonnull
-    public MEntityManager<XP> getXPManager() {
-        return this.xpManager;
+    public XPStatus getStatus(@Nonnull DiscordPointer guild, @Nonnull DiscordPointer user) {
+        return this.xpStatusEntityManager.firstOrCreate(guild, user);
     }
 
+    /**
+     * Get the XP settings for the given guild.
+     * @param guild the guild
+     * @return the XP settings
+     */
     @Nonnull
-    public RankManager getRankManager() {
+    public XPSettings getSettings(@Nonnull DiscordPointer guild) {
+        return this.xpSettingsEntityManager.firstOrCreate(guild);
+    }
+
+    //
+
+    /**
+     * Get the {@link RankManager}.
+     * @return the rank manager
+     */
+    @Nonnull
+    public RankManager getRanks() {
         return this.rankManager;
-    }
-
-    @Nonnull
-    public GEntityManager<XPSettings> getSettingsManager() {
-        return this.settingsManager;
     }
 
     //
@@ -159,14 +201,14 @@ public final class XPModule extends Module {
     //
 
     @Nonnull
-    public XPStatusManager getXPStatusManager() {
-        return this.xpStatusManager;
-    }
-
-    //
-
-    @Nonnull
     public XPController controller() {
         return this.controller;
+    }
+
+    // ===
+
+    @Nonnull
+    public static XPModule get() {
+        return get(XPModule.class);
     }
 }

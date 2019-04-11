@@ -4,14 +4,14 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.base.xp;
+package cynoodle.core.base.xp.commands;
 
 import cynoodle.core.api.Numbers;
 import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
+import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordPointer;
-import cynoodle.core.discord.MEntityManager;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
 import net.dv8tion.jda.core.entities.User;
@@ -20,6 +20,9 @@ import javax.annotation.Nonnull;
 
 import static cynoodle.core.base.commands.CommandErrors.simple;
 
+/**
+ * Command to add XP to a member.
+ */
 @CIdentifier("base:xp:add")
 @CAliases({"xp+","x+","addxp","xpadd","addx"})
 public final class XPAddCommand extends Command {
@@ -30,18 +33,16 @@ public final class XPAddCommand extends Command {
     @Override
     protected void run(@Nonnull CommandContext context, @Nonnull CommandInput input, @Nonnull LocalContext local) throws Exception {
 
-        MEntityManager<XP> xpManager = module.getXPManager();
-
-        DiscordPointer member = input.requireParameterAs(0, "member", Members.parserOf(context));
-        long value = input.requireParameterAs(1, "value", PrimitiveParsers.parseLong());
+        DiscordPointer member =
+                input.requireParameterAs(0, "member", Members.parserOf(context));
+        long value =
+                input.requireParameterAs(1, "value", PrimitiveParsers.parseLong());
 
         // ===
 
-        User user = member.asUser()
-                .orElseThrow(() -> simple("There is no User for the given Member!"));
+        User user = member.asUser().orElseThrow(() -> simple("There is no known User for the given User!"));
 
         // validation
-
         if(user.isBot()) throw simple("Bots can not have XP.");
         if(value <= 0) throw simple("You can not add a negative or zero amount of XP!");
 

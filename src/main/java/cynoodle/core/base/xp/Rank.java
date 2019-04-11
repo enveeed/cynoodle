@@ -14,7 +14,6 @@ import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntity;
 import cynoodle.core.entities.EIdentifier;
 import cynoodle.core.entities.EIndex;
-import cynoodle.core.module.Module;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.IBson;
 import cynoodle.core.mongo.fluent.FluentArray;
@@ -24,6 +23,9 @@ import org.bson.conversions.Bson;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Function;
+
+import static cynoodle.core.base.xp.XPChecks.validLevel;
+import static cynoodle.core.base.xp.XPChecks.validRankName;
 
 /**
  * A rank. Defines a set of roles with properties to apply to a member
@@ -35,17 +37,13 @@ import java.util.function.Function;
 public final class Rank extends GEntity implements Comparable<Rank> {
     private Rank() {}
 
-    private final XPModule module = Module.get(XPModule.class);
-
-    // ===
-
     /**
      * The (display) name of the Rank.
      */
     private String name = "Rank";
 
     /**
-     * The level at which the Rank is set.
+     * The level at which the Rank is set (this is unique)
      */
     private int level;
 
@@ -56,20 +54,13 @@ public final class Rank extends GEntity implements Comparable<Rank> {
 
     // ===
 
-    void create(@Nonnull String name, int level) {
-        setName(name);
-        setLevel(level);
-    }
-
-    // ===
-
     @Nonnull
     public String getName() {
         return this.name;
     }
 
     public void setName(@Nonnull String name) {
-        Checks.notEmpty(name);
+        validRankName(name);
         this.name = name;
     }
 
@@ -77,20 +68,19 @@ public final class Rank extends GEntity implements Comparable<Rank> {
         return this.level;
     }
 
-    public void setLevel(int level) {
-        Checks.notNegative(level, "level");
-        if(level == this.level) return;
+    //
 
-        if(getRankManager().existsByLevel(requireGuild(), level))
-            throw new IllegalArgumentException("There is already a Rank set to this level: " + level);
-
+    // package-private to ensure level uniqueness
+    void setLevel(int level) {
+        validLevel(level);
         this.level = level;
     }
 
     //
 
     public long getRequiredXP() {
-        return this.module.getFormula()
+        return XPModule.get()
+                .getFormula()
                 .getRequiredXP(this.level);
     }
 
@@ -120,7 +110,8 @@ public final class Rank extends GEntity implements Comparable<Rank> {
      */
     @Nonnull
     public Optional<Rank> getPrevious() {
-        return this.getRankManager()
+        return XPModule.get()
+                .getRankEntityManager()
                 .stream(filterLevelPrevious(this.level))
                 .sorted(Comparator.reverseOrder())
                 .limit(1)
@@ -134,7 +125,8 @@ public final class Rank extends GEntity implements Comparable<Rank> {
      */
     @Nonnull
     public Optional<Rank> getNext() {
-        return this.getRankManager()
+        return XPModule.get()
+                .getRankEntityManager()
                 .stream(filterLevelNext(this.level))
                 .sorted()
                 .limit(1)
@@ -203,22 +195,6 @@ public final class Rank extends GEntity implements Comparable<Rank> {
     public static Bson filterLevelAndNext(int level) {
         // match all previous levels and this one
         return Filters.gte("level", level);
-    }
-
-    // ===
-
-    /**
-     * Convenience getter to get the manager as the actual
-     * runtime RankManager type.
-     * @return the rank manager
-     */
-    @Nonnull
-    public RankManager getRankManager() {
-
-        // NOTE: Since Ranks are only ever used within XPModule we can
-        // safely assume that RankManager is also used.
-
-        return (RankManager) getManager(Rank.class);
     }
 
     // ===
