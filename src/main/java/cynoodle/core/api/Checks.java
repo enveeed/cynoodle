@@ -11,7 +11,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import javax.annotation.Nonnull;
 
 /**
- * validity checks for single values.
+ * Validity checks for single values.
  */
 public final class Checks {
     private Checks() {}

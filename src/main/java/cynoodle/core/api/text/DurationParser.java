@@ -6,6 +6,10 @@
 
 package cynoodle.core.api.text;
 
+import cynoodle.core.api.parser.Parser;
+import cynoodle.core.api.parser.ParsingException;
+import cynoodle.core.api.parser.PrimitiveParsers;
+
 import javax.annotation.Nonnull;
 import java.time.Duration;
 

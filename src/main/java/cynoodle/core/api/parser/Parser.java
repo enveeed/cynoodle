@@ -4,7 +4,7 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.api.text;
+package cynoodle.core.api.parser;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;

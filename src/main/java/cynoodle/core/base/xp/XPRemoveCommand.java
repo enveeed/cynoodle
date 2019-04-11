@@ -7,7 +7,7 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.DiscordPointer;
@@ -38,12 +38,12 @@ public final class XPRemoveCommand extends Command {
         // ===
 
         User user = member.asUser()
-                .orElseThrow(() -> simple(this, "There is no User for the given Member!"));
+                .orElseThrow(() -> simple("There is no User for the given Member!"));
 
         // validation
 
-        if(user.isBot()) throw simple(this, "Bots can not have XP.");
-        if(value <= 0) throw simple(this, "You can not remove a negative or zero amount of XP!");
+        if(user.isBot()) throw simple("Bots can not have XP.");
+        if(value <= 0) throw simple("You can not remove a negative or zero amount of XP!");
 
         module.controller()
                 .onMember(context.getGuildPointer(), member)

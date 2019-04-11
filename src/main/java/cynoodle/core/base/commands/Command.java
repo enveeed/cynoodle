@@ -9,7 +9,7 @@ package cynoodle.core.base.commands;
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.CyNoodle;
 import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.ParsingException;
+import cynoodle.core.api.parser.ParsingException;
 import cynoodle.core.base.access.AccessList;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.base.local.LocalModule;
@@ -112,7 +112,7 @@ public abstract class Command {
             input = options.parse(context.getRawInput());
 
         } catch (ParsingException e) {
-            context.queueError(CommandErrors.commandParsingFailed(this, e));
+            context.queueError(CommandErrors.commandParsingFailed(e));
             return;
         }
 
@@ -140,7 +140,7 @@ public abstract class Command {
         AccessList access = properties.getAccess();
 
         if(!access.checkAccess(context.getUserPointer()) && !override) {
-            context.queueError(CommandErrors.permissionInsufficient(this));
+            context.queueError(CommandErrors.permissionInsufficient());
             return;
         }
 
@@ -173,7 +173,7 @@ public abstract class Command {
 
             if(e instanceof CommandError) ce = (CommandError) e;
             else {
-                ce = CommandErrors.internalError(this);
+                ce = CommandErrors.internalError();
                 LOG.atSevere().withCause(e).log("Internal error at %s with input %s!", this.getIdentifier(), input);
             }
 

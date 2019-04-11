@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.moderation.commands;
 
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.base.moderation.*;
@@ -44,7 +44,7 @@ public final class StrikeViewCommand extends Command {
                 .collect(Collectors.toList());
 
         if(index < 0 || index >= strikes.size())
-            throw simple(this, "There is no strike at index `" + index + "`.");
+            throw simple("There is no strike at index `" + index + "`.");
 
         //
 

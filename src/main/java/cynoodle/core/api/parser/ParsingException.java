@@ -4,7 +4,7 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.api.text;
+package cynoodle.core.api.parser;
 
 /**
  * An exception for parsers, that is thrown if an input

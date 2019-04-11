@@ -8,7 +8,7 @@ package cynoodle.core;
 
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.text.Parameters;
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 
 import javax.annotation.Nonnull;
 import java.util.logging.Level;

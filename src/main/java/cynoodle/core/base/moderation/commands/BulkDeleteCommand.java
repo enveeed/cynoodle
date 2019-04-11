@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.moderation.commands;
 
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import net.dv8tion.jda.core.entities.Message;

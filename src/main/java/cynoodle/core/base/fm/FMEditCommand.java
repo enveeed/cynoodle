@@ -8,7 +8,7 @@ package cynoodle.core.base.fm;
 
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.UEntityManager;
@@ -123,7 +123,7 @@ public final class FMEditCommand extends Command {
 
                Optional<FMFormat> format = module.getFormatRegistry().find(formatName);
                if(format.isEmpty()) {
-                   context.queueError(CommandErrors.simple(this, "Unknown format: `" + formatName + "`!"));
+                   context.queueError(CommandErrors.simple("Unknown format: `" + formatName + "`!"));
                    return;
                }
 
@@ -156,7 +156,7 @@ public final class FMEditCommand extends Command {
 
             return;
         }
-        else throw simple(this, "TODO"); // TODO exception
+        else throw simple("TODO"); // TODO exception
     }
 
     // ===

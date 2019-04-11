@@ -41,6 +41,6 @@ public final class LocalizeCommand extends Command {
 
         // TODO
 
-        throw CommandErrors.simple(this, "This command is not supported yet.");
+        throw CommandErrors.simple("This command is not supported yet.");
     }
 }

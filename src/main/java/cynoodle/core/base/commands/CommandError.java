@@ -21,11 +21,6 @@ import java.util.EnumSet;
 public final class CommandError extends Exception {
 
     /**
-     * The command which caused this error.
-     */
-    private final Command command;
-
-    /**
      * The title, a short text indicating what the issue is about.
      */
     private final String title;
@@ -53,7 +48,6 @@ public final class CommandError extends Exception {
     // ===
 
     private CommandError(@Nonnull Builder builder) {
-        this.command    = builder.command;
 
         this.title      = builder.title;
         this.message    = builder.message;
@@ -130,15 +124,13 @@ public final class CommandError extends Exception {
     // ===
 
     @Nonnull
-    public static Builder builder(@Nonnull Command command) {
-        return new Builder(command);
+    public static Builder builder() {
+        return new Builder();
     }
 
     // ===
 
     public static class Builder {
-
-        private Command command;
 
         private String title = null;
         private String message = null;
@@ -146,12 +138,6 @@ public final class CommandError extends Exception {
         private Color color = null;
 
         private final EnumSet<Flag> flags = EnumSet.noneOf(Flag.class);
-
-        // ===
-
-        private Builder(@Nonnull Command command) {
-            this.command = command;
-        }
 
         // ===
 

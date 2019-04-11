@@ -38,7 +38,7 @@ public final class UnMuteCommand extends Command {
         // ensure mute state so we can safely say member is not muted if that's the case
         onMember.applyMute(false);
 
-        if(!onMember.isMuted()) throw CommandErrors.simple(this, "Member is not muted!");
+        if(!onMember.isMuted()) throw CommandErrors.simple("Member is not muted!");
 
         //
 

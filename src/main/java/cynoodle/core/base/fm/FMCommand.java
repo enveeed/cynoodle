@@ -43,7 +43,7 @@ public final class FMCommand extends Command {
         // USERNAME
 
         String username = preferences.getUsername()
-                .orElseThrow(() -> simple(this, "No username defined."));
+                .orElseThrow(() -> simple("No username defined."));
 
         // FORMAT
 
@@ -58,17 +58,17 @@ public final class FMCommand extends Command {
         Optional<FMFormat> formatResult = module.getFormatRegistry()
                 .find(formatName);
 
-        FMFormat format = formatResult.orElseThrow(() -> simple(this, "No such format: `" + formatName + "`"));
+        FMFormat format = formatResult.orElseThrow(() -> simple("No such format: `" + formatName + "`"));
 
         // === API REQUEST ===
 
         PaginatedResult<Track> recent = User.getRecentTracks(username, 1, 1, module.getConfiguration().getAPIKey());
 
-        if (recent.isEmpty()) throw simple(this, "The last.fm API did not return any result.");
+        if (recent.isEmpty()) throw simple("The last.fm API did not return any result.");
 
         Optional<Track> trackResult = recent.getPageResults().stream().findFirst();
 
-        Track track = trackResult.orElseThrow(() -> simple(this, "The last.fm API did not return any track."));
+        Track track = trackResult.orElseThrow(() -> simple("The last.fm API did not return any track."));
 
         // === DISPLAY ===
 

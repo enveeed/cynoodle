@@ -6,6 +6,7 @@
 
 package cynoodle.core.api.text;
 
+import cynoodle.core.api.parser.ParsingException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

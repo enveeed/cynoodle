@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.moderation.commands;
 
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.base.moderation.*;
@@ -48,7 +48,7 @@ public final class StrikeEditCommand extends Command {
                 .collect(Collectors.toList());
 
         if(index < 0 || index >= strikes.size())
-            throw simple(this, "There is no strike at index `" + index + "`.");
+            throw simple("There is no strike at index `" + index + "`.");
 
         Strike strike = strikes.get(index);
 
@@ -77,12 +77,12 @@ public final class StrikeEditCommand extends Command {
         }
         else if(selector.equalsIgnoreCase("time")) {
             // TODO edit timestamp
-            throw simple(this,"timestamp editing is not supported yet");
+            throw simple("timestamp editing is not supported yet");
 
         }
         else {
             // TODO throw useful exception
-            throw simple(this, "not sure what you want me to do, what do you want to edit?");
+            throw simple("not sure what you want me to do, what do you want to edit?");
         }
 
         //

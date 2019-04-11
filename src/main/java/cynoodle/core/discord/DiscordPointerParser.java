@@ -6,8 +6,8 @@
 
 package cynoodle.core.discord;
 
-import cynoodle.core.api.text.ParsingException;
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.ParsingException;
+import cynoodle.core.api.parser.PrimitiveParsers;
 
 import javax.annotation.Nonnull;
 

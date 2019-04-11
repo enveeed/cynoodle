@@ -7,8 +7,8 @@
 package cynoodle.core.base.commands;
 
 import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.Parser;
-import cynoodle.core.api.text.ParsingException;
+import cynoodle.core.api.parser.Parser;
+import cynoodle.core.api.parser.ParsingException;
 
 import javax.annotation.Nonnull;
 import java.util.NoSuchElementException;
@@ -68,7 +68,7 @@ public final class CommandInput {
             try {
                 parsed = parser.apply(content);
             } catch (ParsingException ex) {
-                throw CommandErrors.parameterParsingFailed(command, name, ex);
+                throw CommandErrors.parameterParsingFailed(name, ex);
             }
 
             return Optional.of(parsed);
@@ -84,13 +84,13 @@ public final class CommandInput {
 
     @Nonnull
     public String requireParameter(int index, @Nonnull String name) throws CommandError {
-        return getParameter(index).orElseThrow(() -> CommandErrors.parameterMissing(command, name));
+        return getParameter(index).orElseThrow(() -> CommandErrors.parameterMissing(name));
     }
 
     @Nonnull
     @Deprecated
     public <T> T requireParameterAs(int index, @Nonnull String name, @Nonnull Function<String, T> parser) throws CommandError {
-        return getParameterAs(index, name, parser).orElseThrow(() -> CommandErrors.parameterMissing(command, name));
+        return getParameterAs(index, name, parser).orElseThrow(() -> CommandErrors.parameterMissing(name));
     }
 
     @Nonnull
@@ -120,7 +120,7 @@ public final class CommandInput {
         try {
             parsed = parser.parse(value);
         } catch (ParsingException ex) {
-            throw CommandErrors.optionParsingFailed(command, option, ex);
+            throw CommandErrors.optionParsingFailed(option, ex);
         }
         return parsed;
     }

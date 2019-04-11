@@ -24,5 +24,4 @@ public final class TableBuilder {
     public String build() {
         throw new UnsupportedOperationException(); // TODO
     }
-
 }

@@ -119,7 +119,7 @@ public final class MakeMeCommand extends Command {
 
         MakeMe mm = module.controller().onGuild(context.getGuildPointer())
                 .find(key)
-                .orElseThrow(() -> CommandErrors.simple(this, "No such make-me: `" + key + "`"));
+                .orElseThrow(() -> CommandErrors.simple("No such make-me: `" + key + "`"));
 
         MakeMeStatus status = module.getStatusManager().firstOrCreate(
                 context.getGuildPointer(),
@@ -128,7 +128,7 @@ public final class MakeMeCommand extends Command {
         //
 
         if(!mm.canAccess(context.getUserPointer())) {
-            context.queueError(CommandErrors.permissionInsufficient(this,
+            context.queueError(CommandErrors.permissionInsufficient(
                     "You are now allowed to access this make-me!"));
             return;
         }

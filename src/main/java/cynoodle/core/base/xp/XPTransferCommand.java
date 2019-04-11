@@ -7,7 +7,7 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.DiscordPointer;
@@ -39,21 +39,21 @@ public final class XPTransferCommand extends Command {
         // ===
 
         User userFrom = memberFrom.asUser()
-                .orElseThrow(() -> simple(this, "There is no User for the 'from' Member!"));
+                .orElseThrow(() -> simple("There is no User for the 'from' Member!"));
 
         User userTo = memberTo.asUser()
-                .orElseThrow(() -> simple(this, "There is no User for the 'to' Member!"));
+                .orElseThrow(() -> simple("There is no User for the 'to' Member!"));
 
         XP xpFrom = xpManager.first(XP.filterMember(DiscordPointer.to(context.getGuild()), memberFrom))
-                .orElseThrow(() -> simple(this, "There is no XP for the 'from' Member!"));
+                .orElseThrow(() -> simple("There is no XP for the 'from' Member!"));
 
         XP xpTo = xpManager.firstOrCreate(XP.filterMember(DiscordPointer.to(context.getGuild()), memberTo));
 
         // validation
 
-        if(userFrom.isBot() || userTo.isBot()) throw simple(this, "Bots can not have XP.");
-        if(value <= 0) throw simple(this, "You can not transfer a negative or zero amount of XP!");
-        if(value > xpFrom.get()) throw simple(this, "You can not transfer more XP than the source Member has!");
+        if(userFrom.isBot() || userTo.isBot()) throw simple("Bots can not have XP.");
+        if(value <= 0) throw simple("You can not transfer a negative or zero amount of XP!");
+        if(value > xpFrom.get()) throw simple("You can not transfer more XP than the source Member has!");
 
         xpFrom.remove(value);
         xpTo.add(value);

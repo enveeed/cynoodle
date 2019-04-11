@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.moderation.commands;
 
-import cynoodle.core.api.text.DurationParser;
+import cynoodle.core.api.parser.TimeParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.base.moderation.ModerationController;
@@ -32,13 +32,13 @@ public final class MuteCommand extends Command {
         DiscordPointer member = input.requireParameterAs(0, "member", Members.parserOf(context));
 
         Duration duration = null;
-        if(input.hasParameter(1)) duration = input.requireParameterAs(1, "duration", DurationParser.get());
+        if(input.hasParameter(1)) duration = input.requireParameterAs(1, "duration", TimeParsers.parseDuration());
 
         //
 
         ModerationController.OnMember onMember = controller.onMember(context.getGuildPointer(), member);
 
-        if(onMember.isMuted()) throw CommandErrors.simple(this, "Member is already muted!");
+        if(onMember.isMuted()) throw CommandErrors.simple("Member is already muted!");
 
         if(duration == null) {
             onMember.muteInfinite();

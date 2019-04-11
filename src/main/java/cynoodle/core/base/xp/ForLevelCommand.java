@@ -7,7 +7,7 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.api.Numbers;
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.module.Module;

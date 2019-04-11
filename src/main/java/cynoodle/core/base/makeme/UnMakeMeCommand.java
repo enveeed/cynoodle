@@ -60,6 +60,6 @@ public final class UnMakeMeCommand extends Command {
 
         // nothing found
 
-        throw CommandErrors.simple(this, "Could not find a make-me or make-me group for key `" + key + "`!");
+        throw CommandErrors.simple("Could not find a make-me or make-me group for key `" + key + "`!");
     }
 }

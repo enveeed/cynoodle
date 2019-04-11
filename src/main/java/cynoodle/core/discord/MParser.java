@@ -6,8 +6,8 @@
 
 package cynoodle.core.discord;
 
-import cynoodle.core.api.text.Parser;
-import cynoodle.core.api.text.ParsingException;
+import cynoodle.core.api.parser.Parser;
+import cynoodle.core.api.parser.ParsingException;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 

@@ -8,7 +8,7 @@ package cynoodle.core.base.utilities;
 
 import cynoodle.core.api.Random;
 import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.PrimitiveParsers;
+import cynoodle.core.api.parser.PrimitiveParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.DiscordPointer;
@@ -43,7 +43,7 @@ public final class ChooseOfRoleCommand extends Command {
 
         DiscordPointer roleP = input.requireParameterAs(0, "role", Roles.parserAt(context.getGuildPointer()));
         Role role = roleP.asRole()
-                .orElseThrow(() -> CommandErrors.simple(this, "Unknown Role `" + roleP.getID() + "`!"));
+                .orElseThrow(() -> CommandErrors.simple("Unknown Role `" + roleP.getID() + "`!"));
 
         //
 
@@ -51,15 +51,15 @@ public final class ChooseOfRoleCommand extends Command {
                 .getMembersWithRoles(role);
 
         if(members.size() == 0)
-            throw CommandErrors.simple(this, "Nobody has the Role **" + role.getName()+"**!");
+            throw CommandErrors.simple("Nobody has the Role **" + role.getName()+"**!");
 
         //
 
         if(input.hasOption(OPT_COUNTDOWN)) {
 
             int seconds = input.getOptionValueAs(OPT_COUNTDOWN, PrimitiveParsers.parseInteger());
-            if(seconds > 20) throw CommandErrors.simple(this, "Countdown cannot be over `20` seconds!");
-            if(seconds < 3) throw CommandErrors.simple(this, "Countdown must be at least `3` seconds!");
+            if(seconds > 20) throw CommandErrors.simple("Countdown cannot be over `20` seconds!");
+            if(seconds < 3) throw CommandErrors.simple("Countdown must be at least `3` seconds!");
 
             context.queueReply("Choosing one member out of **" + role.getName() + "** in **`" + seconds
                     + "` seconds** ... (`" + members.size() + "` members)");

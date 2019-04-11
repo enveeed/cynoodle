@@ -7,6 +7,7 @@
 package cynoodle.core.api.text;
 
 import cynoodle.core.api.Checks;
+import cynoodle.core.api.parser.ParsingException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

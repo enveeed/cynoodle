@@ -8,6 +8,7 @@ package cynoodle.core.base.profiles;
 
 import cynoodle.core.api.Strings;
 import cynoodle.core.api.text.Options;
+import cynoodle.core.api.parser.TimeParsers;
 import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.UEntityManager;
@@ -161,7 +162,15 @@ public final class ProfileEditCommand extends Command {
             }
             profile.persist();
         } else if (property.equals("birthday")) {
-            // TODO
+            if (reset) {
+                profile.setText(null);
+                context.queueReply("**|** Your birthday was reset.");
+            } else {
+                LocalDate birthday = input.requireParameterAs(1, "birthday", TimeParsers.parseLocalDate());
+                profile.setBirthday(birthday);
+                context.queueReply("**|** Your birthday was set to " + local.formatDate(birthday));
+            }
+            profile.persist();
         } else if (property.equals("pronouns")) {
             if (reset) {
                 profile.setPronouns(null);
@@ -175,7 +184,7 @@ public final class ProfileEditCommand extends Command {
                     if (test.equalsIgnoreCase(pronounsIn) && pronouns == null) pronouns = Pronouns.FEMININE;
                 for (String test : VALUES_PRONOUNS_INDEFINITE)
                     if (test.equalsIgnoreCase(pronounsIn) && pronouns == null) pronouns = Pronouns.INDEFINITE;
-                if(pronouns == null) throw simple(this, "Could not find any matching pronouns for `" + pronounsIn + "`!");
+                if(pronouns == null) throw simple("Could not find any matching pronouns for `" + pronounsIn + "`!");
                 profile.setPronouns(pronouns);
                 context.queueReply("**|** Your pronouns were set.");
             }
@@ -268,7 +277,7 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your linked Letterboxd account was set.");
             }
             profile.persist();
-        } else throw simple(this, "Unknown property `" + property + "`.");
+        } else throw simple("Unknown property `" + property + "`.");
 
     }
 

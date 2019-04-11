@@ -7,8 +7,8 @@
 package cynoodle.core.base.moderation;
 
 import cynoodle.core.api.Checks;
-import cynoodle.core.api.text.DurationParser;
-import cynoodle.core.api.text.Parser;
+import cynoodle.core.api.parser.Parser;
+import cynoodle.core.api.parser.TimeParsers;
 import cynoodle.core.mongo.fluent.FluentValues;
 import org.bson.BsonInt64;
 import org.bson.BsonNull;
@@ -82,7 +82,7 @@ public final class Decay {
     public static Parser<Decay> parser() {
         return input -> {
             if (input.equalsIgnoreCase("never")) return Decay.never();
-            else return Decay.of(DurationParser.get().parse(input));
+            else return Decay.of(TimeParsers.parseDuration().parse(input));
         };
     }
 }

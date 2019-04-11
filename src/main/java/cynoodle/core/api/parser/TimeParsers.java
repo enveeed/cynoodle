@@ -4,7 +4,7 @@
  * Proprietary and confidential.
  */
 
-package cynoodle.core.api.text;
+package cynoodle.core.api.parser;
 
 import javax.annotation.Nonnull;
 import java.time.*;
@@ -31,7 +31,7 @@ public final class TimeParsers {
     private static final String SYMBOL_UNIT_DAYS        = "d";
 
     // matches (possibly negative) integer number followed by string (possibly with a space)
-    private static final Pattern PATTERN_VALUE_UNIT =
+    private static final Pattern PATTERN_DURATION =
             Pattern.compile("(-?\\d+)\\s?([a-z]+)");
 
     // matches 01.01.1970 or 01/01/1970
@@ -170,7 +170,7 @@ public final class TimeParsers {
     public static Parser<Duration> parseDuration() {
         return input -> {
 
-            Matcher matcher = PATTERN_VALUE_UNIT.matcher(input);
+            Matcher matcher = PATTERN_DURATION.matcher(input);
 
             if(!matcher.matches())
                 throw new ParsingException("Invalid format, expected e.g. `236ms`");

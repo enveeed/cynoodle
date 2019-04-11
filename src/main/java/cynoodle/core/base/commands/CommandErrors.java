@@ -7,7 +7,7 @@
 package cynoodle.core.base.commands;
 
 import cynoodle.core.api.text.Options;
-import cynoodle.core.api.text.ParsingException;
+import cynoodle.core.api.parser.ParsingException;
 import net.dv8tion.jda.core.Permission;
 
 import javax.annotation.Nonnull;
@@ -31,8 +31,8 @@ public final class CommandErrors {
     // === GENERAL ===
 
     @Nonnull
-    public static CommandError simple(@Nonnull Command command, @Nonnull String message) {
-        return CommandError.builder(command)
+    public static CommandError simple(@Nonnull String message) {
+        return CommandError.builder()
                 .withTitle("Command Error")
                 .withMessage(message)
                 .withIcon(ICON_EXTERNAL)
@@ -43,12 +43,12 @@ public final class CommandErrors {
     // === INPUT ===
 
     @Nonnull
-    public static CommandError commandParsingFailed(@Nonnull Command command, @Nonnull ParsingException exception) {
+    public static CommandError commandParsingFailed(@Nonnull ParsingException exception) {
 
         String message = exception.getMessage();
         if(message == null) message = "Failed to parse input!";
 
-        return CommandError.builder(command)
+        return CommandError.builder()
                 .withTitle("Command Parsing Failed")
                 .withMessage("Failed to parse command:\n" + message)
                 .withIcon(ICON_EXTERNAL)
@@ -58,12 +58,12 @@ public final class CommandErrors {
     }
 
     @Nonnull
-    public static CommandError parameterParsingFailed(@Nonnull Command command, @Nonnull String name, @Nonnull ParsingException exception) {
+    public static CommandError parameterParsingFailed(@Nonnull String name, @Nonnull ParsingException exception) {
 
         String message = exception.getMessage();
         if(message == null) message = "Failed to parse input!";
 
-        return CommandError.builder(command)
+        return CommandError.builder()
                 .withTitle("Parameter Parsing Failed")
                 .withMessage("Failed to parse parameter `" + name + "`:\n" + message)
                 .withIcon(ICON_EXTERNAL)
@@ -73,12 +73,12 @@ public final class CommandErrors {
     }
 
     @Nonnull
-    public static CommandError optionParsingFailed(@Nonnull Command command, @Nonnull Options.Option option, @Nonnull ParsingException exception) {
+    public static CommandError optionParsingFailed(@Nonnull Options.Option option, @Nonnull ParsingException exception) {
 
         String message = exception.getMessage();
         if(message == null) message = "Failed to parse input!";
 
-        return CommandError.builder(command)
+        return CommandError.builder()
                 .withTitle("Option Parsing Failed")
                 .withMessage("Failed to parse option `" + option.getLong() + "`:\n" + message)
                 .withIcon(ICON_EXTERNAL)
@@ -88,8 +88,8 @@ public final class CommandErrors {
     }
 
     @Nonnull
-    public static CommandError parameterMissing(@Nonnull Command command, @Nonnull String name) {
-        return CommandError.builder(command)
+    public static CommandError parameterMissing(@Nonnull String name) {
+        return CommandError.builder()
                 .withTitle("Invalid Input")
                 .withMessage("Missing parameter `" + name + "`!")
                 .withIcon(ICON_EXTERNAL)
@@ -101,8 +101,8 @@ public final class CommandErrors {
     // === DISCORD ===
 
     @Nonnull
-    public static CommandError insufficientDiscordPermissions(@Nonnull Command command, @Nonnull Permission permission) {
-        return CommandError.builder(command)
+    public static CommandError insufficientDiscordPermissions(@Nonnull Permission permission) {
+        return CommandError.builder()
                 .withTitle("Insufficient Discord Permissions")
                 .withMessage("The bot account misses permission \"" + permission.getName()+"\"!")
                 .withIcon(ICON_EXTERNAL)
@@ -113,8 +113,8 @@ public final class CommandErrors {
     // === INTERNAL ===
 
     @Nonnull
-    public static CommandError internalError(@Nonnull Command command) {
-        return CommandError.builder(command)
+    public static CommandError internalError() {
+        return CommandError.builder()
                 .withTitle("Unexpected Internal Error")
                 .withMessage("This was probably not your fault, please try again later.")
                 .withIcon(ICON_INTERNAL)
@@ -125,8 +125,8 @@ public final class CommandErrors {
     // === PERMISSIONS ===
 
     @Nonnull
-    public static CommandError permissionInsufficient(@Nonnull Command command, @Nonnull String message) {
-        return CommandError.builder(command)
+    public static CommandError permissionInsufficient(@Nonnull String message) {
+        return CommandError.builder()
                 .withTitle("Insufficient Permissions")
                 .withMessage(message)
                 .withIcon(ICON_PERMISSION)
@@ -135,13 +135,13 @@ public final class CommandErrors {
     }
 
     @Nonnull
-    public static CommandError permissionInsufficient(@Nonnull Command command) {
-        return permissionInsufficient(command, "You are not allowed to access this.");
+    public static CommandError permissionInsufficient() {
+        return permissionInsufficient("You are not allowed to access this.");
     }
 
     @Nonnull
-    public static CommandError permissionMissing(@Nonnull Command command) {
-        return CommandError.builder(command)
+    public static CommandError permissionMissing() {
+        return CommandError.builder()
                 .withTitle("Permissions Error")
                 .withMessage("This command has no permission set.")
                 .withIcon(ICON_PERMISSION)
