@@ -50,14 +50,14 @@ public final class MFormatter {
 
     @Nonnull
     private String formatUserFull(@Nonnull DiscordPointer input) {
-        User user = module.getAPI().getUserById(input.getID());
+        User user = module.getAPI().retrieveUserById(input.getID()).complete();
         if(user == null) return formatID(input);
         else return user.getName() + "#" + user.getDiscriminator();
     }
 
     @Nonnull
     private String formatUser(@Nonnull DiscordPointer input) {
-        User user = module.getAPI().getUserById(input.getID());
+        User user = module.getAPI().retrieveUserById(input.getID()).complete();
         if(user == null) return formatID(input);
         else return user.getName();
     }
@@ -67,7 +67,7 @@ public final class MFormatter {
         Guild guild = module.getAPI().getGuildById(this.guild.getID());
         if(guild == null) return formatUser(input);
         Member member = guild.getMemberById(input.getID());
-        if(member == null) return formatID(input);
+        if(member == null) return formatUser(input);
         else return member.getEffectiveName();
     }
 
