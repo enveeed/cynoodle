@@ -6,8 +6,13 @@
 
 package cynoodle.core.base.utilities;
 
+import com.google.common.eventbus.Subscribe;
 import cynoodle.core.base.commands.CommandRegistry;
 import cynoodle.core.base.commands.CommandsModule;
+import cynoodle.core.base.notifications.NotificationType;
+import cynoodle.core.base.notifications.NotificationTypeRegistry;
+import cynoodle.core.base.notifications.NotificationsModule;
+import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
@@ -21,6 +26,13 @@ import cynoodle.core.module.Module;
 public final class UtilitiesModule extends Module {
     private UtilitiesModule() {}
 
+    private static final NotificationType NOTIFICATION_JOIN = NotificationType.of("base:utilities:member_join",
+            "member");
+    private static final NotificationType NOTIFICATION_LEAVE = NotificationType.of("base:utilities:member_leave",
+            "member");
+
+    UtilitiesEventHandler handler = new UtilitiesEventHandler();
+
     // ===
 
     @Override
@@ -32,10 +44,27 @@ public final class UtilitiesModule extends Module {
         commandRegistry.register(VersionCommand.class);
         commandRegistry.register(ChooseOfRoleCommand.class);
         commandRegistry.register(TemporaryHelpCommand.class);
+        commandRegistry.register(TemporarySetupCommand.class);
+
+        NotificationTypeRegistry notificationTypeRegistry = Module.get(NotificationsModule.class).getRegistry();
+
+        notificationTypeRegistry.register(NOTIFICATION_JOIN);
+        notificationTypeRegistry.register(NOTIFICATION_LEAVE);
     }
 
     @Override
     protected void shutdown() {
         super.shutdown();
+    }
+
+    public UtilitiesEventHandler getHandler() {
+        return handler;
+    }
+
+    // ===
+
+    @Subscribe
+    private void onEvent(DiscordEvent de) {
+        handler.onEvent(de);
     }
 }

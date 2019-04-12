@@ -6,7 +6,6 @@
 
 package cynoodle.core.base.utilities;
 
-import cynoodle.core.base.notifications.NotificationController;
 import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.discord.DiscordEvent;
 import cynoodle.core.discord.DiscordPointer;
@@ -20,8 +19,6 @@ import javax.annotation.Nonnull;
 
 public final class UtilitiesEventHandler implements EventListener {
     UtilitiesEventHandler() {}
-
-    private final NotificationController controller = Module.get(NotificationsModule.class).controller();
 
     // ===
 
@@ -39,7 +36,7 @@ public final class UtilitiesEventHandler implements EventListener {
         DiscordPointer guild = DiscordPointer.to(event.getGuild());
         DiscordPointer user = DiscordPointer.to(event.getUser());
 
-        controller.onGuild(guild).emit("base:utilities:member_join",
+        Module.get(NotificationsModule.class).controller().onGuild(guild).emit("base:utilities:member_join",
                 Members.formatAt(guild).format(user));
 
     }
@@ -49,7 +46,7 @@ public final class UtilitiesEventHandler implements EventListener {
         DiscordPointer guild = DiscordPointer.to(event.getGuild());
         DiscordPointer user = DiscordPointer.to(event.getUser());
 
-        controller.onGuild(guild).emit("base:utilities:member_leave",
+        Module.get(NotificationsModule.class).controller().onGuild(guild).emit("base:utilities:member_leave",
                 Members.formatAt(guild).format(user));
 
     }
