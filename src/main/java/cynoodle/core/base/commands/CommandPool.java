@@ -50,9 +50,7 @@ public final class CommandPool {
     /**
      * The executor for all command tasks.
      */
-    private final ThreadPoolExecutor executor =
-            new ThreadPoolExecutor(DEF_CORE_POOL_SIZE, DEF_MAX_POOL_SIZE, DEF_KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS,
-                    this.queue, this.threadFactory);
+    private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(DEF_CORE_POOL_SIZE, threadFactory); // TODO fix this
 
     // ===
 
