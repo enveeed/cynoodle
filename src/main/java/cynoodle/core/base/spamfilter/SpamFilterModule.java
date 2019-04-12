@@ -89,7 +89,7 @@ public final class SpamFilterModule extends Module {
     // ===
 
     @Nonnull
-    GEntityManager<SpamFilterSettings> getSettingsManager() {
+    public GEntityManager<SpamFilterSettings> getSettingsManager() {
         return this.settingsManager;
     }
 
