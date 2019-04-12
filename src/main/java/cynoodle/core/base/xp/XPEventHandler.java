@@ -41,13 +41,13 @@ final class XPEventHandler implements EventListener {
 
         DiscordPointer guild = DiscordPointer.to(event.getGuild());
         DiscordPointer user = DiscordPointer.to(event.getAuthor());
-        DiscordPointer message = DiscordPointer.to(event.getMessage());
+        DiscordPointer channel = DiscordPointer.to(event.getChannel());
 
         // === GAIN ===
 
         module.controller()
                 .onMember(guild, user)
-                .gain(message);
+                .gain(channel);
 
     }
 

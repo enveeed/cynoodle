@@ -37,7 +37,8 @@ public final class XPStatus extends MEntity implements Comparable<XPStatus> {
     /**
      * The timeout (-until) timestamp.
      */
-    private Instant timeout = Instant.MIN;
+    private Instant timeout = Instant.now()
+            .minusMillis(100);
 
     // === VALUE ===
 

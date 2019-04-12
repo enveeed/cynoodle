@@ -34,20 +34,20 @@ public final class XPChecks {
 
     @CanIgnoreReturnValue
     public static int validLevel(int level) throws IllegalArgumentException {
-        if(isValidLevel(level)) throw new IllegalArgumentException("Invalid level value: " + level);
+        if(!isValidLevel(level)) throw new IllegalArgumentException("Invalid level value: " + level);
         return level;
     }
 
     @CanIgnoreReturnValue
     public static long validXP(long xp) throws IllegalArgumentException {
-        if(isValidXP(xp)) throw new IllegalArgumentException("Invalid XP value: " + xp);
+        if(!isValidXP(xp)) throw new IllegalArgumentException("Invalid XP value: " + xp);
         return xp;
     }
 
     @Nonnull
     @CanIgnoreReturnValue
     public static String validRankName(@Nonnull String name) throws IllegalArgumentException {
-        if(isValidRankName(name)) throw new IllegalArgumentException("Invalid Rank name: " + name);
+        if(!isValidRankName(name)) throw new IllegalArgumentException("Invalid Rank name: " + name);
         return name;
     }
 }
