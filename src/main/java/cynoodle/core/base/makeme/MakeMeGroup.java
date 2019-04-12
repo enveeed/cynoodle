@@ -90,6 +90,10 @@ public final class MakeMeGroup extends GEntity {
         return this.unique;
     }
 
+    public void setUniqueEnabled(boolean unique) {
+        this.unique = unique;
+    }
+
     // ===
 
     @Nonnull
