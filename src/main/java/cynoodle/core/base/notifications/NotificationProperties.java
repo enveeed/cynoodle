@@ -126,4 +126,17 @@ public final class NotificationProperties extends NestedEntity {
 
         return data;
     }
+
+    // TODo test only
+
+
+    @Override
+    public String toString() {
+        return "NotificationProperties{" +
+                "identifier='" + identifier + '\'' +
+                ", enabled=" + enabled +
+                ", channel=" + channel +
+                ", messages=" + messages +
+                '}';
+    }
 }

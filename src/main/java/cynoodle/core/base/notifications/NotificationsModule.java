@@ -58,7 +58,7 @@ public final class NotificationsModule extends Module {
     // ===
 
     @Nonnull
-    GEntityManager<NotificationSettings> getSettingsManager() {
+    public GEntityManager<NotificationSettings> getSettingsManager() {
         return this.settingsManager;
     }
 

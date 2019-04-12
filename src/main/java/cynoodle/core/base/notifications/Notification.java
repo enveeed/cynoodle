@@ -10,6 +10,7 @@ import cynoodle.core.discord.DiscordPointer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Optional;
 
 public final class Notification {
@@ -77,5 +78,16 @@ public final class Notification {
         }
 
         return out;
+    }
+
+    //
+
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "identifier='" + identifier + '\'' +
+                ", context=" + context +
+                ", variables=" + Arrays.toString(variables) +
+                '}';
     }
 }

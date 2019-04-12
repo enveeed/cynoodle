@@ -72,8 +72,10 @@ public final class NotificationController {
 
             //
 
+            // 1. context 2. channel 3. fail
             DiscordPointer channelP = notification.getContext()
-                    .orElseThrow(); // TODO support non-context notifications
+                    .or(properties::getChannel).orElseThrow(() -> new IllegalStateException("No channel set for notification "
+                            + notification.getIdentifier() + " on guild " + guild + ", it had no context either!"));
             TextChannel channel = channelP.asTextChannel()
                     .orElseThrow();// TODO warn unknown channel and discard instead
 
