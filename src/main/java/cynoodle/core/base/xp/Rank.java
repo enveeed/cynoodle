@@ -110,8 +110,7 @@ public final class Rank extends GEntity implements Comparable<Rank> {
      */
     @Nonnull
     public Optional<Rank> getPrevious() {
-        return XPModule.get()
-                .getRankEntityManager()
+        return getManager(Rank.class)
                 .stream(filterLevelPrevious(this.level))
                 .sorted(Comparator.reverseOrder())
                 .limit(1)
@@ -125,8 +124,7 @@ public final class Rank extends GEntity implements Comparable<Rank> {
      */
     @Nonnull
     public Optional<Rank> getNext() {
-        return XPModule.get()
-                .getRankEntityManager()
+        return getManager(Rank.class)
                 .stream(filterLevelNext(this.level))
                 .sorted()
                 .limit(1)

@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class XPController {
@@ -203,7 +204,21 @@ public final class XPController {
                             );
                 }
 
-                // TODO rank notifications
+                RankManager ranks = module.getRanks();
+
+                Optional<Rank> rankPreviousO = ranks.getAtLevelEffective(guild, levelPrevious);
+                Optional<Rank> rankCurrentO = ranks.getAtLevelEffective(guild, levelCurrent);
+
+                if(rankCurrentO.isPresent() && (rankPreviousO.isEmpty() || !rankPreviousO.equals(rankCurrentO))) {
+
+                    Rank rank = rankCurrentO.get();
+
+                    notifications.onGuild(this.guild)
+                            .emit("base:xp:rank_up", context,
+                                    Members.formatAt(this.guild).format(this.user),
+                                    rank.getName()
+                            );
+                }
             }
         }
 

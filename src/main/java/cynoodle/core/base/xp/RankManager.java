@@ -6,10 +6,12 @@
 
 package cynoodle.core.base.xp;
 
+import com.mongodb.client.model.Filters;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.GEntityManager;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -43,10 +45,29 @@ public final class RankManager {
 
     //
 
+    /**
+     * Get the Rank which is set to the given level.
+     * @param guild the guild
+     * @param level the level
+     * @return the rank, or empty if there is none on the level
+     */
     @Nonnull
-    public Optional<Rank> getOnLevel(int level) {
+    public Optional<Rank> getAtLevel(@Nonnull DiscordPointer guild, int level) {
         validLevel(level);
-        return this.entities.first(Rank.filterLevel(level));
+        return this.entities.first(Filters.and(Rank.filterGuild(guild), Rank.filterLevel(level)));
+    }
+
+    /**
+     * Get a Rank which is effective at the given level.
+     * @param guild the guild
+     * @param level the level
+     * @return the rank, or empty if there is none effective for the level
+     */
+    @Nonnull
+    public Optional<Rank> getAtLevelEffective(@Nonnull DiscordPointer guild, int level) {
+        validLevel(level);
+        return this.entities.stream(Filters.and(Rank.filterGuild(guild), Rank.filterLevelAndPrevious(level)))
+                .max(Comparator.comparingInt(Rank::getLevel));
     }
 
     //

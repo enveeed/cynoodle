@@ -65,7 +65,7 @@ public final class XPCommand extends Command {
 
         // === RANK ===
 
-        Optional<Rank> level_next_rank = ranks.getOnLevel(level_next);
+        Optional<Rank> level_next_rank = ranks.getAtLevel(context.getGuildPointer(), level_next);
 
         String level_next_rank_out;
 
