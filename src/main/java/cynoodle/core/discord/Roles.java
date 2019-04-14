@@ -6,12 +6,12 @@
 
 package cynoodle.core.discord;
 
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 
 import javax.annotation.Nonnull;
 
 /**
- * Utility for everything about {@link net.dv8tion.jda.core.entities.Role Roles}.
+ * Utility for everything about {@link net.dv8tion.jda.api.entities.Role Roles}.
  */
 public final class Roles {
     private Roles() {}

@@ -29,8 +29,8 @@ import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.base.xp.XPSettings;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.entities.ISnowflake;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.ISnowflake;
+import net.dv8tion.jda.api.entities.Member;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;

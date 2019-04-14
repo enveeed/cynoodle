@@ -12,11 +12,16 @@ import cynoodle.core.CyNoodle;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MSystem;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.utils.JDALogger;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.SelfUser;
+import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.internal.utils.JDALogger;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
@@ -38,7 +43,7 @@ public final class DiscordModule extends Module {
     /**
      * The account ID of the test account.
      */
-    public static final long ID_TEST_ACCOUNT = 401357678053556225L;
+    private static final long ID_TEST_ACCOUNT = 401357678053556225L;
 
     // ===
 
@@ -50,6 +55,7 @@ public final class DiscordModule extends Module {
 
     @Nonnull
     public ShardManager getAPI() {
+        if(this.api == null) throw new IllegalStateException("Discord is not connected, cannot use API.");
         return this.api;
     }
 
@@ -99,8 +105,8 @@ public final class DiscordModule extends Module {
             // events
             builder.addEventListeners(new ListenerAdapter() {
                 @Override
-                public void onGenericEvent(Event event) {
-                    relayEvent(event);
+                public void onGenericEvent(@Nonnull GenericEvent event) {
+                    relayEvent((Event) event);
                 }
             });
 
@@ -138,19 +144,61 @@ public final class DiscordModule extends Module {
         this.api.shutdown();
     }
 
-    // ===
-
-    public boolean isTestAccount() {
-        return this.api.getShardById(0).getSelfUser().getIdLong() == ID_TEST_ACCOUNT;
-    }
-
     // === EVENTS ===
 
     private void relayEvent(@Nonnull Event event) {
-        CyNoodle.get().getEvents()
-                .post(DiscordEvent.wrap(event));
+
+        if(event instanceof GenericGuildEvent) {
+            // discard event if the test instance is active on the server
+            // and this is not the test instance
+            Guild guild = ((GenericGuildEvent) event).getGuild();
+            if(!isTestAccount() && (isTestAccountOn(guild) && isTestAccountOnline(guild)))
+                return;
+        }
+
+        // relay event
+        CyNoodle.get().getEvents().post(DiscordEvent.wrap(event));
     }
 
+    // ===
+
+    /**
+     * Get the currently logged in Bot account.
+     * @return the self account
+     */
+    @Nonnull
+    public SelfUser getSelf() {
+        return getAPI().getShardById(0).getSelfUser();
+    }
+
+    // === TEST ACCOUNT ===
+
+    /**
+     * Check if the currently logged in account is {@link #ID_TEST_ACCOUNT}.
+     * @return true if this is the test account, false otherwise
+     */
+    public boolean isTestAccount() {
+        return getSelf().getIdLong() == ID_TEST_ACCOUNT;
+    }
+
+    /**
+     * Check if {@link #ID_TEST_ACCOUNT} is online on the given guild.
+     * @param guild the guild
+     * @return true if online, false otherwise.
+     */
+    public boolean isTestAccountOnline(@Nonnull Guild guild) {
+        return guild.getMemberById(ID_TEST_ACCOUNT).getOnlineStatus() == OnlineStatus.ONLINE;
+    }
+
+    /**
+     * Check if {@link #ID_TEST_ACCOUNT} is a member on the given guild.
+     * @param guild the guild
+     * @return true if it is a member, false otherwise.
+     */
+    public boolean isTestAccountOn(@Nonnull Guild guild) {
+        return guild.getMemberById(ID_TEST_ACCOUNT) != null;
+    }
+    
     // === UTIL ===
 
     private static void setupJDALogging() throws Exception {

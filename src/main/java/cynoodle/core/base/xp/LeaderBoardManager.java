@@ -8,6 +8,7 @@ package cynoodle.core.base.xp;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cynoodle.core.discord.DiscordPointer;
+import net.dv8tion.jda.api.entities.Guild;
 import org.eclipse.collections.api.map.primitive.MutableLongObjectMap;
 import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 
@@ -55,13 +56,13 @@ public final class LeaderBoardManager {
      */
     @Nonnull
     @CanIgnoreReturnValue
-    public LeaderBoard generate(@Nonnull DiscordPointer guild) {
+    public LeaderBoard generate(@Nonnull Guild guild) {
 
         // generate the board
         LeaderBoard board = LeaderBoard.generate(guild);
 
         // store the board
-        this.boards.put(guild.getID(), board);
+        this.boards.put(guild.getIdLong(), board);
 
         return board;
     }

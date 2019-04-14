@@ -43,8 +43,6 @@ public final class LaunchSettings {
 
     // ===
 
-    private boolean convertLegacy;
-
     private String configPath;
 
     // ===
@@ -55,7 +53,6 @@ public final class LaunchSettings {
         this.logLevel = collector.logLevel;
         this.noPermissions = collector.noPermissions;
         this.setupTest = collector.setupTest;
-        this.convertLegacy = collector.convertLegacy;
         this.configPath = collector.configPath;
     }
 
@@ -80,10 +77,6 @@ public final class LaunchSettings {
         return this.setupTest;
     }
 
-    public boolean isConvertLegacyEnabled() {
-        return this.convertLegacy;
-    }
-
     public String getConfigPath() {
         return this.configPath;
     }
@@ -98,7 +91,6 @@ public final class LaunchSettings {
         int logLevel = Level.INFO.intValue();
         boolean noPermissions = false;
         boolean setupTest = false;
-        boolean convertLegacy = false;
         String configPath = "./config.json";
 
     }
@@ -114,9 +106,6 @@ public final class LaunchSettings {
     private static final Options.Option OPT_SETUP_TEST
             = Options.newFlagOption("setup-test",null);
 
-    private static final Options.Option OPT_CONVERT_LEGACY
-            = Options.newFlagOption("convert-legacy",null);
-
     private static final Options.Option OPT_CONFIG
             = Options.newFlagOption("config",'c');
 
@@ -131,7 +120,7 @@ public final class LaunchSettings {
         //
 
         Options options = Options.newBuilder()
-                .add(OPT_LOG_LEVEL, OPT_NO_PERMISSIONS, OPT_SETUP_TEST, OPT_CONVERT_LEGACY, OPT_CONFIG)
+                .add(OPT_LOG_LEVEL, OPT_NO_PERMISSIONS, OPT_SETUP_TEST, OPT_CONFIG)
                 .build();
 
         //
@@ -144,7 +133,6 @@ public final class LaunchSettings {
 
         collector.noPermissions = result.hasOption(OPT_NO_PERMISSIONS);
         collector.setupTest = result.hasOption(OPT_SETUP_TEST);
-        collector.convertLegacy = result.hasOption(OPT_CONVERT_LEGACY);
 
         if(result.hasOption(OPT_CONFIG)) {
             collector.configPath = result.getOptionValue(OPT_CONFIG);

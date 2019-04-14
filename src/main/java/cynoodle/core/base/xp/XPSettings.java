@@ -22,10 +22,19 @@ import java.time.Duration;
 public final class XPSettings extends GEntity {
     private XPSettings() {}
 
+    /**
+     * The minimum value of random XP gain.
+     */
     private long gain_min = 25;
 
+    /**
+     * The maximum value of random XP gain.
+     */
     private long gain_max = 85;
 
+    /**
+     * The timeout duration for random XP gain.
+     */
     private Duration gain_timeout = Duration.ofSeconds(60);
 
     //

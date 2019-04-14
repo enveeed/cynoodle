@@ -9,7 +9,7 @@ package cynoodle.core.base.spamfilter;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import cynoodle.core.discord.MemberKey;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;

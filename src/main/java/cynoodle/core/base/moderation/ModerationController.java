@@ -8,8 +8,8 @@ package cynoodle.core.base.moderation;
 
 import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
@@ -108,7 +108,7 @@ public final class ModerationController {
             // check channels
             List<TextChannel> channels = guild.getTextChannels();
 
-            for (Channel channel : channels) {
+            for (TextChannel channel : channels) {
 
                 PermissionOverride override = channel.getPermissionOverride(role);
 

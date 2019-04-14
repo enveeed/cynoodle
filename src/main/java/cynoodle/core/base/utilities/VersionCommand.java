@@ -11,7 +11,7 @@ import cynoodle.core.base.commands.*;
 import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.DiscordModule;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;

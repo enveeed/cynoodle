@@ -8,8 +8,8 @@ package cynoodle.core.base.local;
 
 import cynoodle.core.base.commands.*;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
 
 import javax.annotation.Nonnull;
 import java.util.List;

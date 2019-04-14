@@ -11,9 +11,9 @@ import cynoodle.core.entities.EIndex;
 import cynoodle.core.entities.Entity;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
@@ -62,11 +62,6 @@ public abstract class MEntity extends Entity implements IMEntity {
         this.guild = guild;
     }
 
-    @Nonnull
-    public final DiscordPointer requireGuild() throws IllegalStateException {
-        return getGuild().orElseThrow(() -> new IllegalStateException("No Guild set."));
-    }
-
     // === USER ===
 
     @Nonnull
@@ -78,11 +73,6 @@ public abstract class MEntity extends Entity implements IMEntity {
     @Override
     public final void setUser(@Nullable DiscordPointer user) {
         this.user = user;
-    }
-
-    @Nonnull
-    public final DiscordPointer requireUser() throws IllegalStateException {
-        return getUser().orElseThrow(() -> new IllegalStateException("No User set."));
     }
 
     // === MEMBER ===

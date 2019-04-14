@@ -12,9 +12,9 @@ import cynoodle.core.base.notifications.NotificationController;
 import cynoodle.core.base.notifications.NotificationsModule;
 import cynoodle.core.discord.*;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -89,7 +89,7 @@ public final class XPController {
         // ===
 
         public long get() {
-            return module.getStatus(guild, user).get();
+            return module.getStatus(guild, user).getXP();
         }
 
         // ===
@@ -152,10 +152,10 @@ public final class XPController {
             long previous;
 
             if(change > 0) {
-                previous = xp.add(change);
+                previous = xp.addXP(change);
             }
             else if(change < 0) {
-                previous = xp.remove(-change);
+                previous = xp.removeXP(-change);
             }
             else return;
 
@@ -163,7 +163,7 @@ public final class XPController {
 
             //
 
-            long current = xp.get();
+            long current = xp.getXP();
 
             LOG.atFiner().log("Updated XP for %s:%s %s %s %s -> %s", guild, user, previous,
                     change >= 0 ? "+" : "-", change >= 0 ? change : -change, current);
@@ -242,7 +242,7 @@ public final class XPController {
 
             //
 
-            int level = formula.getReachedLevel(status.get());
+            int level = formula.getReachedLevel(status.getXP());
 
             //
 

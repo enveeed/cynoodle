@@ -10,7 +10,7 @@ import com.mongodb.client.model.Filters;
 import cynoodle.core.api.Snowflake;
 import cynoodle.core.entities.EntityManager;
 import cynoodle.core.entities.EntityType;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;

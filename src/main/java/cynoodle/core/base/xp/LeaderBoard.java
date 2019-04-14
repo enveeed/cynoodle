@@ -7,6 +7,7 @@
 package cynoodle.core.base.xp;
 
 import cynoodle.core.discord.DiscordPointer;
+import net.dv8tion.jda.api.entities.Guild;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
@@ -133,21 +134,23 @@ public final class LeaderBoard {
     // ===
 
     @Nonnull
-    public static LeaderBoard generate(@Nonnull DiscordPointer guild) {
+    public static LeaderBoard generate(@Nonnull Guild guild) {
 
         XPModule module = XPModule.get();
 
-        List<Entry> entries = new ArrayList<>();
-
-        List<XPStatus> xpList = module.getXPStatusEntityManager()
+        List<XPStatus> statusList = module.getXPStatusEntityManager()
                 .stream(XPStatus.filterGuild(guild))
-                .sorted()
+                .filter(XPStatus::hasUser) // NOTE: This may be not needed since we never create any XPStatus instances without a user set
+                .filter(status -> guild.getMemberById(status.getUserID()) != null)
+                .sorted(XPStatus.orderDescending())
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < xpList.size(); i++) {
-            XPStatus xp = xpList.get(i);
+        List<Entry> entries = new ArrayList<>();
+
+        for (int i = 0; i < statusList.size(); i++) {
+            XPStatus xp = statusList.get(i);
             int rank = i + 1;
-            entries.add(new Entry(xp.requireUser(), xp.get(), rank));
+            entries.add(new Entry(xp.requireUser(), xp.getXP(), rank));
         }
 
         return new LeaderBoard(entries, Instant.now());

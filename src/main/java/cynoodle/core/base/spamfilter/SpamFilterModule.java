@@ -17,7 +17,7 @@ import cynoodle.core.entities.NestedEntityType;
 import cynoodle.core.module.MIdentifier;
 import cynoodle.core.module.MRequires;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 

@@ -7,7 +7,7 @@
 package cynoodle.core.discord;
 
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.api.entities.*;
 import org.bson.BsonInt64;
 import org.bson.BsonNull;
 import org.bson.BsonValue;

@@ -14,8 +14,8 @@ import cynoodle.core.base.local.LocalContext;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
 import cynoodle.core.discord.Roles;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
 import java.util.List;

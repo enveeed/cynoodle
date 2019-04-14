@@ -10,7 +10,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.flogger.FluentLogger;
 import cynoodle.core.api.Snowflake;
 import cynoodle.core.base.access.AccessModule;
-import cynoodle.core.base.commands.Command;
 import cynoodle.core.base.commands.CommandsModule;
 import cynoodle.core.base.fm.FMModule;
 import cynoodle.core.base.local.LocalModule;
@@ -22,8 +21,6 @@ import cynoodle.core.base.spamfilter.SpamFilterModule;
 import cynoodle.core.base.utilities.UtilitiesModule;
 import cynoodle.core.base.xp.XPModule;
 import cynoodle.core.discord.DiscordModule;
-import cynoodle.core.legacy.Legacy;
-import cynoodle.core.module.Module;
 import cynoodle.core.module.ModuleClassException;
 import cynoodle.core.module.ModuleManager;
 import cynoodle.core.mongo.MongoModule;
@@ -225,27 +222,6 @@ public final class CyNoodle {
         if(this.launchSettings.isNoPermissionsEnabled()) {
             LOG.atWarning().log("Access control is overridden on all servers (--no-permissions was given)!");
         }
-
-        // === TODO LEGACY ONLY ===
-
-        if(launchSettings.isConvertLegacyEnabled()) {
-            Legacy legacy = new Legacy();
-
-            try {
-                legacy.importLegacy();
-            } catch (Exception e) {
-                LOG.atSevere().withCause(e).log("Failed to complete legacy import");
-            }
-        }
-
-        // === TODO DEBUG ONLY ===
-
-        LOG.atFine().log("Registered commands:");
-        for (Command command : Module.get(CommandsModule.class)
-                .getRegistry().all()) {
-            LOG.atFine().log("%s", command.getIdentifier());
-        }
-
 
         // ===
 

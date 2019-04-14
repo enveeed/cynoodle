@@ -7,7 +7,7 @@
 package cynoodle.core.base.spamfilter;
 
 import cynoodle.core.discord.MemberKey;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public final class LastRateAnalyzer implements SpamAnalyzer {
 
         MemberKey key = MemberKey.of(event.getMember());
 
-        long time = event.getMessage().getCreationTime()
+        long time = event.getMessage().getTimeCreated()
                 .toInstant().toEpochMilli();
         long last = this.tracker.getOrDefault(key, -1L);
 

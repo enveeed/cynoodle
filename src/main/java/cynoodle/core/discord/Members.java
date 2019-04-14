@@ -7,12 +7,12 @@
 package cynoodle.core.discord;
 
 import cynoodle.core.base.commands.CommandContext;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 
 import javax.annotation.Nonnull;
 
 /**
- * Utility for everything about {@link net.dv8tion.jda.core.entities.Member Members}.
+ * Utility for everything about {@link net.dv8tion.jda.api.entities.Member Members}.
  */
 public final class Members {
     private Members() {}

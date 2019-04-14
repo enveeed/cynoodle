@@ -11,7 +11,7 @@ import cynoodle.core.entities.EIndex;
 import cynoodle.core.entities.Entity;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
@@ -50,11 +50,6 @@ public abstract class GEntity extends Entity implements IGEntity {
     @Override
     public final void setGuild(@Nullable DiscordPointer guild) {
         this.guild = guild;
-    }
-
-    @Nonnull
-    public final DiscordPointer requireGuild() throws IllegalStateException {
-        return getGuild().orElseThrow(() -> new IllegalStateException("No Guild set."));
     }
 
     // === FILTER ===

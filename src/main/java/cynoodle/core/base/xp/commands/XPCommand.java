@@ -47,7 +47,7 @@ public final class XPCommand extends Command {
 
         XPFormula formula = module.getFormula();
 
-        long xp_current = status.get();
+        long xp_current = status.getXP();
 
         int level_current = formula.getReachedLevel(xp_current);
 

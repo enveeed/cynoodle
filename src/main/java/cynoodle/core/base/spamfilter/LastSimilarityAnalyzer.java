@@ -8,7 +8,7 @@ package cynoodle.core.base.spamfilter;
 
 import cynoodle.core.api.Strings;
 import cynoodle.core.discord.MemberKey;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

@@ -8,7 +8,7 @@ package cynoodle.core.base.commands;
 
 import cynoodle.core.api.text.Options;
 import cynoodle.core.api.parser.ParsingException;
-import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.api.Permission;
 
 import javax.annotation.Nonnull;
 import java.awt.*;

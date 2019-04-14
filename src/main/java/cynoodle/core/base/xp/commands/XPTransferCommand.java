@@ -15,7 +15,7 @@ import cynoodle.core.base.xp.XPStatus;
 import cynoodle.core.discord.DiscordPointer;
 import cynoodle.core.discord.Members;
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
@@ -53,11 +53,11 @@ public final class XPTransferCommand extends Command {
 
         if(userFrom.isBot() || userTo.isBot()) throw simple("Bots can not have XP.");
         if(value <= 0) throw simple("You can not transfer a negative or zero amount of XP!");
-        if(value > statusFrom.get()) throw simple("You can not transfer more XP than the source Member has!");
+        if(value > statusFrom.getXP()) throw simple("You can not transfer more XP than the source Member has!");
 
         // TODO replace with controller.transfer() to allow rank apply and notifications etc.
-        statusFrom.remove(value);
-        statusTo.add(value);
+        statusFrom.removeXP(value);
+        statusTo.addXP(value);
 
         statusFrom.persist();
         statusTo.persist();

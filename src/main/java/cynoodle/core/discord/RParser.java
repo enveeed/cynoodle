@@ -8,13 +8,13 @@ package cynoodle.core.discord;
 
 import cynoodle.core.api.parser.Parser;
 import cynoodle.core.api.parser.ParsingException;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
 
 /**
- * Parser for {@link net.dv8tion.jda.core.entities.Role Roles}.
+ * Parser for {@link net.dv8tion.jda.api.entities.Role Roles}.
  */
 public final class RParser implements Parser<DiscordPointer> {
 

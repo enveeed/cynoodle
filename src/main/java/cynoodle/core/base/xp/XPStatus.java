@@ -16,13 +16,14 @@ import cynoodle.core.mongo.fluent.FluentValues;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * The XP status of a Member.
  */
 @EIdentifier("base:xp:status")
-public final class XPStatus extends MEntity implements Comparable<XPStatus> {
+public final class XPStatus extends MEntity {
     private XPStatus() {}
 
     private final static FluentLogger LOG = FluentLogger.forEnclosingClass();
@@ -30,54 +31,40 @@ public final class XPStatus extends MEntity implements Comparable<XPStatus> {
     // ===
 
     /**
-     * The current XP.
+     * The current XP value.
      */
     private final AtomicLong value = new AtomicLong(0L);
 
     /**
      * The timeout (-until) timestamp.
      */
-    private Instant timeout = Instant.now()
-            .minusMillis(100);
+    private Instant timeout = Instant.now().minusMillis(100);
 
     // === VALUE ===
 
-    public long add(long value) {
-        Checks.notNegative(value, "value");
-        return this.value.getAndUpdate(x -> x + value);
-    }
-
-    public long remove(long value) {
+    public long addXP(long value) {
         Checks.notNegative(value, "value");
         return this.value.getAndUpdate(x -> {
-            long next = x - value;
-            if (next < 0L) next = 0L;
+            long next = x + value;
+            LOG.atFinest().log("Adding XP for %s: %s + %s -> %s", requireUser(), x, value, next);
             return next;
         });
     }
 
-    // TODO temporary for legacy data
-    public long set(long value) {
+    public long removeXP(long value) {
         Checks.notNegative(value, "value");
-        return this.value.getAndUpdate(x -> value);
+        return this.value.getAndUpdate(x -> {
+            long next = x - value;
+            if (next < 0L) next = 0L;
+            LOG.atFinest().log("Removing XP for %s: %s + %s -> %s", requireUser(), x, value, next);
+            return next;
+        });
     }
 
     //
 
-    public long get() {
+    public long getXP() {
         return this.value.get();
-    }
-
-    //
-
-    void addAndPersist(long xp) {
-        add(xp);
-        persist();
-    }
-
-    void removeAndPersist(long xp) {
-        remove(xp);
-        persist();
     }
 
     // === TIMEOUT ===
@@ -120,12 +107,13 @@ public final class XPStatus extends MEntity implements Comparable<XPStatus> {
 
     // ===
 
-    @Override
-    public int compareTo(@Nonnull XPStatus o) {
+    @Nonnull
+    public static Comparator<XPStatus> orderAscending() {
+        return Comparator.comparingLong(XPStatus::getXP);
+    }
 
-        // this is the reverse order, that means more XP comes first
-        // (natural order for XP)
-
-        return Long.compare(o.get(), this.get());
+    @Nonnull
+    public static Comparator<XPStatus> orderDescending() {
+        return Comparator.comparingLong(XPStatus::getXP).reversed();
     }
 }

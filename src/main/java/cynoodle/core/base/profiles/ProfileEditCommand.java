@@ -157,6 +157,7 @@ public final class ProfileEditCommand extends Command {
                 context.queueReply("**|** Your profile text was reset.");
             } else {
                 String text = input.requireParameter(1, "text");
+                if(text.length() > 200) throw simple("Text cannot be longer than `200` characters.");
                 profile.setText(text);
                 context.queueReply("**|** Your profile text was set.");
             }

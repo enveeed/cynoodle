@@ -64,7 +64,7 @@ public final class LeaderBoardCommand extends Command {
         // TODO temporary
         if(boardOpt.isEmpty()) {
             context.getChannel().sendMessage("**|** Updating leader board, this may take a few moments ...").complete();
-            board = leaderboards.generate(context.getGuildPointer());
+            board = leaderboards.generate(context.getGuild());
         }
         else board = boardOpt.orElseThrow();
 

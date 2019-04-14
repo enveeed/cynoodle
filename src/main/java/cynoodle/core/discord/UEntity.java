@@ -11,7 +11,7 @@ import cynoodle.core.entities.EIndex;
 import cynoodle.core.entities.Entity;
 import cynoodle.core.mongo.BsonDataException;
 import cynoodle.core.mongo.fluent.FluentDocument;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
@@ -50,11 +50,6 @@ public abstract class UEntity extends Entity implements IUEntity {
     @Override
     public final void setUser(@Nullable DiscordPointer user) {
         this.user = user;
-    }
-
-    @Nonnull
-    public final DiscordPointer requireUser() throws IllegalStateException {
-        return getUser().orElseThrow(() -> new IllegalStateException("No User set."));
     }
 
     // === FILTER ===

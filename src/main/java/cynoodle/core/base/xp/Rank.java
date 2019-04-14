@@ -166,31 +166,31 @@ public final class Rank extends GEntity implements Comparable<Rank> {
     // ===
 
     @Nonnull
-    public static Bson filterLevel(int level) {
+    static Bson filterLevel(int level) {
         // match level exactly
         return Filters.eq("level", level);
     }
 
     @Nonnull
-    public static Bson filterLevelPrevious(int level) {
+    static Bson filterLevelPrevious(int level) {
         // match all previous levels, not this one
         return Filters.lt("level", level);
     }
 
     @Nonnull
-    public static Bson filterLevelAndPrevious(int level) {
+    static Bson filterLevelAndPrevious(int level) {
         // match all previous levels and this one
         return Filters.lte("level", level);
     }
 
     @Nonnull
-    public static Bson filterLevelNext(int level) {
+    private static Bson filterLevelNext(int level) {
         // match all next levels, not this one
         return Filters.gt("level", level);
     }
 
     @Nonnull
-    public static Bson filterLevelAndNext(int level) {
+    static Bson filterLevelAndNext(int level) {
         // match all previous levels and this one
         return Filters.gte("level", level);
     }

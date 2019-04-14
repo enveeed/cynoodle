@@ -7,9 +7,9 @@
 package cynoodle.core.discord;
 
 import cynoodle.core.module.Module;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 
@@ -50,14 +50,14 @@ public final class MFormatter {
 
     @Nonnull
     private String formatUserFull(@Nonnull DiscordPointer input) {
-        User user = module.getAPI().retrieveUserById(input.getID()).complete();
+        User user = module.getAPI().retrieveUserById(input.getID()).complete(); // TODO this throws when user is not found, fix this
         if(user == null) return formatID(input);
         else return user.getName() + "#" + user.getDiscriminator();
     }
 
     @Nonnull
     private String formatUser(@Nonnull DiscordPointer input) {
-        User user = module.getAPI().retrieveUserById(input.getID()).complete();
+        User user = module.getAPI().retrieveUserById(input.getID()).complete(); // TODO this throws when user is not found, fix this
         if(user == null) return formatID(input);
         else return user.getName();
     }

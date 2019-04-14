@@ -8,7 +8,7 @@ package cynoodle.core.discord;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import cynoodle.core.api.Checks;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nonnull;
 

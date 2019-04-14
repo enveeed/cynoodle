@@ -6,7 +6,7 @@
 
 package cynoodle.core.base.spamfilter;
 
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
