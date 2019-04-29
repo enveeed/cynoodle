@@ -28,7 +28,7 @@ val gitHash = {
 
 // ======
 
-version = "2019.0.0-beta-$gitHash"
+version = "2019.1.0-dev-$gitHash"
 group = "cynoodle"
 
 // ===
@@ -36,7 +36,7 @@ group = "cynoodle"
 buildConfig {
     appName = project.name
     version = project.version.toString()
-    packageName = "cynoodle.core"
+    packageName = "cynoodle"
 }
 
 // ===
@@ -51,8 +51,8 @@ repositories {
 // ===
 
 application {
-    applicationName = "cynoodle-core"
-    mainClassName = "cynoodle.core.Launcher"
+    applicationName = "cynoodle"
+    mainClassName = "cynoodle.Launcher"
 }
 
 // ===
