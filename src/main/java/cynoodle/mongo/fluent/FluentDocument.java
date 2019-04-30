@@ -127,6 +127,17 @@ public final class FluentDocument implements FluentValue, Iterable<String> {
                     v -> v == null ? BsonNull.VALUE : function.apply(v));
         }
 
+        // temporary to support codec via legacy code
+        public <V> SetAPI<V> as(Codec<V> codec) {
+            return new SetAPI<>(this.key, Codec.store(codec));
+        }
+
+        // temporary to support codec via legacy code
+        public <V> SetAPI<V> asNullable(Codec<V> codec) {
+            return new SetAPI<>(this.key,
+                    v -> v == null ? BsonNull.VALUE : Codec.store(codec).apply(v));
+        }
+
         //
 
         public <V> SetAPI<V> map(Function<? super V, ? extends T> function) {
@@ -225,6 +236,16 @@ public final class FluentDocument implements FluentValue, Iterable<String> {
 
         public <V> GetAPI<V> asNullable(Function<? super BsonValue, ? extends V> function) {
             return new GetAPI<>(this.key, value -> value.isNull() ? null : function.apply(value));
+        }
+
+        // temporary to support codec via legacy code
+        public <V> GetAPI<V> as(Codec<V> codec) {
+            return new GetAPI<>(this.key, Codec.load(codec));
+        }
+
+        // temporary to support codec via legacy code
+        public <V> GetAPI<V> asNullable(Codec<V> codec) {
+            return new GetAPI<>(this.key, value -> value.isNull() ? null : Codec.load(codec).apply(value));
         }
 
         //
