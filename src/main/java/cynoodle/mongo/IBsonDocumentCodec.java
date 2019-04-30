@@ -15,16 +15,16 @@ import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 /**
- * Simple {@link cynoodle.mongo.fluent.Codec Codec} implementation for {@link IBson} implementations.
+ * Simple {@link cynoodle.mongo.fluent.Codec Codec} implementation for {@link IBsonDocument} implementations.
  * @param <T> the type of the implementation
  */
-public final class IBsonCodec<T extends IBson> implements Codec<T> {
+public final class IBsonDocumentCodec<T extends IBsonDocument> implements Codec<T> {
 
     private final Supplier<T> instanceSupplier;
 
     // ===
 
-    public IBsonCodec(@Nonnull Supplier<T> instanceSupplier) {
+    public IBsonDocumentCodec(@Nonnull Supplier<T> instanceSupplier) {
         this.instanceSupplier = instanceSupplier;
     }
 
@@ -38,7 +38,7 @@ public final class IBsonCodec<T extends IBson> implements Codec<T> {
         try {
             instance.fromBson(FluentDocument.wrap(bson.asDocument()));
         } catch (BsonDataException e) {
-            throw new BsonDataException("Implementation failed to load BSON!", e);
+            throw new BsonDataException("Implementation failed to load BSON Document!", e);
         }
 
         return instance;
@@ -47,14 +47,14 @@ public final class IBsonCodec<T extends IBson> implements Codec<T> {
     @Override
     public BsonValue store(T object) throws BSONException {
 
-        FluentDocument document;
+        FluentDocument bson;
 
         try {
-            document = object.toBson();
+            bson = object.toBson();
         } catch (BsonDataException e) {
-            throw new BsonDataException("Implementation failed to store BSON!", e);
+            throw new BsonDataException("Implementation failed to store BSON Document!", e);
         }
 
-        return document.asBson();
+        return bson.asBson();
     }
 }
