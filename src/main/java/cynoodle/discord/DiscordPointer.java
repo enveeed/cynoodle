@@ -13,6 +13,7 @@ import org.bson.BsonNull;
 import org.bson.BsonValue;
 
 import javax.annotation.Nonnull;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -48,9 +49,19 @@ public final class DiscordPointer {
     }
 
     @Nonnull
+    public User requireUser() throws NoSuchElementException {
+        return asUser().orElseThrow(() -> new NoSuchElementException("There is no User with ID " + this.id));
+    }
+
+    @Nonnull
     public Optional<Guild> asGuild() {
         return Optional.ofNullable(Module.get(DiscordModule.class)
                 .getAPI().getGuildById(this.id));
+    }
+
+    @Nonnull
+    public Guild requireGuild() throws NoSuchElementException {
+        return asGuild().orElseThrow(() -> new NoSuchElementException("There is no Guild with ID " + this.id));
     }
 
     public Optional<Role> asRole() {
@@ -59,9 +70,19 @@ public final class DiscordPointer {
     }
 
     @Nonnull
+    public Role requireRole() throws NoSuchElementException {
+        return asRole().orElseThrow(() -> new NoSuchElementException("There is no Role with ID " + this.id));
+    }
+
+    @Nonnull
     public Optional<TextChannel> asTextChannel() {
         return Optional.ofNullable(Module.get(DiscordModule.class)
                 .getAPI().getTextChannelById(this.id));
+    }
+
+    @Nonnull
+    public TextChannel requireTextChannel() throws NoSuchElementException {
+        return asTextChannel().orElseThrow(() -> new NoSuchElementException("There is no TextChannel with ID " + this.id));
     }
 
     // ===
