@@ -25,6 +25,8 @@ import cynoodle.discord.DiscordPointer;
 import cynoodle.discord.GEntityManager;
 import cynoodle.discord.MEntityManager;
 import cynoodle.entities.EntityManager;
+import cynoodle.entities.EntityReference;
+import cynoodle.mongo.fluent.Codec;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -81,7 +83,10 @@ public final class Permissions {
     //
 
     @Nonnull
-    public Permission createPermission(@Nonnull Guild guild, @Nonnull PermissionType permissionType, boolean statusDefault) {
+    public Permission createPermission(@Nonnull Guild guild,
+                                       @Nonnull PermissionType permissionType,
+                                       @Nonnull PermissionMeta meta,
+                                       boolean statusDefault) {
         if(findType(permissionType.getName()).isEmpty())
             throw new IllegalArgumentException("Given permission type " + permissionType.getName() + " was not registered yet!");
 
@@ -89,12 +94,15 @@ public final class Permissions {
                 x -> {
                     x.setPermissionTypeName(permissionType.getName());
                     x.setStatusDefault(statusDefault);
+                    x.setMeta(meta);
                 });
     }
 
     @Nonnull
-    public Permission createPermission(@Nonnull Guild guild, @Nonnull PermissionType permissionType) {
-        return createPermission(guild, permissionType, false);
+    public Permission createPermission(@Nonnull Guild guild,
+                                       @Nonnull PermissionType permissionType,
+                                       @Nonnull PermissionMeta meta) {
+        return createPermission(guild, permissionType, meta, false);
     }
 
     // ===
@@ -170,6 +178,14 @@ public final class Permissions {
         // 4. use default since the permission was never set anywhere
 
         return permission.getStatusDefault();
+    }
+
+    // ===
+
+    // TODO this is ugly, find another way to do this (fix entity ref. as a whole)
+    @Nonnull
+    public Codec<EntityReference<Permission>> codecPermissionReference() {
+        return EntityReference.codecWith(this.permissionEntityManager);
     }
 
     // ===
