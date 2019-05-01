@@ -21,6 +21,8 @@
 
 package cynoodle.base.permissions;
 
+import cynoodle.mongo.fluent.Codec;
+
 import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.function.Function;
@@ -31,12 +33,16 @@ import java.util.function.Function;
 public final class PermissionType {
 
     private final String name;
+    private final Codec<? extends PermissionMeta> metaCodec;
     private final Function<Permission, String> formatter;
 
     // ===
 
-    private PermissionType(@Nonnull String name, @Nonnull Function<Permission, String> formatter) {
+    private PermissionType(@Nonnull String name,
+                           @Nonnull Codec<? extends PermissionMeta> metaCodec,
+                           @Nonnull Function<Permission, String> formatter) {
         this.name = name;
+        this.metaCodec = metaCodec;
         this.formatter = formatter;
     }
 
@@ -49,6 +55,16 @@ public final class PermissionType {
     @Nonnull
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * Get the codec for the {@link PermissionMeta} of
+     * the {@link Permission Permissions} of this type.
+     * @return the meta codec
+     */
+    @Nonnull
+    public Codec<? extends PermissionMeta> getMetaCodec() {
+        return this.metaCodec;
     }
 
     /**
@@ -65,5 +81,14 @@ public final class PermissionType {
             throw new IllegalArgumentException("Permission type mismatch: Got permission of "
                     + permission.getPermissionTypeName() + " but expected " + this.name + "!");
         return this.formatter.apply(permission);
+    }
+
+    // ===
+
+    @Nonnull
+    public static PermissionType of(@Nonnull String name,
+                                    @Nonnull Codec<? extends PermissionMeta> metaCodec,
+                                    @Nonnull Function<Permission, String> formatter) {
+        return new PermissionType(name, metaCodec, formatter);
     }
 }

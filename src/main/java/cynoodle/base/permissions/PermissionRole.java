@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 /**
  * Permissions of a {@link net.dv8tion.jda.api.entities.Role Role}.
  */
-@EIdentifier("base:permissions:permission_role")
+@EIdentifier(PermissionsModule.IDENTIFIER + ":permission_role")
 public final class PermissionRole extends Entity {
     private PermissionRole() {}
 

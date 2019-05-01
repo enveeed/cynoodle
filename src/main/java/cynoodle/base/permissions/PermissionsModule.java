@@ -26,9 +26,11 @@ import cynoodle.module.Module;
 
 import javax.annotation.Nonnull;
 
-@MIdentifier("base:permissions")
+@MIdentifier(PermissionsModule.IDENTIFIER)
 public final class PermissionsModule extends Module {
     private PermissionsModule() {}
+
+    static final String IDENTIFIER = "base:permissions";
 
     // ===
 

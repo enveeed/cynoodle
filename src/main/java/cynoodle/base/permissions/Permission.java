@@ -24,6 +24,7 @@ package cynoodle.base.permissions;
 import cynoodle.discord.GEntity;
 import cynoodle.entities.EIdentifier;
 import cynoodle.entities.EntityType;
+import cynoodle.mongo.fluent.Codec;
 import cynoodle.mongo.fluent.FluentDocument;
 import net.dv8tion.jda.api.entities.Member;
 import org.bson.BSONException;
@@ -33,7 +34,7 @@ import javax.annotation.Nonnull;
 /**
  * A Permission, which defines access to a specific resource or functionality.
  */
-@EIdentifier("base:permissions:permission")
+@EIdentifier(PermissionsModule.IDENTIFIER + ":permission")
 public final class Permission extends GEntity {
     private Permission() {}
 
@@ -52,6 +53,12 @@ public final class Permission extends GEntity {
      */
     private boolean statusDefault = false;
 
+    /**
+     * Additional meta for permissions, e.g. for back referencing related resources.
+     * Codec is defined via {@link PermissionType}.
+     */
+    private PermissionMeta meta;
+
     // ===
 
     @Nonnull
@@ -62,8 +69,6 @@ public final class Permission extends GEntity {
     void setPermissionTypeName(@Nonnull String type) {
         this.permissionType = type;
     }
-
-    //
 
     public boolean getStatusDefault() {
         return this.statusDefault;
@@ -76,11 +81,22 @@ public final class Permission extends GEntity {
     //
 
     @Nonnull
+    public PermissionMeta getMeta() {
+        return this.meta;
+    }
+
+    void setMeta(@Nonnull PermissionMeta meta) {
+        this.meta = meta;
+    }
+
+    //
+
+    @Nonnull
     public PermissionType getPermissionType() {
         return Permissions.get()
                 .findType(this.permissionType)
                 .orElseThrow(() -> new IllegalStateException("Permission "
-                        + this.getID() + " has unknown type of " + this.permissionType + "!"));
+                        + this.getID() + " has unknown (unregistered) type of " + this.permissionType + "!"));
     }
 
     @Nonnull
@@ -95,16 +111,25 @@ public final class Permission extends GEntity {
 
         this.permissionType = data.getAt("type").asString().value();
         this.statusDefault = data.getAt("status_default").asBoolean().or(this.statusDefault);
+        this.meta = data.getAt("meta").as(getPermissionType().getMetaCodec()).value();
 
     }
 
     @Nonnull
     @Override
+    @SuppressWarnings("unchecked")
     public FluentDocument toBson() throws BSONException {
         FluentDocument data = FluentDocument.wrapNew();
 
         data.setAt("type").asString().to(this.permissionType);
         data.setAt("status_default").asBoolean().to(this.statusDefault);
+
+        // TODO replace this dangerous codec cast
+        //  (it works because its always a subtype of PermissionMeta anyways so it does not matter)
+        //  with fixed generics in the fluent Bson API which allow acceptance of wildcard codec in one direction or the other
+        //  / any other solution in case its not possible with java generics (i'm a bit confused there still, its a mess honestly)
+
+        data.setAt("meta").as((Codec<PermissionMeta>) getPermissionType().getMetaCodec()).to(this.meta);
 
         return data;
     }

@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
  * Permissions defined explicitly for a Member always take priority over any {@link PermissionRole Role Permissions}
  * the member may have according to their Discord Roles.
  */
-@EIdentifier("base:permissions:permission_member")
+@EIdentifier(PermissionsModule.IDENTIFIER + ":permission_member")
 public final class PermissionMember extends MEntity {
     private PermissionMember() {}
 
