@@ -35,7 +35,6 @@ import cynoodle.base.profiles.ProfilesModule;
 import cynoodle.base.spamfilter.SpamFilterModule;
 import cynoodle.base.utilities.UtilitiesModule;
 import cynoodle.base.xp.XPModule;
-import cynoodle.core.BuildConfig;
 import cynoodle.discord.DiscordModule;
 import cynoodle.module.ModuleClassException;
 import cynoodle.module.ModuleManager;

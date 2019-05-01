@@ -21,7 +21,7 @@
 
 package cynoodle.base.utilities;
 
-import cynoodle.core.BuildConfig;
+import cynoodle.BuildConfig;
 import cynoodle.base.commands.*;
 import cynoodle.base.local.LocalContext;
 import cynoodle.discord.DiscordModule;

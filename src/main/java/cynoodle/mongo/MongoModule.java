@@ -27,7 +27,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import cynoodle.core.BuildConfig;
+import cynoodle.BuildConfig;
 import cynoodle.CyNoodle;
 import cynoodle.module.MIdentifier;
 import cynoodle.module.MSystem;
