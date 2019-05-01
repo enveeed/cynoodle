@@ -56,13 +56,13 @@ public final class VersionCommand extends Command {
 
         descOut.append("\n\n");
 
-        descOut.append("[GitHub](https://github.com/enveeed/cynoodle-core)").append(" | ")
-                .append("[Changelog](https://github.com/enveeed/cynoodle-core/blob/master/CHANGELOG.md)").append(" | ")
-                .append("[Report a Bug](https://github.com/enveeed/cynoodle-core/issues/)");
+        descOut.append("[GitHub](https://github.com/enveeed/cynoodle)").append(" | ")
+                .append("[Changelog](https://github.com/enveeed/cynoodle/blob/master/CHANGELOG.md)").append(" | ")
+                .append("[Report a Bug](https://github.com/enveeed/cynoodle/issues/)");
 
         eOut.setDescription(descOut);
 
-        eOut.setFooter("(C) enveeed " + LocalDate.now().getYear(), null);
+        eOut.setFooter("(C) enveeed " + LocalDate.now().getYear() + " | Licensed under GPLv3", null);
 
         //
 
