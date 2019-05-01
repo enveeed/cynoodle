@@ -31,6 +31,7 @@ import cynoodle.base.local.LocalModule;
 import cynoodle.base.makeme.MakeMeModule;
 import cynoodle.base.moderation.ModerationModule;
 import cynoodle.base.notifications.NotificationsModule;
+import cynoodle.base.permissions.PermissionsModule;
 import cynoodle.base.profiles.ProfilesModule;
 import cynoodle.base.spamfilter.SpamFilterModule;
 import cynoodle.base.utilities.UtilitiesModule;
@@ -382,6 +383,7 @@ public final class CyNoodle {
         this.modules.register(ModerationModule.class);
         this.modules.register(UtilitiesModule.class);
         this.modules.register(SpamFilterModule.class);
+        this.modules.register(PermissionsModule.class);
 
     }
 
