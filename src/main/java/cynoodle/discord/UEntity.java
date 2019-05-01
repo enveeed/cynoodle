@@ -1,7 +1,22 @@
 /*
- * Copyright (c) enveeed 2019 - All Rights Reserved.
- * Unauthorized copying of this file, via any medium is strictly prohibited.
- * Proprietary and confidential.
+ * cynoodle, a bot for the chat platform Discord
+ *
+ * Copyright (C) 2019 enveeed
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
 package cynoodle.discord;
@@ -75,7 +90,6 @@ public abstract class UEntity extends Entity implements IUEntity {
 
     @Override
     public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
-        super.fromBson(source);
 
         this.user = source.getAt(KEY_USER).as(fromBsonNullable()).or(this.user);
 
@@ -84,7 +98,7 @@ public abstract class UEntity extends Entity implements IUEntity {
     @Nonnull
     @Override
     public FluentDocument toBson() throws BsonDataException {
-        FluentDocument data = super.toBson();
+        FluentDocument data = FluentDocument.wrapNew();
 
         data.setAt(KEY_USER).as(toBsonNullable()).to(this.user);
 

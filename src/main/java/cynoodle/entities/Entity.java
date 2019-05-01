@@ -1,14 +1,29 @@
 /*
- * Copyright (c) enveeed 2019 - All Rights Reserved.
- * Unauthorized copying of this file, via any medium is strictly prohibited.
- * Proprietary and confidential.
+ * cynoodle, a bot for the chat platform Discord
+ *
+ * Copyright (C) 2019 enveeed
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
 package cynoodle.entities;
 
 import cynoodle.CyNoodle;
 import cynoodle.api.Snowflake;
-import cynoodle.mongo.IBson;
+import cynoodle.mongo.IBsonDocument;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
@@ -17,7 +32,7 @@ import java.util.NoSuchElementException;
 /**
  * An Entity, a persistent (on MongoDB), uniquely identified (via snowflakes) and cached data object.
  */
-public abstract class Entity implements IEntity, IBson {
+public abstract class Entity implements IEntity, IBsonDocument {
 
     private EntityManager<?> manager;
     private long id;

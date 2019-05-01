@@ -1,5 +1,4 @@
-![version](https://img.shields.io/badge/version-2019.0.0--beta-blue.svg?style=flat-square)
-![java-version](https://img.shields.io/badge/java-11-yellowgreen.svg?style=flat-square)
+![version](https://img.shields.io/github/release/enveeed/cynoodle.svg?color=blue&label=version&style=flat-square)
 
 # cynoodle
 
@@ -12,3 +11,8 @@ This project requires at least **Java `11`** (class file version `55+`) to run a
 
 Use `./gradlew build` (or `gradlew.bat build` on Windows) to build cynoodle. This will create
 the distribution zip and tar files in `build/distributions/`.
+
+## License
+
+cynoodle is licensed under the **GNU General Public License v3**, 
+see [`LICENSE`](https://github.com/enveeed/cynoodle/blob/master/LICENSE).
