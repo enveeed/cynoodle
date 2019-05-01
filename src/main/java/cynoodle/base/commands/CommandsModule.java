@@ -23,6 +23,7 @@ package cynoodle.base.commands;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.common.flogger.FluentLogger;
+import cynoodle.base.permissions.Permissions;
 import cynoodle.discord.DiscordEvent;
 import cynoodle.entities.EntityType;
 import cynoodle.module.MIdentifier;
@@ -36,6 +37,7 @@ import javax.annotation.Nonnull;
 @MIdentifier("base:commands")
 @MRequires("base:local")
 @MRequires("base:access")
+@MRequires("base:permissions")
 public final class CommandsModule extends Module {
     private CommandsModule() {}
 
@@ -70,6 +72,10 @@ public final class CommandsModule extends Module {
         //
 
         this.settings.ensureIndexes();
+
+        // register permission type
+
+        Permissions.get().registerType(Command.PERMISSION_TYPE);
     }
 
     @Override

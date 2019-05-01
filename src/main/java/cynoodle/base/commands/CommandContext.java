@@ -85,6 +85,16 @@ public final class CommandContext {
         return this.event.getGuild();
     }
 
+    //
+
+    /**
+     * Get the member which caused this command.
+     * @return the member
+     */
+    public Member getMember() {
+        return this.event.getMember();
+    }
+
     // === POINTERS ==
 
     /**

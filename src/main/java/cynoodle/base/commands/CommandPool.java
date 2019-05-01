@@ -21,6 +21,7 @@
 
 package cynoodle.base.commands;
 
+import com.google.common.flogger.FluentLogger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -31,6 +32,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * Dynamic execution pool for commands.
  */
 public final class CommandPool {
+
+    private final static FluentLogger LOG = FluentLogger.forEnclosingClass();
+
+    // ===
 
     private final static int DEF_CORE_POOL_SIZE = 32;
     private final static int DEF_MAX_POOL_SIZE = 64;
@@ -108,7 +113,13 @@ public final class CommandPool {
 
         @Override
         public Void call() throws Exception {
-            command.execute(this.context);
+            try {
+                command.execute(this.context);
+            } catch (Exception e) {
+                LOG.atSevere()
+                        .withCause(e)
+                        .log("Unexpected internal exception during command.execute() pipeline!");
+            }
             return null;
         }
 

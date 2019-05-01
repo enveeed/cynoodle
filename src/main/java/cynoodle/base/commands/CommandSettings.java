@@ -24,8 +24,11 @@ package cynoodle.base.commands;
 import cynoodle.api.Checks;
 import cynoodle.base.access.AccessList;
 import cynoodle.base.access.AccessLists;
+import cynoodle.base.permissions.Permission;
+import cynoodle.base.permissions.Permissions;
 import cynoodle.discord.GEntity;
 import cynoodle.entities.EIdentifier;
+import cynoodle.entities.EntityReference;
 import cynoodle.module.Module;
 import cynoodle.mongo.BsonDataException;
 import cynoodle.mongo.IBsonDocument;
@@ -127,7 +130,14 @@ public final class CommandSettings extends GEntity {
          * The command access list
          * (status is DENY by default to ensure that if new commands are added, nobody has permissions to them.)
          */
+        @Deprecated
+        // TODO REMOVE THIS
         private AccessList access = AccessLists.create(CommandSettings.this, AccessList.Status.DENY);
+
+        /**
+         * The permission for this command.
+         */
+        private EntityReference<Permission> permission = null;
 
         // ===
 
@@ -161,8 +171,28 @@ public final class CommandSettings extends GEntity {
         //
 
         @Nonnull
+        @Deprecated
+        // TODO REMOVE THIS
         public AccessList getAccess() {
             return this.access;
+        }
+
+        @Nonnull
+        public Permission getPermission() {
+            if(this.permission == null) {
+                Permissions permissions = Permissions.get();
+
+                Permission permission = permissions.createPermission(requireGuild().requireGuild(),
+                        Command.PERMISSION_TYPE,
+                        new CommandPermissionMeta(this.identifier),
+                        false);
+                this.permission = permission.reference(Permission.class);
+
+                persist();
+
+                return permission;
+            }
+            else return this.permission.require();
         }
 
         // ===
@@ -181,8 +211,8 @@ public final class CommandSettings extends GEntity {
             this.identifier = source.getAt("identifier").asString().value();
             this.aliases = source.getAt("aliases").asArray().or(FluentArray.wrapNew())
                     .collect().asString().toSetOr(this.aliases);
-            this.access = source.getAt("access").as(AccessLists.load(CommandSettings.this)).or(this.access);
-
+            // TODO remove this.access = source.getAt("access").as(AccessLists.load(CommandSettings.this)).or(this.access);
+            this.permission = source.getAt("permission").as(Permissions.get().codecPermissionReference()).or(this.permission);
         }
 
         @Nonnull
@@ -193,7 +223,11 @@ public final class CommandSettings extends GEntity {
             data.setAt("identifier").asString().to(this.identifier);
             data.setAt("aliases").asArray()
                     .to(FluentArray.wrapNew().insert().asString().atEnd(this.aliases));
-            data.setAt("access").as(AccessLists.store()).to(this.access);
+            // TODO remove data.setAt("access").as(AccessLists.store()).to(this.access);
+            // done this way because if permission was null before it must be created first
+            data.setAt("permission").as(Permissions.get().codecPermissionReference())
+                    .to(getPermission().reference(Permission.class));
+
 
             return data;
         }

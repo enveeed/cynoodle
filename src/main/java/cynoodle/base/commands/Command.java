@@ -23,12 +23,14 @@ package cynoodle.base.commands;
 
 import com.google.common.flogger.FluentLogger;
 import cynoodle.CyNoodle;
-import cynoodle.api.text.Options;
 import cynoodle.api.parser.ParsingException;
-import cynoodle.base.access.AccessList;
+import cynoodle.api.text.Options;
 import cynoodle.base.local.LocalContext;
 import cynoodle.base.local.LocalModule;
 import cynoodle.base.local.LocalPreferences;
+import cynoodle.base.permissions.Permission;
+import cynoodle.base.permissions.PermissionType;
+import cynoodle.base.permissions.Permissions;
 import cynoodle.discord.DiscordModule;
 import cynoodle.module.Module;
 
@@ -41,6 +43,14 @@ public abstract class Command {
     private final static FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     private final CommandsModule module = Module.get(CommandsModule.class);
+
+    // ===
+
+    static final PermissionType PERMISSION_TYPE
+            = PermissionType.of("base:commands", CommandPermissionMeta.codec(), permission -> {
+                CommandPermissionMeta meta = (CommandPermissionMeta) permission.getMeta();
+                return "Usage of command `" + meta.getIdentifier() + "`";
+            });
 
     // ===
 
@@ -152,9 +162,10 @@ public abstract class Command {
 
         boolean override = CyNoodle.get().getLaunchSettings().isNoPermissionsEnabled();
 
-        AccessList access = properties.getAccess();
+        Permissions permissions = Permissions.get();
+        Permission permission = properties.getPermission();
 
-        if(!access.checkAccess(context.getUserPointer()) && !override) {
+        if(!permissions.test(context.getMember(), permission) && !override) {
             context.queueError(CommandErrors.permissionInsufficient());
             return;
         }
