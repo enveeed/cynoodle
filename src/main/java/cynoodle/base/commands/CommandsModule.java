@@ -23,7 +23,6 @@ package cynoodle.base.commands;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.common.flogger.FluentLogger;
-import cynoodle.base.permissions.Permissions;
 import cynoodle.discord.DiscordEvent;
 import cynoodle.entities.EntityType;
 import cynoodle.module.MIdentifier;
@@ -68,14 +67,6 @@ public final class CommandsModule extends Module {
         this.handler = new CommandHandler();
         this.pool = new CommandPool();
         this.mappingsManager = new CommandMappingsManager();
-
-        //
-
-        this.settings.ensureIndexes();
-
-        // register permission type
-
-        Permissions.get().registerType(Command.PERMISSION_TYPE);
     }
 
     @Override

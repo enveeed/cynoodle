@@ -29,7 +29,6 @@ import cynoodle.base.local.LocalContext;
 import cynoodle.base.local.LocalModule;
 import cynoodle.base.local.LocalPreferences;
 import cynoodle.base.permissions.Permission;
-import cynoodle.base.permissions.PermissionType;
 import cynoodle.base.permissions.Permissions;
 import cynoodle.discord.DiscordModule;
 import cynoodle.module.Module;
@@ -43,14 +42,6 @@ public abstract class Command {
     private final static FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     private final CommandsModule module = Module.get(CommandsModule.class);
-
-    // ===
-
-    static final PermissionType PERMISSION_TYPE
-            = PermissionType.of("base:commands", CommandPermissionMeta.codec(), permission -> {
-                CommandPermissionMeta meta = (CommandPermissionMeta) permission.getMeta();
-                return "Usage of command `" + meta.getIdentifier() + "`";
-            });
 
     // ===
 
@@ -163,9 +154,9 @@ public abstract class Command {
         boolean override = CyNoodle.get().getLaunchSettings().isNoPermissionsEnabled();
 
         Permissions permissions = Permissions.get();
-        Permission permission = properties.getPermission();
+        Permission permission = properties.getPermission().orElse(null);
 
-        if(!permissions.test(context.getMember(), permission) && !override) {
+        if(permission == null || !permissions.test(context.getMember(), permission) && !override) {
             context.queueError(CommandErrors.permissionInsufficient());
             return;
         }

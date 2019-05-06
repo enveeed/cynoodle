@@ -22,13 +22,10 @@
 package cynoodle.base.commands;
 
 import cynoodle.api.Checks;
-import cynoodle.base.access.AccessList;
-import cynoodle.base.access.AccessLists;
 import cynoodle.base.permissions.Permission;
-import cynoodle.base.permissions.Permissions;
+import cynoodle.base.permissions.PermissionReference;
 import cynoodle.discord.GEntity;
 import cynoodle.entities.EIdentifier;
-import cynoodle.entities.EntityReference;
 import cynoodle.module.Module;
 import cynoodle.mongo.BsonDataException;
 import cynoodle.mongo.IBsonDocument;
@@ -38,6 +35,7 @@ import org.bson.BsonArray;
 import org.bson.BsonValue;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -122,22 +120,14 @@ public final class CommandSettings extends GEntity {
         private String identifier;
 
         /**
+         * The permission for the command.
+         */
+        private PermissionReference permission = null;
+
+        /**
          * All alias strings which are mapped to the command
          */
         private Set<String> aliases = new HashSet<>();
-
-        /**
-         * The command access list
-         * (status is DENY by default to ensure that if new commands are added, nobody has permissions to them.)
-         */
-        @Deprecated
-        // TODO REMOVE THIS
-        private AccessList access = AccessLists.create(CommandSettings.this, AccessList.Status.DENY);
-
-        /**
-         * The permission for this command.
-         */
-        private EntityReference<Permission> permission = null;
 
         // ===
 
@@ -160,6 +150,17 @@ public final class CommandSettings extends GEntity {
         //
 
         @Nonnull
+        public Optional<Permission> getPermission() {
+            return this.permission == null ? Optional.empty() : this.permission.get();
+        }
+
+        public void setPermission(@Nullable Permission permission) {
+            this.permission = PermissionReference.of(permission);
+        }
+
+        //
+
+        @Nonnull
         public Set<String> getAliases() {
             return this.aliases;
         }
@@ -168,51 +169,15 @@ public final class CommandSettings extends GEntity {
             this.aliases = aliases;
         }
 
-        //
-
-        @Nonnull
-        @Deprecated
-        // TODO REMOVE THIS
-        public AccessList getAccess() {
-            return this.access;
-        }
-
-        @Nonnull
-        public Permission getPermission() {
-            if(this.permission == null) {
-                Permissions permissions = Permissions.get();
-
-                Permission permission = permissions.createPermission(requireGuild().requireGuild(),
-                        Command.PERMISSION_TYPE,
-                        new CommandPermissionMeta(this.identifier),
-                        false);
-                this.permission = permission.reference(Permission.class);
-
-                persist();
-
-                return permission;
-            }
-            else return this.permission.require();
-        }
-
-        // ===
-
-        @Nonnull
-        public String getPrimaryAlias() {
-            return this.aliases.stream().sorted().findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Aliases are empty, can't get primary alias."));
-        }
-
         // ===
 
         @Override
         public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
 
             this.identifier = source.getAt("identifier").asString().value();
+            this.permission = source.getAt("permission").asNullable(PermissionReference.codec()).or(this.permission);
             this.aliases = source.getAt("aliases").asArray().or(FluentArray.wrapNew())
                     .collect().asString().toSetOr(this.aliases);
-            // TODO remove this.access = source.getAt("access").as(AccessLists.load(CommandSettings.this)).or(this.access);
-            this.permission = source.getAt("permission").as(Permissions.get().codecPermissionReference()).or(this.permission);
         }
 
         @Nonnull
@@ -221,12 +186,9 @@ public final class CommandSettings extends GEntity {
             FluentDocument data = FluentDocument.wrapNew();
 
             data.setAt("identifier").asString().to(this.identifier);
+            data.setAt("permission").asNullable(PermissionReference.codec()).to(this.permission);
             data.setAt("aliases").asArray()
                     .to(FluentArray.wrapNew().insert().asString().atEnd(this.aliases));
-            // TODO remove data.setAt("access").as(AccessLists.store()).to(this.access);
-            // done this way because if permission was null before it must be created first
-            data.setAt("permission").as(Permissions.get().codecPermissionReference())
-                    .to(getPermission().reference(Permission.class));
 
 
             return data;
