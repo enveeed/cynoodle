@@ -19,11 +19,24 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-package cynoodle.base.permissions;
+package cynoodle.discord;
+
+import java.util.regex.Pattern;
 
 /**
- * Meta embedded into {@link Permission Permissions} to allow the inclusion of meta data, e.g.
- * to backreference to the resource or functionality the permission is related to.
- * Codec is defined via {@link PermissionType}
+ * Static utility about mentions.
  */
-public interface PermissionMeta {}
+public final class Mentions {
+    private Mentions() {}
+
+    // ===
+
+    public static final Pattern REGEX_USER = Pattern.compile("<@!?(\\d+)>");
+    public static final Pattern REGEX_ROLE = Pattern.compile("<@&(\\d+)>");
+    public static final Pattern REGEX_CHANNEL = Pattern.compile("<#(\\d+)>");
+    public static final Pattern REGEX_EMOTE = Pattern.compile("<a?:([a-zA-Z0-9_]+):([0-9]+)>");
+
+    // NOTE: Source for those regex is the JDA Message interface
+
+    // TODO more ...
+}
