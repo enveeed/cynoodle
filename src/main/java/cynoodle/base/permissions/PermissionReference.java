@@ -27,7 +27,6 @@ import org.bson.BSONException;
 import org.bson.BsonValue;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -39,7 +38,7 @@ public final class PermissionReference {
 
     // ===
 
-    private PermissionReference(@Nullable EntityReference<Permission> reference) {
+    private PermissionReference(@Nonnull EntityReference<Permission> reference) {
         this.reference = reference;
     }
 
@@ -47,21 +46,19 @@ public final class PermissionReference {
 
     @Nonnull
     public Optional<Permission> get() {
-        return reference == null ? Optional.empty() : reference.get();
+        return reference.get();
     }
 
-    // ===
-
-    @Nullable
-    public EntityReference<Permission> getReference() {
-        return this.reference;
+    @Nonnull
+    public Permission require() {
+        return reference.require();
     }
 
     // ===
 
     @Nonnull
-    public static PermissionReference of(@Nullable Permission permission) {
-        return new PermissionReference(permission == null ? null : permission.reference(Permission.class));
+    public static PermissionReference of(@Nonnull Permission permission) {
+        return new PermissionReference(permission.reference(Permission.class));
     }
 
     // ===
@@ -76,7 +73,7 @@ public final class PermissionReference {
 
             @Override
             public BsonValue store(PermissionReference object) throws BSONException {
-                return Permission.referenceCodec().store(object.getReference());
+                return Permission.referenceCodec().store(object.reference);
             }
         };
     }

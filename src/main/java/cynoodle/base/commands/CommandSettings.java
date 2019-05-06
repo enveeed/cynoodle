@@ -155,7 +155,7 @@ public final class CommandSettings extends GEntity {
         }
 
         public void setPermission(@Nullable Permission permission) {
-            this.permission = PermissionReference.of(permission);
+            this.permission = permission == null ? null : PermissionReference.of(permission);
         }
 
         //
