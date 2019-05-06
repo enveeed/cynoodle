@@ -23,6 +23,7 @@ package cynoodle.base.permissions;
 
 import cynoodle.discord.GEntity;
 import cynoodle.entities.EIdentifier;
+import cynoodle.entities.EntityReference;
 import cynoodle.entities.EntityType;
 import cynoodle.mongo.fluent.Codec;
 import cynoodle.mongo.fluent.FluentDocument;
@@ -43,9 +44,10 @@ public final class Permission extends GEntity {
     // ===
 
     /**
-     * The type name of this permission, decides which {@link PermissionType} instance will be used at runtime.
+     * The name of this permission.
      */
-    private String permissionType;
+    // NOTE: Always initialized via setName() from Permissions.createPermission(), so never null.
+    private String name;
 
     /**
      * The default status of this permission, which {@link Permissions#test(Member, Permission)} will
@@ -53,22 +55,18 @@ public final class Permission extends GEntity {
      */
     private boolean statusDefault = false;
 
-    /**
-     * Additional meta for permissions, e.g. for back referencing related resources.
-     * Codec is defined via {@link PermissionType}.
-     */
-    private PermissionMeta meta;
-
     // ===
 
     @Nonnull
-    public String getPermissionTypeName() {
-        return permissionType;
+    public String getName() {
+        return this.name;
     }
 
-    void setPermissionTypeName(@Nonnull String type) {
-        this.permissionType = type;
+    public void setName(@Nonnull String name) {
+        this.name = name;
     }
+
+    //
 
     public boolean getStatusDefault() {
         return this.statusDefault;
@@ -78,59 +76,37 @@ public final class Permission extends GEntity {
         this.statusDefault = status;
     }
 
-    //
-
-    @Nonnull
-    public PermissionMeta getMeta() {
-        return this.meta;
-    }
-
-    void setMeta(@Nonnull PermissionMeta meta) {
-        this.meta = meta;
-    }
-
-    //
-
-    @Nonnull
-    public PermissionType getPermissionType() {
-        return Permissions.get()
-                .findType(this.permissionType)
-                .orElseThrow(() -> new IllegalStateException("Permission "
-                        + this.getID() + " has unknown (unregistered) type of " + this.permissionType + "!"));
-    }
-
-    @Nonnull
-    public String getDisplayName() {
-        return this.getPermissionType().getDisplayName(this);
-    }
-
     // ===
 
     @Override
     public void fromBson(@Nonnull FluentDocument data) throws BSONException {
 
-        this.permissionType = data.getAt("type").asString().value();
+        this.name = data.getAt("name").asString().value();
         this.statusDefault = data.getAt("status_default").asBoolean().or(this.statusDefault);
-        this.meta = data.getAt("meta").as(getPermissionType().getMetaCodec()).value();
 
     }
 
     @Nonnull
     @Override
-    @SuppressWarnings("unchecked")
     public FluentDocument toBson() throws BSONException {
         FluentDocument data = FluentDocument.wrapNew();
 
-        data.setAt("type").asString().to(this.permissionType);
+        data.setAt("name").asString().to(this.name);
         data.setAt("status_default").asBoolean().to(this.statusDefault);
 
-        // TODO replace this dangerous codec cast
-        //  (it works because its always a subtype of PermissionMeta anyways so it does not matter)
-        //  with fixed generics in the fluent Bson API which allow acceptance of wildcard codec in one direction or the other
-        //  / any other solution in case its not possible with java generics (i'm a bit confused there still, its a mess honestly)
-
-        data.setAt("meta").as((Codec<PermissionMeta>) getPermissionType().getMetaCodec()).to(this.meta);
-
         return data;
+    }
+
+    // ===
+
+    /**
+     * Convenience method to obtain the {@link Codec} for an {@link EntityReference}
+     * of a {@link Permission}.
+     * @return the codec for a permission entity reference
+     */
+    @Nonnull
+    public static Codec<EntityReference<Permission>> referenceCodec() {
+        return Permissions.get()
+                .codecPermissionReference();
     }
 }

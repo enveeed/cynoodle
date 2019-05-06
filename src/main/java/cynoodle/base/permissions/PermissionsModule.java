@@ -42,7 +42,14 @@ public final class PermissionsModule extends Module {
     protected void start() {
         super.start();
 
+        // initialize permissions instance
         this.permissions = new Permissions();
+
+        // setup events
+        // TODO replace this with actual cynoodle API event listener registration
+        noodle().getDiscord().getAPI().addEventListener(new PermissionsEventHandler());
+
+        // TODO test if something was deleted while we were offline and remove those permissions (role + member)
     }
 
     @Override

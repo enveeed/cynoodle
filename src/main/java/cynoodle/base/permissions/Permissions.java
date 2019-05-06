@@ -21,6 +21,7 @@
 
 package cynoodle.base.permissions;
 
+import com.google.common.flogger.FluentLogger;
 import cynoodle.discord.DiscordPointer;
 import cynoodle.discord.GEntityManager;
 import cynoodle.discord.MEntityManager;
@@ -32,15 +33,18 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Central permission management.
  * Obtain instance via {@link #get()}, requires {@link PermissionsModule} to be active.
  */
 public final class Permissions {
+
+    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
+
+    // ===
 
     Permissions() {}
 
@@ -53,24 +57,18 @@ public final class Permissions {
     private final MEntityManager<PermissionMember> memberEntityManager
             = new MEntityManager<>(PermissionMember.TYPE);
 
-    private final Map<String, PermissionType> typeRegistry
-            = new HashMap<>();
-
     // ===
 
     GEntityManager<Permission> getPermissionEntityManager() {
         return this.permissionEntityManager;
     }
 
-    // ===
-
-    public void registerType(@Nonnull PermissionType type) {
-        this.typeRegistry.put(type.getName(), type);
+    EntityManager<PermissionRole> getRoleEntityManager() {
+        return this.roleEntityManager;
     }
 
-    @Nonnull
-    public Optional<PermissionType> findType(@Nonnull String name) {
-        return Optional.ofNullable(this.typeRegistry.get(name));
+    MEntityManager<PermissionMember> getMemberEntityManager() {
+        return this.memberEntityManager;
     }
 
     // ===
@@ -84,25 +82,22 @@ public final class Permissions {
 
     @Nonnull
     public Permission createPermission(@Nonnull Guild guild,
-                                       @Nonnull PermissionType permissionType,
-                                       @Nonnull PermissionMeta meta,
+                                       @Nonnull String name,
                                        boolean statusDefault) {
-        if(findType(permissionType.getName()).isEmpty())
-            throw new IllegalArgumentException("Given permission type " + permissionType.getName() + " was not registered yet!");
-
         return this.permissionEntityManager.create(guild,
                 x -> {
-                    x.setPermissionTypeName(permissionType.getName());
+                    x.setName(name);
                     x.setStatusDefault(statusDefault);
-                    x.setMeta(meta);
                 });
     }
 
     @Nonnull
     public Permission createPermission(@Nonnull Guild guild,
-                                       @Nonnull PermissionType permissionType,
-                                       @Nonnull PermissionMeta meta) {
-        return createPermission(guild, permissionType, meta, false);
+                                       @Nonnull String name) {
+        return this.permissionEntityManager.create(guild,
+                x -> {
+                    x.setName(name);
+                });
     }
 
     // ===
@@ -144,7 +139,7 @@ public final class Permissions {
 
     /**
      * Test if the given member has the given permission, either directly via {@link PermissionMember}
-     * or due to their roles via {@link PermissionRole}.
+     * or due to their roles via {@link PermissionRole}. If this is not the case, use the default status of the permission.
      * @param member the member
      * @param permission the permission
      * @return true
@@ -182,10 +177,23 @@ public final class Permissions {
 
     // ===
 
+    /**
+     * Get a set of all permissions known on the given Guild.
+     * NOTE: This method also deletes any permissions encountered which have an unknown type.
+     * @param guild the guild
+     * @return a set of all permissions for this guild
+     */
+    @Nonnull
+    public Set<Permission> getPermissions(@Nonnull Guild guild) {
+        return this.permissionEntityManager.stream(guild).collect(Collectors.toUnmodifiableSet());
+    }
+
+    // ===
+
     // TODO this is ugly, find another way to do this (fix entity ref. as a whole)
     @Nonnull
     public Codec<EntityReference<Permission>> codecPermissionReference() {
-        return EntityReference.codecWith(this.permissionEntityManager);
+        return this.permissionEntityManager.referenceCodec();
     }
 
     // ===

@@ -62,7 +62,7 @@ public final class PermissionContainer implements IBsonArray {
      * @param permission the permission
      * @param allow true to allow, false to deny
      */
-    public void setPermission(Permission permission, boolean allow) {
+    public void set(Permission permission, boolean allow) {
         this.setEntry(permission, allow);
     }
 
@@ -70,15 +70,15 @@ public final class PermissionContainer implements IBsonArray {
      * Set the given permission to <b>allow</b>.
      * @param permission the permission
      */
-    public void setPermission(Permission permission) {
-        setPermission(permission, true);
+    public void set(Permission permission) {
+        set(permission, true);
     }
 
     /**
      * Unset the given permission.
      * @param permission the permission
      */
-    public void unsetPermission(Permission permission) {
+    public void unset(Permission permission) {
         this.unsetEntry(permission);
     }
 
