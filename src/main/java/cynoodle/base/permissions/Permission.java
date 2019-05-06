@@ -78,6 +78,13 @@ public final class Permission extends GEntity {
 
     // ===
 
+    public boolean test(@Nonnull Member member) {
+        return Permissions.get()
+                .test(member, this);
+    }
+
+    // ===
+
     @Override
     public void fromBson(@Nonnull FluentDocument data) throws BSONException {
 
