@@ -37,6 +37,7 @@ import cynoodle.api.Snowflake;
 import cynoodle.module.Module;
 import cynoodle.mongo.BsonDataException;
 import cynoodle.mongo.MongoModule;
+import cynoodle.mongo.fluent.Codec;
 import cynoodle.mongo.fluent.FluentDocument;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
@@ -201,6 +202,11 @@ public class EntityManager<E extends Entity> {
     @Nonnull
     public final EntityReference<E> reference(long id) {
         return new EntityReference<>(this, id);
+    }
+
+    @Nonnull
+    public final Codec<EntityReference<E>> referenceCodec() {
+        return EntityReference.codecWith(this);
     }
 
     // ===
