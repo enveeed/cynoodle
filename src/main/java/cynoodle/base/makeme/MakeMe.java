@@ -22,8 +22,8 @@
 package cynoodle.base.makeme;
 
 import com.mongodb.client.model.Filters;
-import cynoodle.base.access.AccessList;
-import cynoodle.base.access.AccessLists;
+import cynoodle.base.permissions.Permission;
+import cynoodle.base.permissions.PermissionReference;
 import cynoodle.discord.DiscordPointer;
 import cynoodle.discord.GEntity;
 import cynoodle.discord.GEntityManager;
@@ -34,6 +34,7 @@ import cynoodle.entities.EntityReference;
 import cynoodle.module.Module;
 import cynoodle.mongo.BsonDataException;
 import cynoodle.mongo.fluent.FluentDocument;
+import net.dv8tion.jda.api.entities.Member;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
@@ -77,9 +78,9 @@ public final class MakeMe extends GEntity {
     private DiscordPointer role;
 
     /**
-     * The access list for this make-me (default status is ALLOW)
+     * The permission for this make-me.
      */
-    private AccessList access = AccessLists.create(this, AccessList.Status.ALLOW);
+    private PermissionReference permission = null;
 
     /**
      * The group this make-me belongs to.
@@ -129,26 +130,30 @@ public final class MakeMe extends GEntity {
     //
 
     @Nonnull
-    public AccessList getAccess() {
-        return this.access;
+    public Optional<Permission> getPermission() {
+        return this.permission == null ? Optional.empty() : this.permission.get();
+    }
+
+    public void setPermission(@Nullable Permission permission) {
+        this.permission = permission == null ? null : PermissionReference.of(permission);
     }
 
     //
 
     /**
-     * Check if the given user can access this make-me.
-     * @param user the user
+     * Check if the given member can access this make-me.
+     * @param member the member
      * @return true if accessible, false otherwise.
      */
-    public boolean canAccess(@Nonnull DiscordPointer user) {
+    public boolean canAccess(@Nonnull Member member) {
 
         Optional<MakeMeGroup> groupO = getGroup();
         if(groupO.isPresent()) {
             MakeMeGroup group = groupO.get();
-            if(!group.getAccess().checkAccess(user)) return false;
+            if(!group.canAccess(member)) return false;
         }
 
-        return this.getAccess().checkAccess(user);
+        return this.permission == null || this.permission.require().test(member);
     }
 
     // ===
@@ -179,7 +184,7 @@ public final class MakeMe extends GEntity {
         this.key = source.getAt(KEY_KEY).asString().or(this.key);
         this.name = source.getAt("name").asString().or(this.name);
         this.role = source.getAt("role").as(DiscordPointer.fromBson()).or(this.role);
-        this.access = source.getAt("access").as(AccessLists.load(this)).or(this.access);
+        this.permission = source.getAt("permission").asNullable(PermissionReference.codec()).or(this.permission);
         this.group = source.getAt(KEY_GROUP).asNullable(EntityReference.load(groupManager)).or(this.group);
     }
 
@@ -191,7 +196,7 @@ public final class MakeMe extends GEntity {
         data.setAt(KEY_KEY).asString().to(this.key);
         data.setAt("name").asString().to(this.name);
         data.setAt("role").as(DiscordPointer.toBson()).to(this.role);
-        data.setAt("access").as(AccessLists.store()).to(this.access);
+        data.setAt("permission").asNullable(PermissionReference.codec()).to(this.permission);
         data.setAt(KEY_GROUP).asNullable(EntityReference.<MakeMeGroup>store()).to(this.group);
 
         return data;

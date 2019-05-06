@@ -252,7 +252,7 @@ public final class MakeMeController {
 
             for (MakeMe mm : all) {
 
-                if(!mm.canAccess(user)) {
+                if(!mm.canAccess(member)) {
                     // TODO remove it from storage as well
                     continue;
                 }

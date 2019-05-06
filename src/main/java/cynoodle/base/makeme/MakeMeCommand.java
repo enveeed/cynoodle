@@ -142,7 +142,7 @@ public final class MakeMeCommand extends Command {
 
         //
 
-        if(!mm.canAccess(context.getUserPointer())) {
+        if(!mm.canAccess(context.getMember())) {
             context.queueError(CommandErrors.permissionInsufficient(
                     "You are now allowed to access this make-me!"));
             return;

@@ -22,18 +22,21 @@
 package cynoodle.base.makeme;
 
 import com.mongodb.client.model.Filters;
-import cynoodle.base.access.AccessList;
-import cynoodle.base.access.AccessLists;
+import cynoodle.base.permissions.Permission;
+import cynoodle.base.permissions.PermissionReference;
 import cynoodle.discord.GEntity;
 import cynoodle.entities.EIdentifier;
 import cynoodle.entities.EIndex;
 import cynoodle.entities.EntityIOException;
 import cynoodle.mongo.BsonDataException;
 import cynoodle.mongo.fluent.FluentDocument;
+import net.dv8tion.jda.api.entities.Member;
 import org.bson.conversions.Bson;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * A make-me group is a collection of {@link MakeMe make-me}.
@@ -58,9 +61,9 @@ public final class MakeMeGroup extends GEntity {
     private String name;
 
     /**
-     * The access list for this group.
+     * The permission for this group.
      */
-    private AccessList access = AccessLists.create(this);
+    private PermissionReference permission = null;
 
     //
 
@@ -95,8 +98,12 @@ public final class MakeMeGroup extends GEntity {
     //
 
     @Nonnull
-    public AccessList getAccess() {
-        return this.access;
+    public Optional<Permission> getPermission() {
+        return this.permission == null ? Optional.empty() : this.permission.get();
+    }
+
+    public void setPermission(@Nullable Permission permission) {
+        this.permission = permission == null ? null : PermissionReference.of(permission);
     }
 
     //
@@ -107,6 +114,12 @@ public final class MakeMeGroup extends GEntity {
 
     public void setUniqueEnabled(boolean unique) {
         this.unique = unique;
+    }
+
+    // ===
+
+    public boolean canAccess(@Nonnull Member member) {
+        return this.permission == null || this.permission.require().test(member);
     }
 
     // ===
@@ -131,8 +144,7 @@ public final class MakeMeGroup extends GEntity {
 
         this.key = source.getAt(KEY_KEY).asString().or(this.key);
         this.name = source.getAt("name").asString().or(this.name);
-        this.access = source.getAt("access").as(AccessLists.load(this)).or(this.access);
-
+        this.permission = source.getAt("permission").asNullable(PermissionReference.codec()).or(this.permission);
         this.unique = source.getAt("unique").asBoolean().or(this.unique);
     }
 
@@ -143,8 +155,7 @@ public final class MakeMeGroup extends GEntity {
 
         data.setAt(KEY_KEY).asString().to(this.key);
         data.setAt("name").asString().to(this.name);
-        data.setAt("access").as(AccessLists.store()).to(this.access);
-
+        data.setAt("permission").asNullable(PermissionReference.codec()).to(this.permission);
         data.setAt("unique").asBoolean().to(this.unique);
 
         return data;
