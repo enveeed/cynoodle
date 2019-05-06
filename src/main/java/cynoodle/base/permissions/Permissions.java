@@ -82,22 +82,16 @@ public final class Permissions {
 
     @Nonnull
     public Permission createPermission(@Nonnull Guild guild,
-                                       @Nonnull String name,
                                        boolean statusDefault) {
         return this.permissionEntityManager.create(guild,
                 x -> {
-                    x.setName(name);
                     x.setStatusDefault(statusDefault);
                 });
     }
 
     @Nonnull
-    public Permission createPermission(@Nonnull Guild guild,
-                                       @Nonnull String name) {
-        return this.permissionEntityManager.create(guild,
-                x -> {
-                    x.setName(name);
-                });
+    public Permission createPermission(@Nonnull Guild guild) {
+        return this.permissionEntityManager.create(guild);
     }
 
     // ===

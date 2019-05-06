@@ -44,27 +44,10 @@ public final class Permission extends GEntity {
     // ===
 
     /**
-     * The name of this permission.
-     */
-    // NOTE: Always initialized via setName() from Permissions.createPermission(), so never null.
-    private String name;
-
-    /**
      * The default status of this permission, which {@link Permissions#test(Member, Permission)} will
      * fall back to in case the permission is defined nowhere, for neither allow or deny.
      */
     private boolean statusDefault = false;
-
-    // ===
-
-    @Nonnull
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(@Nonnull String name) {
-        this.name = name;
-    }
 
     //
 
@@ -87,8 +70,6 @@ public final class Permission extends GEntity {
 
     @Override
     public void fromBson(@Nonnull FluentDocument data) throws BSONException {
-
-        this.name = data.getAt("name").asString().value();
         this.statusDefault = data.getAt("status_default").asBoolean().or(this.statusDefault);
 
     }
@@ -98,7 +79,6 @@ public final class Permission extends GEntity {
     public FluentDocument toBson() throws BSONException {
         FluentDocument data = FluentDocument.wrapNew();
 
-        data.setAt("name").asString().to(this.name);
         data.setAt("status_default").asBoolean().to(this.statusDefault);
 
         return data;
