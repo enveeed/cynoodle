@@ -538,6 +538,10 @@ public class EntityManager<E extends Entity> {
         delete(entity.getID());
     }
 
+    public final void delete(@Nonnull Bson filter) {
+        first(filter).ifPresent(this::delete);
+    }
+
     //
 
     public final void deleteAll() {
@@ -553,6 +557,10 @@ public class EntityManager<E extends Entity> {
     public final void deleteAll(@Nonnull E... entities) {
         for (E entity : entities)
             delete(entity);
+    }
+
+    public final void deleteAll(@Nonnull Bson filter) {
+        stream(filter).forEach(this::delete);
     }
 
     // === CACHE ===
