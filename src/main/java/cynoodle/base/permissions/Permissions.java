@@ -71,30 +71,21 @@ public final class Permissions {
         return this.memberEntityManager;
     }
 
-    // ===
+    // === PERMISSIONS ===
 
     @Nonnull
-    public Optional<Permission> getPermission(long id) {
+    public Optional<Permission> get(long id) {
         return this.permissionEntityManager.get(id);
     }
 
     //
 
     @Nonnull
-    public Permission createPermission(@Nonnull Guild guild,
-                                       boolean statusDefault) {
-        return this.permissionEntityManager.create(guild,
-                x -> {
-                    x.setStatusDefault(statusDefault);
-                });
-    }
-
-    @Nonnull
-    public Permission createPermission(@Nonnull Guild guild) {
+    public Permission create(@Nonnull Guild guild) {
         return this.permissionEntityManager.create(guild);
     }
 
-    // ===
+    // === CONTAINERS ===
 
     /**
      * Get the {@link PermissionRole} for the given Role or create it if it does not exist.
@@ -102,9 +93,11 @@ public final class Permissions {
      * @return the permission role
      */
     @Nonnull
-    public PermissionRole getRolePermissions(@Nonnull Role role) {
+    public PermissionRole forRole(@Nonnull Role role) {
         return this.roleEntityManager.firstOrCreate(PermissionRole.filterRole(role),
-                x -> x.create(DiscordPointer.to(role)));
+                x -> {
+                    x.setRole(DiscordPointer.to(role));
+                });
     }
 
     /**
@@ -112,11 +105,11 @@ public final class Permissions {
      * create it if it does not exist.
      * @param guild the guild
      * @return the permission role
-     * @see #getRolePermissions(Role)
+     * @see #forRole(Role)
      */
     @Nonnull
-    public PermissionRole getRolePermissionsPublic(@Nonnull Guild guild) {
-        return getRolePermissions(guild.getPublicRole());
+    public PermissionRole forPublicRole(@Nonnull Guild guild) {
+        return forRole(guild.getPublicRole());
     }
 
     /**
@@ -125,24 +118,25 @@ public final class Permissions {
      * @return the permission member
      */
     @Nonnull
-    public PermissionMember getMemberPermissions(@Nonnull Member member) {
+    public PermissionMember forMember(@Nonnull Member member) {
         return this.memberEntityManager.firstOrCreate(member);
     }
 
-    // ===
+    // === TEST === //
 
     /**
      * Test if the given member has the given permission, either directly via {@link PermissionMember}
-     * or due to their roles via {@link PermissionRole}. If this is not the case, use the default status of the permission.
+     * or due to their roles via {@link PermissionRole}. If this is not the case, use the fallback value.
      * @param member the member
      * @param permission the permission
-     * @return true
+     * @param fallback the fallback value
+     * @return true if the member has the permission, false if denied, the fallback otherwise
      */
-    public boolean test(@Nonnull Member member, @Nonnull Permission permission) {
+    public boolean test(@Nonnull Member member, @Nonnull Permission permission, boolean fallback) {
 
         // 1. test directly
 
-        PermissionContainer permissionsDirect = this.getMemberPermissions(member).getPermissions();
+        PermissionContainer permissionsDirect = this.forMember(member).getPermissions();
 
         if(permissionsDirect.contains(permission)) {
             return permissionsDirect.allows(permission);
@@ -151,7 +145,7 @@ public final class Permissions {
         // 2. test roles (highest -> lowest)
 
         for (Role role : member.getRoles()) {
-            PermissionContainer permissionsRole = this.getRolePermissions(role).getPermissions();
+            PermissionContainer permissionsRole = this.forRole(role).getPermissions();
             if(permissionsRole.contains(permission)) {
                 return permissionsRole.allows(permission);
             }
@@ -159,14 +153,18 @@ public final class Permissions {
 
         // 3. test public role ("lowest")
 
-        PermissionContainer permissionsPublicRole = this.getRolePermissionsPublic(member.getGuild()).getPermissions();
+        PermissionContainer permissionsPublicRole = this.forPublicRole(member.getGuild()).getPermissions();
         if(permissionsPublicRole.contains(permission)) {
             return permissionsPublicRole.allows(permission);
         }
 
         // 4. use default since the permission was never set anywhere
 
-        return permission.getStatusDefault();
+        return fallback;
+    }
+
+    public boolean test(@Nonnull Member member, @Nonnull Permission permission) {
+        return test(member, permission, false);
     }
 
     // ===

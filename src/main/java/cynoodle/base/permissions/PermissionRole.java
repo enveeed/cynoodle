@@ -50,12 +50,9 @@ public final class PermissionRole extends Entity {
 
     // ===
 
-    // internal creation method
-    void create(DiscordPointer role) {
+    void setRole(@Nonnull DiscordPointer role) {
         this.role = role;
     }
-
-    // ===
 
     @Nonnull
     public Role getRole() {

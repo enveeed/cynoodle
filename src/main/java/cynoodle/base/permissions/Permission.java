@@ -26,9 +26,7 @@ import cynoodle.entities.EIdentifier;
 import cynoodle.entities.EntityReference;
 import cynoodle.entities.EntityType;
 import cynoodle.mongo.fluent.Codec;
-import cynoodle.mongo.fluent.FluentDocument;
 import net.dv8tion.jda.api.entities.Member;
-import org.bson.BSONException;
 
 import javax.annotation.Nonnull;
 
@@ -43,45 +41,8 @@ public final class Permission extends GEntity {
 
     // ===
 
-    /**
-     * The default status of this permission, which {@link Permissions#test(Member, Permission)} will
-     * fall back to in case the permission is defined nowhere, for neither allow or deny.
-     */
-    private boolean statusDefault = false;
-
-    //
-
-    public boolean getStatusDefault() {
-        return this.statusDefault;
-    }
-
-    void setStatusDefault(boolean status) {
-        this.statusDefault = status;
-    }
-
-    // ===
-
     public boolean test(@Nonnull Member member) {
-        return Permissions.get()
-                .test(member, this);
-    }
-
-    // ===
-
-    @Override
-    public void fromBson(@Nonnull FluentDocument data) throws BSONException {
-        this.statusDefault = data.getAt("status_default").asBoolean().or(this.statusDefault);
-
-    }
-
-    @Nonnull
-    @Override
-    public FluentDocument toBson() throws BSONException {
-        FluentDocument data = FluentDocument.wrapNew();
-
-        data.setAt("status_default").asBoolean().to(this.statusDefault);
-
-        return data;
+        return Permissions.get().test(member, this);
     }
 
     // ===
@@ -93,7 +54,6 @@ public final class Permission extends GEntity {
      */
     @Nonnull
     public static Codec<EntityReference<Permission>> referenceCodec() {
-        return Permissions.get()
-                .codecPermissionReference();
+        return Permissions.get().codecPermissionReference();
     }
 }
