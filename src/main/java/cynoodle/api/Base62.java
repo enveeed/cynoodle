@@ -19,46 +19,32 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-package cynoodle.entities;
-
-import cynoodle.CyNoodle;
+package cynoodle.api;
 
 import javax.annotation.Nonnull;
-import java.time.Instant;
-import java.util.NoSuchElementException;
 
-/**
- * superinterface for public interfaces to {@link Entity Entities},
- * to prevent exposing implementation details.
- */
-public interface IEntity {
-
-    /**
-     * Get the snowflake ID of this Entity.
-     * @return the ID
-     */
-    long getID();
-
-    /**
-     * Get the creation time of this Entity.
-     * @return an Instant of the creation time of this Entity
-     * @see cynoodle.api.Snowflake
-     * @see CyNoodle#CYNOODLE_EPOCH
-     */
-    @Nonnull
-    Instant getCreationTime();
-
-    //
-
-    @Nonnull
-    String getIDString();
-
-    @Nonnull
-    String getIDStringBase62();
+public final class Base62 {
+    private Base62() {}
 
     // ===
 
-    void persist() throws IllegalStateException, EntityIOException;
+    // 0-9A-Za-z
+    public static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    void update() throws IllegalStateException, NoSuchElementException, EntityIOException;
+    // ===
+
+    @Nonnull
+    public static String toBase62(long n) {
+        byte[] digits = MoreMath.toDigits(n, 62);
+        char[] characters = new char[digits.length];
+        for (int i = 0; i < digits.length; i++) characters[i] = ALPHABET.charAt(digits[i]);
+        return String.valueOf(characters);
+    }
+
+    public static long fromBase62(@Nonnull String in) {
+        char[] characters = in.toCharArray();
+        byte[] digits = new byte[characters.length];
+        for (int i = 0; i < characters.length; i++) digits[i] = (byte) ALPHABET.indexOf(characters[i]);
+        return MoreMath.fromDigits(digits, 62);
+    }
 }

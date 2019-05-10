@@ -35,4 +35,34 @@ public final class MoreMath {
         if(m < 0) throw new IllegalArgumentException("Argument cannot be negative: "+m);
         return (m*(m+1)*((2*m)+1)) / 6;
     }
+
+    // ===
+
+    // get the digits of the input number n in the given base (1 to 127)
+    public static byte[] toDigits(long n, int b) {
+        if(b < 1 || b > Byte.MAX_VALUE)
+            throw new IllegalArgumentException("Invalid base: " + b);
+
+        // amount of digits the output will have in the given base
+        int length = n == 0L ? 0 : (int)(Math.floor(Math.log(n) / Math.log(b)) + 1);
+
+        byte[] digits = new byte[length];
+        for (int i = digits.length - 1; i >= 0; i--) {
+            digits[i] = (byte) (n % b);
+            n = Math.floorDiv(n, b);
+        }
+
+        return digits;
+    }
+
+    // get the number of the input digits in the given base (1 to 127)
+    public static long fromDigits(byte[] digits, int b) {
+        if(b < 1 || b > Byte.MAX_VALUE)
+            throw new IllegalArgumentException("Invalid base: " + b);
+        long n = 0L;
+        for (int i = 0; i < digits.length; i++) {
+            n = (b * n) + digits[i];
+        }
+        return n;
+    }
 }

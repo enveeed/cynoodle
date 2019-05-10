@@ -22,6 +22,7 @@
 package cynoodle.entities;
 
 import cynoodle.CyNoodle;
+import cynoodle.api.Base62;
 import cynoodle.api.Snowflake;
 import cynoodle.mongo.IBsonDocument;
 
@@ -69,6 +70,20 @@ public abstract class Entity implements IEntity, IBsonDocument {
     public final Instant getCreationTime() {
         return this.manager.getSnowflake()
                 .getCreationTime(this.id);
+    }
+
+    //
+
+    @Nonnull
+    @Override
+    public final String getIDString() {
+        return Long.toString(this.id);
+    }
+
+    @Nonnull
+    @Override
+    public String getIDStringBase62() {
+        return Base62.toBase62(this.id);
     }
 
     // === MANAGER ===
