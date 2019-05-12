@@ -25,7 +25,9 @@ import cynoodle.discord.GEntity;
 import cynoodle.entities.EIdentifier;
 import cynoodle.entities.EntityReference;
 import cynoodle.entities.EntityType;
+import cynoodle.mongo.BsonDataException;
 import cynoodle.mongo.fluent.Codec;
+import cynoodle.mongo.fluent.FluentDocument;
 import net.dv8tion.jda.api.entities.Member;
 
 import javax.annotation.Nonnull;
@@ -41,8 +43,76 @@ public final class Permission extends GEntity {
 
     // ===
 
+    /**
+     * The {@link PermissionType} key for this permission.
+     */
+    private String permissionType;
+
+    // ===
+
+    @Nonnull
+    public String getPermissionTypeKey() {
+        return this.permissionType;
+    }
+
+    @Nonnull
+    public PermissionType getPermissionType() {
+        // NOTE: This throws in case this is a orphan permission.
+        return Permissions.get().getTypeRegistry()
+                .require(this.permissionType);
+    }
+
+    //
+
+    void setPermissionTypeKey(@Nonnull String permissionType) {
+        this.permissionType = permissionType;
+    }
+
+    // ===
+
+    // These methods all depend on the permission type
+
+    @Nonnull
+    public String getName() {
+        return getPermissionType()
+                .getPermissionName(this);
+    }
+
+    // ...
+
+    // === INTERNAL ===
+
+    // this is the case if the type is no longer known
+    // TODO also introduce a way to detect if the type no longer controls this permission
+    boolean isOrphan() {
+        return !Permissions.get().getTypeRegistry()
+                .contains(getPermissionTypeKey());
+    }
+
+    // ===
+
     public boolean test(@Nonnull Member member) {
-        return Permissions.get().test(member, this);
+        return Permissions.get()
+                .test(member, this);
+    }
+
+    // ===
+
+    @Override
+    public void fromBson(@Nonnull FluentDocument source) throws BsonDataException {
+        super.fromBson(source);
+
+        this.permissionType = source.getAt("permission_type").asString().value();
+    }
+
+    @Nonnull
+    @Override
+    public FluentDocument toBson() throws BsonDataException {
+        FluentDocument data = super.toBson();
+
+        data.setAt("permission_type").asString().to(this.permissionType);
+
+        return data;
     }
 
     // ===

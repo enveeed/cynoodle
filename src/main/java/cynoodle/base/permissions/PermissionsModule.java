@@ -21,6 +21,7 @@
 
 package cynoodle.base.permissions;
 
+import com.google.common.flogger.FluentLogger;
 import cynoodle.module.MIdentifier;
 import cynoodle.module.Module;
 
@@ -29,6 +30,8 @@ import javax.annotation.Nonnull;
 @MIdentifier(PermissionsModule.IDENTIFIER)
 public final class PermissionsModule extends Module {
     private PermissionsModule() {}
+
+    private static final FluentLogger LOG = FluentLogger.forEnclosingClass();
 
     static final String IDENTIFIER = "base:permissions";
 
@@ -50,6 +53,11 @@ public final class PermissionsModule extends Module {
         noodle().getDiscord().getAPI().addEventListener(new PermissionsEventHandler());
 
         // TODO test if something was deleted while we were offline and remove those permissions (role + member)
+
+        // delete orphans
+        LOG.atFine().log("Deleting orphan permissions ...");
+        this.permissions.deleteOrphanPermissions();
+        LOG.atFine().log("Done.");
     }
 
     @Override

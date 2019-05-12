@@ -57,6 +57,9 @@ public final class Permissions {
     private final MEntityManager<PermissionMember> memberEntityManager
             = new MEntityManager<>(PermissionMember.TYPE);
 
+    private final PermissionTypeRegistry typeRegistry
+            = new PermissionTypeRegistry();
+
     // ===
 
     GEntityManager<Permission> getPermissionEntityManager() {
@@ -71,6 +74,10 @@ public final class Permissions {
         return this.memberEntityManager;
     }
 
+    PermissionTypeRegistry getTypeRegistry() {
+        return this.typeRegistry;
+    }
+
     // === PERMISSIONS ===
 
     @Nonnull
@@ -80,9 +87,24 @@ public final class Permissions {
 
     //
 
+    /**
+     * Create a new Permission of the given type on the given guild.
+     * The type must be registered.
+     * @param type the type, must be registered
+     * @param guild the guild
+     * @return the new permission
+     */
     @Nonnull
-    public Permission create(@Nonnull Guild guild) {
-        return this.permissionEntityManager.create(guild);
+    public Permission create(@Nonnull PermissionType type, @Nonnull Guild guild) {
+
+        // ensure that the permission type is registered so we don't accidentally create orphan permissions
+        if(!this.typeRegistry.contains(type))
+            throw new IllegalArgumentException("Cannot create new Permission with unregistered PermissionType \"" + type.getKey() + "\"");
+
+        return this.permissionEntityManager.create(guild,
+                x -> {
+                    x.setPermissionTypeKey(type.getKey());
+                });
     }
 
     // === CONTAINERS ===
@@ -178,6 +200,19 @@ public final class Permissions {
     @Nonnull
     public Set<Permission> getPermissions(@Nonnull Guild guild) {
         return this.permissionEntityManager.stream(guild).collect(Collectors.toUnmodifiableSet());
+    }
+
+    // ===
+
+    /**
+     * Delete all permissions which are orphans, that are permissions
+     * of which the type is no longer known.
+     */
+    // TODO also detect if the type no longer controls the permission
+    void deleteOrphanPermissions() {
+        this.permissionEntityManager.stream()
+                .filter(Permission::isOrphan)
+                .forEach(this.permissionEntityManager::delete);
     }
 
     // ===
