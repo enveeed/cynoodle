@@ -41,7 +41,7 @@ public final class PermissionContainer implements IBsonArray {
 
     // ===
 
-    private Map<Long, PermissionEntry> permissions = new HashMap<>();
+    private Map<String, PermissionEntry> permissions = new HashMap<>();
 
     // === PERMISSIONS ===
 
@@ -62,7 +62,7 @@ public final class PermissionContainer implements IBsonArray {
      * @param permission the permission
      * @param allow true to allow, false to deny
      */
-    public void set(Permission permission, boolean allow) {
+    public void set(String permission, boolean allow) {
         this.setEntry(permission, allow);
     }
 
@@ -70,7 +70,7 @@ public final class PermissionContainer implements IBsonArray {
      * Set the given permission to <b>allow</b>.
      * @param permission the permission
      */
-    public void set(Permission permission) {
+    public void set(String permission) {
         set(permission, true);
     }
 
@@ -78,7 +78,7 @@ public final class PermissionContainer implements IBsonArray {
      * Unset the given permission.
      * @param permission the permission
      */
-    public void unset(Permission permission) {
+    public void unset(String permission) {
         this.unsetEntry(permission);
     }
 
@@ -90,30 +90,30 @@ public final class PermissionContainer implements IBsonArray {
      * @param permission the permission
      * @return true if set to allow or deny, false if unset
      */
-    public boolean contains(Permission permission) {
-        return this.permissions.containsKey(permission.getID());
+    public boolean contains(String permission) {
+        return this.permissions.containsKey(permission);
     }
 
     //
 
-    public boolean allows(Permission permission) {
+    public boolean allows(String permission) {
         if(!contains(permission)) return false;
-        else return this.permissions.get(permission.getID()).isAllowed();
+        else return this.permissions.get(permission).isAllowed();
     }
 
-    public boolean denies(Permission permission) {
+    public boolean denies(String permission) {
         if(!contains(permission)) return false;
-        else return this.permissions.get(permission.getID()).isDenied();
+        else return this.permissions.get(permission).isDenied();
     }
 
     // ===
 
-    private void setEntry(Permission permission, boolean allow) {
-        this.permissions.put(permission.getID(), new PermissionEntry(permission, allow));
+    private void setEntry(String permission, boolean allow) {
+        this.permissions.put(permission, new PermissionEntry(permission, allow));
     }
 
-    private void unsetEntry(Permission permission) {
-        this.permissions.remove(permission.getID());
+    private void unsetEntry(String permission) {
+        this.permissions.remove(permission);
     }
 
     // ===
@@ -127,7 +127,7 @@ public final class PermissionContainer implements IBsonArray {
 
         this.permissions = data.collect()
                 .as(Codec.load(PermissionEntry.codec()))
-                .toMapOr(PermissionEntry::getPermissionID, this.permissions);
+                .toMapOr(PermissionEntry::getPermission, this.permissions);
 
     }
 

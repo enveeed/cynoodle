@@ -23,18 +23,14 @@ package cynoodle.base.permissions;
 
 import com.google.common.flogger.FluentLogger;
 import cynoodle.discord.DiscordPointer;
-import cynoodle.discord.GEntityManager;
 import cynoodle.discord.MEntityManager;
 import cynoodle.entities.EntityManager;
-import cynoodle.entities.EntityReference;
-import cynoodle.mongo.fluent.Codec;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 /**
  * Central permission management.
@@ -46,25 +42,23 @@ public final class Permissions {
 
     // ===
 
+    /**
+     * The regex all permissions must match.
+     */
+    static final Pattern REGEX_PERMISSION = Pattern.compile("^[\\w.]{1,128}$");
+
+    // ===
+
     Permissions() {}
 
     // ===
 
-    private final GEntityManager<Permission> permissionEntityManager
-            = new GEntityManager<>(Permission.TYPE);
     private final EntityManager<PermissionRole> roleEntityManager
             = new EntityManager<>(PermissionRole.TYPE);
     private final MEntityManager<PermissionMember> memberEntityManager
             = new MEntityManager<>(PermissionMember.TYPE);
 
-    private final PermissionTypeRegistry typeRegistry
-            = new PermissionTypeRegistry();
-
     // ===
-
-    GEntityManager<Permission> getPermissionEntityManager() {
-        return this.permissionEntityManager;
-    }
 
     EntityManager<PermissionRole> getRoleEntityManager() {
         return this.roleEntityManager;
@@ -72,39 +66,6 @@ public final class Permissions {
 
     MEntityManager<PermissionMember> getMemberEntityManager() {
         return this.memberEntityManager;
-    }
-
-    PermissionTypeRegistry getTypeRegistry() {
-        return this.typeRegistry;
-    }
-
-    // === PERMISSIONS ===
-
-    @Nonnull
-    public Optional<Permission> get(long id) {
-        return this.permissionEntityManager.get(id);
-    }
-
-    //
-
-    /**
-     * Create a new Permission of the given type on the given guild.
-     * The type must be registered.
-     * @param type the type, must be registered
-     * @param guild the guild
-     * @return the new permission
-     */
-    @Nonnull
-    public Permission create(@Nonnull PermissionType type, @Nonnull Guild guild) {
-
-        // ensure that the permission type is registered so we don't accidentally create orphan permissions
-        if(!this.typeRegistry.contains(type))
-            throw new IllegalArgumentException("Cannot create new Permission with unregistered PermissionType \"" + type.getKey() + "\"");
-
-        return this.permissionEntityManager.create(guild,
-                x -> {
-                    x.setPermissionTypeKey(type.getKey());
-                });
     }
 
     // === CONTAINERS ===
@@ -144,7 +105,7 @@ public final class Permissions {
         return this.memberEntityManager.firstOrCreate(member);
     }
 
-    // === TEST === //
+    // === TEST ===
 
     /**
      * Test if the given member has the given permission, either directly via {@link PermissionMember}
@@ -154,7 +115,11 @@ public final class Permissions {
      * @param fallback the fallback value
      * @return true if the member has the permission, false if denied, the fallback otherwise
      */
-    public boolean test(@Nonnull Member member, @Nonnull Permission permission, boolean fallback) {
+    public boolean test(@Nonnull Member member, @Nonnull String permission, boolean fallback) {
+
+        // verify permission
+        if(!isValidPermission(permission))
+            throw new IllegalArgumentException("Invalid permission: " + permission);
 
         // 1. test directly
 
@@ -180,47 +145,19 @@ public final class Permissions {
             return permissionsPublicRole.allows(permission);
         }
 
-        // 4. use default since the permission was never set anywhere
+        // 4. use fallback since the permission was never set anywhere
 
         return fallback;
     }
 
-    public boolean test(@Nonnull Member member, @Nonnull Permission permission) {
+    public boolean test(@Nonnull Member member, @Nonnull String permission) {
         return test(member, permission, false);
     }
 
     // ===
 
-    /**
-     * Get a set of all permissions known on the given Guild.
-     * NOTE: This method also deletes any permissions encountered which have an unknown type.
-     * @param guild the guild
-     * @return a set of all permissions for this guild
-     */
-    @Nonnull
-    public Set<Permission> getPermissions(@Nonnull Guild guild) {
-        return this.permissionEntityManager.stream(guild).collect(Collectors.toUnmodifiableSet());
-    }
-
-    // ===
-
-    /**
-     * Delete all permissions which are orphans, that are permissions
-     * of which the type is no longer known.
-     */
-    // TODO also detect if the type no longer controls the permission
-    void deleteOrphanPermissions() {
-        this.permissionEntityManager.stream()
-                .filter(Permission::isOrphan)
-                .forEach(this.permissionEntityManager::delete);
-    }
-
-    // ===
-
-    // TODO this is ugly, find another way to do this (fix entity ref. as a whole)
-    @Nonnull
-    public Codec<EntityReference<Permission>> codecPermissionReference() {
-        return this.permissionEntityManager.referenceCodec();
+    public static boolean isValidPermission(@Nonnull String permission) {
+        return REGEX_PERMISSION.matcher(permission).matches();
     }
 
     // ===

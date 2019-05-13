@@ -21,7 +21,6 @@
 
 package cynoodle.base.permissions;
 
-import cynoodle.entities.EntityReference;
 import cynoodle.mongo.IBsonDocument;
 import cynoodle.mongo.IBsonDocumentCodec;
 import cynoodle.mongo.fluent.Codec;
@@ -31,7 +30,7 @@ import org.bson.BSONException;
 import javax.annotation.Nonnull;
 
 /**
- * An immutable Entry for a {@link Permission} into a {@link PermissionContainer},
+ * An immutable Entry for a permission into a {@link PermissionContainer},
  * to either <b>allow</b> or <b>deny</b> it.
  */
 public final class PermissionEntry implements IBsonDocument {
@@ -39,13 +38,13 @@ public final class PermissionEntry implements IBsonDocument {
 
     // ===
 
-    private EntityReference<Permission> permission;
+    private String permission;
     private boolean status;
 
     // ===
 
-    PermissionEntry(Permission permission, boolean status) {
-        this.permission = permission.reference(Permission.class);
+    PermissionEntry(@Nonnull String permission, boolean status) {
+        this.permission = permission;
         this.status = status;
     }
 
@@ -56,18 +55,8 @@ public final class PermissionEntry implements IBsonDocument {
      * @return the permission
      */
     @Nonnull
-    public Permission getPermission() {
-        return this.permission.require();
-    }
-
-    /**
-     * Get the permission ID of this Entry.
-     * This directly uses the references ID instead of checking if it exists first,
-     * thus making it faster (but not ensuring valid state)
-     * @return the permission ID
-     */
-    public long getPermissionID() {
-        return this.permission.getID();
+    public String getPermission() {
+        return this.permission;
     }
 
     //
@@ -90,13 +79,9 @@ public final class PermissionEntry implements IBsonDocument {
 
     // ===
 
-    // TODO replace the following occurrences of entity ref. codec with improved form once its there
-
     @Override
     public void fromBson(@Nonnull FluentDocument data) throws BSONException {
-        this.permission = data.getAt("permission")
-                .as(EntityReference.codecWith(Permissions.get().getPermissionEntityManager()))
-                .or(this.permission);
+        this.permission = data.getAt("permission").asString().or(this.permission);
         this.status = data.getAt("status").asBoolean().or(this.status);
     }
 
@@ -105,7 +90,7 @@ public final class PermissionEntry implements IBsonDocument {
     public FluentDocument toBson() throws BSONException {
         FluentDocument data = FluentDocument.wrapNew();
 
-        data.setAt("permission").as(EntityReference.codecWith(Permissions.get().getPermissionEntityManager())).to(this.permission);
+        data.setAt("permission").asString().to(this.permission);
         data.setAt("status").asBoolean().to(this.status);
 
         return data;
