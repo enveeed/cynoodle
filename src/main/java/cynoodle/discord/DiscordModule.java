@@ -27,21 +27,18 @@ import cynoodle.CyNoodle;
 import cynoodle.module.MIdentifier;
 import cynoodle.module.MSystem;
 import cynoodle.module.Module;
-import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.internal.utils.JDALogger;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 /**
  * This module manages all Discord API (JDA) functionality.
@@ -86,14 +83,6 @@ public final class DiscordModule extends Module {
     @Override
     protected void start() {
         super.start();
-
-        LOG.atFine().log("Modifying JDA logging ...");
-
-        try {
-            setupJDALogging();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         LOG.atInfo().log("Connecting to Discord ...");
 
@@ -216,6 +205,10 @@ public final class DiscordModule extends Module {
     
     // === UTIL ===
 
+    // NOTE: This is no longer needed because of
+    // https://github.com/DV8FromTheWorld/JDA/commit/405925e3ae69b3c9b3078d1b61652f0a99347357
+
+    /*
     private static void setupJDALogging() throws Exception {
 
         Field field = JDALogger.class.getDeclaredField("SLF4J_ENABLED");
@@ -227,6 +220,6 @@ public final class DiscordModule extends Module {
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
         field.set(null, true);
-    }
+    }*/
 
 }
