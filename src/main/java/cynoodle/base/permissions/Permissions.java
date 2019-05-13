@@ -45,7 +45,7 @@ public final class Permissions {
     /**
      * The regex all permissions must match.
      */
-    static final Pattern REGEX_PERMISSION = Pattern.compile("^[\\w.]{1,128}$");
+    static final Pattern REGEX_PERMISSION = Pattern.compile("^[\\w.]{1,64}$");
 
     // ===
 
