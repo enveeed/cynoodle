@@ -103,6 +103,16 @@ public final class FluentArray implements FluentValue {
             return new InsertAPI<>(v -> v == null ? BsonNull.VALUE : function.apply(v));
         }
 
+        // temporary to support codec via legacy code
+        public <V> InsertAPI<V> as(Codec<V> codec) {
+            return new InsertAPI<>(Codec.store(codec));
+        }
+
+        // temporary to support codec via legacy code
+        public <V> InsertAPI<V> asNullable(Codec<V> codec) {
+            return new InsertAPI<>(v -> v == null ? BsonNull.VALUE : Codec.store(codec).apply(v));
+        }
+
         public <V> InsertAPI<V> map(Function<? super V, ? extends T> function) {
             return new InsertAPI<>(function.andThen(this.function));
         }
@@ -233,6 +243,16 @@ public final class FluentArray implements FluentValue {
 
         public <V> CollectAPI<V> asNullable(Function<? super BsonValue, ? extends V> function) {
             return new CollectAPI<>(this.from, this.to, value -> value.isNull() ? null : function.apply(value));
+        }
+
+        // temporary to support codec via legacy code
+        public <V> CollectAPI<V> as(Codec<V> codec) {
+            return new CollectAPI<>(this.from, this.to, Codec.load(codec));
+        }
+
+        // temporary to support codec via legacy code
+        public <V> CollectAPI<V> asNullable(Codec<V> codec) {
+            return new CollectAPI<>(this.from, this.to, value -> value.isNull() ? null : Codec.load(codec).apply(value));
         }
 
         public <V> CollectAPI<V> map(Function<? super T, ? extends V> function) {
