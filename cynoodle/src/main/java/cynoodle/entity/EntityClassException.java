@@ -19,13 +19,24 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.entity;
 
-// cynoodle
-include("cynoodle")
+/**
+ * Indicates a problem with an {@link Entity} class.
+ */
+public final class EntityClassException extends RuntimeException {
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    EntityClassException() {}
+
+    EntityClassException(String message) {
+        super(message);
+    }
+
+    EntityClassException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    EntityClassException(Throwable cause) {
+        super(cause);
+    }
 }

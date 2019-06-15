@@ -19,13 +19,24 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.mongodb;
 
-// cynoodle
-include("cynoodle")
+/**
+ * Exception for issues with the syntax, loading and saving of {@link IBsonDocument}.
+ */
+public final class BsonDataException extends RuntimeException {
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    public BsonDataException() {}
+
+    public BsonDataException(String message) {
+        super(message);
+    }
+
+    public BsonDataException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public BsonDataException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -19,13 +19,29 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util;
 
-// cynoodle
-include("cynoodle")
+import org.junit.jupiter.api.Test;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+import static org.junit.jupiter.api.Assertions.*;
+
+class Base62Test {
+
+    @Test
+    void testBase62() {
+
+        long in = 239039208329392L;
+
+        String base62 = Base62.toBase62(in);
+
+        System.out.println("Base62: " + base62);
+
+        long out = Base62.fromBase62(base62);
+
+        System.out.println("Num: " + out);
+
+        assertEquals(in, out);
+
+    }
+
 }

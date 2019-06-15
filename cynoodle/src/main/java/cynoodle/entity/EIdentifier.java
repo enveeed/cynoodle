@@ -19,13 +19,22 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.entity;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+/**
+ * Declares the entity identifier on a {@link Entity} class.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface EIdentifier {
+
+    @Nonnull
+    String value();
+
 }

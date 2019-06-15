@@ -19,13 +19,42 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.mongodb.fluent;
 
-// cynoodle
-include("cynoodle")
+interface API {
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    API asDocument();
+
+    API asArray();
+
+    //
+
+    API asString();
+
+    API asInteger();
+
+    API asLong();
+
+    API asDouble();
+
+    API asBoolean();
+
+    //
+
+    API asDocumentNullable();
+
+    API asArrayNullable();
+
+    //
+
+    API asStringNullable();
+
+    API asIntegerNullable();
+
+    API asLongNullable();
+
+    API asDoubleNullable();
+
+    API asBooleanNullable();
+
 }

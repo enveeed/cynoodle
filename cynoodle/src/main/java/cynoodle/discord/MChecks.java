@@ -19,13 +19,24 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.discord;
 
-// cynoodle
-include("cynoodle")
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import cynoodle.util.Checks;
+import net.dv8tion.jda.api.entities.Member;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+import javax.annotation.Nonnull;
+
+public final class MChecks {
+    private MChecks() {}
+
+    // === USER ===
+
+    @Nonnull
+    @CanIgnoreReturnValue
+    public static Member notBot(Member member) {
+        Checks.notNull(member, "member");
+        UChecks.notBot(member.getUser());
+        return member;
+    }
 }

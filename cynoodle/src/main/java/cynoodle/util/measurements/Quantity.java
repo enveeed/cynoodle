@@ -19,13 +19,13 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.measurements;
 
-// cynoodle
-include("cynoodle")
+public enum Quantity {
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    LENGTH,
+    TIME,
+    MASS,
+    TEMPERATURE,
+
 }

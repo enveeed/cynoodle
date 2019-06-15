@@ -19,13 +19,13 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.base;
 
-// cynoodle
-include("cynoodle")
+/**
+ * Utility for all base modules.
+ */
+public final class BaseModules {
+    private BaseModules() {}
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    // ===
 }

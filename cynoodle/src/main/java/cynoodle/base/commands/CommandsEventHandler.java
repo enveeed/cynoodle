@@ -19,13 +19,30 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.base.commands;
 
-// cynoodle
-include("cynoodle")
+import com.google.common.eventbus.Subscribe;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+import javax.annotation.Nonnull;
+
+/**
+ * Event handler for {@link Commands}.
+ */
+public final class CommandsEventHandler {
+    CommandsEventHandler() {}
+
+    // ===
+
+    @Subscribe
+    private void onMessage(@Nonnull GuildMessageReceivedEvent event) {
+        if(event.getAuthor().isBot()) return;
+        if(event.isWebhookMessage()) return;
+
+        CommandHandler handler = Commands.get().getHandler();
+
+        handler.handle(event);
+    }
+
+
 }

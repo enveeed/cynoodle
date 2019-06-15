@@ -19,13 +19,15 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.discord.format;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+/**
+ * Represents an object which can be formatted in Discord Format (limited Markdown).
+ */
+public interface DFormattable {
+
+    @Nonnull
+    String format();
 }

@@ -19,13 +19,19 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.options;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+/**
+ * Thrown by {@link Options#parse(String)} when there is an option encountered
+ * in an input string which is not known and <code>ignoreUnknownOptions</code> is false.
+ */
+public final class OptionUnknownException extends OptionsException {
+
+    // ===
+
+    OptionUnknownException(@Nonnull String message) {
+        super(message);
+    }
 }

@@ -19,13 +19,36 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.measurements;
 
-// cynoodle
-include("cynoodle")
+public abstract class BaseUnit<U extends BaseUnit<U>> implements Unit<U> {
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    private final String identifier;
+    private final String symbol;
+    private final String name;
+
+    // ===
+
+    BaseUnit(String identifier, String symbol, String name) {
+        this.identifier = identifier;
+        this.symbol = symbol;
+        this.name = name;
+    }
+
+    // ===
+
+    @Override
+    public final String identifier() {
+        return this.identifier;
+    }
+
+    @Override
+    public final String symbol() {
+        return this.symbol;
+    }
+
+    @Override
+    public final String name() {
+        return this.name;
+    }
 }

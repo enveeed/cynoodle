@@ -19,13 +19,33 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.options;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+/**
+ * Thrown by {@link Options#parse(String)} when there was an option in the input string
+ * which required a value, but there was no value.
+ */
+public final class OptionValueMissingException extends OptionsException {
+
+    private final Option option;
+
+    // ===
+
+    OptionValueMissingException(@Nonnull String message, @Nonnull Option option) {
+        super(message);
+        this.option = option;
+    }
+
+    // ===
+
+    /**
+     * Get the option which required a value which was missing and caused this exception.
+     * @return the cause option
+     */
+    @Nonnull
+    public Option getOption() {
+        return this.option;
+    }
 }

@@ -19,13 +19,32 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.concurrent;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
+import java.time.Instant;
+import java.time.temporal.TemporalUnit;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+/**
+ * Static factory methods to create different kinds of {@link Schedule Schedules}.
+ */
+public final class Schedules {
+    private Schedules() {}
+
+    // ===
+
+    /**
+     * Create a schedule that will delay execution for the
+     * exact given amount of time when the schedule is queried.
+     * @param amount the amount
+     * @param unit the unit
+     * @return the schedule
+     */
+    @Nonnull
+    public static Schedule delay(long amount, @Nonnull TemporalUnit unit) {
+        return () -> {
+            Instant now = Instant.now();
+            return now.plus(amount, unit);
+        };
+    }
 }

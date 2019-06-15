@@ -19,13 +19,18 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.options;
 
-// cynoodle
-include("cynoodle")
+/**
+ * super runtime exception for exceptions related to {@link Options}.
+ */
+public class OptionsException extends RuntimeException {
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    OptionsException(String message) {
+        super(message);
+    }
+
+    OptionsException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

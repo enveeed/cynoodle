@@ -19,13 +19,25 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.parsing;
 
-// cynoodle
-include("cynoodle")
+/**
+ * An exception for parsers, that is thrown if an input
+ * is being parsed but was not of the expected format.
+ */
+public class ParsingException extends IllegalArgumentException {
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    public ParsingException() {}
+
+    public ParsingException(String s) {
+        super(s);
+    }
+
+    public ParsingException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ParsingException(Throwable cause) {
+        super(cause);
+    }
 }

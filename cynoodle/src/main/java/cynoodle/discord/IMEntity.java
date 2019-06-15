@@ -19,13 +19,35 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.discord;
 
-// cynoodle
-include("cynoodle")
+import cynoodle.entity.IEntity;
+import net.dv8tion.jda.api.entities.Member;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+import javax.annotation.Nullable;
+
+/**
+ * superinterface for public interfaces to {@link MEntity}.
+ */
+public interface IMEntity extends IEntity, IGEntity, IUEntity {
+
+    /**
+     * Set the given member.
+     * @param member the member or null
+     */
+    default void setMember(@Nullable Member member) {
+        this.setGuild(member == null ? null : GReference.of(member));
+        this.setUser(member == null ? null : UReference.of(member));
+    }
+
+    //
+
+    /**
+     * Check if there is a member set.
+     * @return true if there is a member, false otherwise.
+     */
+    default boolean hasMember() {
+        return this.hasGuild() && this.hasUser();
+    }
+
 }

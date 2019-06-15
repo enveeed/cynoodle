@@ -19,13 +19,20 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.mongodb;
 
-// cynoodle
-include("cynoodle")
+import cynoodle.mongodb.fluent.FluentDocument;
+import org.bson.BSONException;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+import javax.annotation.Nonnull;
+
+/**
+ * {@link FluentDocument} conversion interface.
+ */
+public interface IBsonDocument {
+
+    void fromBson(@Nonnull FluentDocument data) throws BSONException;
+
+    @Nonnull
+    FluentDocument toBson() throws BSONException;
 }

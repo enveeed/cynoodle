@@ -19,13 +19,14 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.concurrent;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
+import java.time.Instant;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+public interface Schedule {
+
+    @Nonnull
+    Instant next();
+
 }

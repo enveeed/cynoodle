@@ -19,13 +19,34 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.base.commands;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+/**
+ * A special {@link Exception} which can be thrown by {@link Command#execute(Context)}
+ * which will be handled separately and which contains a {@link CommandError}.
+ */
+public final class CommandException extends RuntimeException {
+
+    private final CommandError error;
+
+    // ===
+
+    public CommandException(@Nonnull CommandError error) {
+        this.error = error;
+    }
+
+    // ===
+
+    @Nonnull
+    public CommandError getError() {
+        return this.error;
+    }
+
+    // ===
+
+    public static void throwError(@Nonnull CommandError error) throws CommandException {
+        throw new CommandException(error);
+    }
 }

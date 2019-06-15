@@ -19,13 +19,40 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.base.commands;
 
-// cynoodle
-include("cynoodle")
+import cynoodle.mongodb.IBsonDocument;
+import cynoodle.mongodb.IBsonDocumentCodec;
+import cynoodle.mongodb.fluent.Codec;
+import cynoodle.mongodb.fluent.FluentDocument;
+import org.bson.BSONException;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+import javax.annotation.Nonnull;
+
+/**
+ * Properties for a specific {@link Command} on a guild.
+ */
+public final class CommandProperties implements IBsonDocument {
+
+    private CommandProperties() {}
+
+    // ===
+
+    @Override
+    public void fromBson(@Nonnull FluentDocument data) throws BSONException {
+
+    }
+
+    @Nonnull
+    @Override
+    public FluentDocument toBson() throws BSONException {
+        return null;
+    }
+
+    // ===
+
+    @Nonnull
+    public static Codec<CommandProperties> codec() {
+        return new IBsonDocumentCodec<>(CommandProperties::new);
+    }
 }

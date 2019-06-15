@@ -19,13 +19,7 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.modules.experience;
 
-// cynoodle
-include("cynoodle")
-
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+public class CommandLeaderBoard {
 }

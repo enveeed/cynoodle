@@ -19,13 +19,28 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.modules.experience;
 
-// cynoodle
-include("cynoodle")
+import cynoodle.base.commands.Command;
+import cynoodle.base.commands.CommandException;
+import cynoodle.base.commands.Context;
+import cynoodle.base.commands.CommandAliases;
+import cynoodle.base.commands.CommandKey;
+import cynoodle.base.commands.CommandPermission;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+import javax.annotation.Nonnull;
+
+/**
+ * This command shows general experience information for a member.
+ */
+@CommandKey("cynoodle:experience")
+@CommandAliases({"experience", "xp", "rank", "r"})
+@CommandPermission("experience.command.experience")
+public final class CommandExperience implements Command {
+    private CommandExperience() {}
+
+    @Override
+    public void execute(@Nonnull Context context) throws CommandException {
+
+    }
 }

@@ -19,13 +19,34 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.text;
 
-// cynoodle
-include("cynoodle")
+import cynoodle.util.parsing.Parser;
+import cynoodle.util.parsing.ParsingException;
+import cynoodle.util.parsing.PrimitiveParsers;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+import javax.annotation.Nonnull;
+import java.time.Duration;
+
+/**
+ * Parser for {@link Duration Durations}.
+ */
+public final class DurationParser implements Parser<Duration> {
+
+    private final static DurationParser instance = new DurationParser();
+
+    // ===
+
+    @Nonnull
+    public Duration parse(@Nonnull String input) throws ParsingException {
+        // TODO replace this with actual duration parsing as right now its only parsing days
+        return Duration.ofDays(PrimitiveParsers.parseLong().parse(input));
+    }
+
+    // ===
+
+    @Nonnull
+    public static DurationParser get() {
+        return instance;
+    }
 }

@@ -19,13 +19,16 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.entity;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
+import java.lang.annotation.*;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface EIndexes {
+
+    @Nonnull
+    EIndex[] value();
+
 }

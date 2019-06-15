@@ -19,13 +19,25 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.entity;
 
-// cynoodle
-include("cynoodle")
+/**
+ * Indicates a problem with the data IO of an {@link Entity} instance.
+ */
+public final class EntityIOException extends RuntimeException {
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+    EntityIOException() {
+    }
+
+    EntityIOException(String message) {
+        super(message);
+    }
+
+    EntityIOException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    EntityIOException(Throwable cause) {
+        super(cause);
+    }
 }

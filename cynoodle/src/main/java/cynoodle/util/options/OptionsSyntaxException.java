@@ -19,13 +19,19 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.util.options;
 
-// cynoodle
-include("cynoodle")
+import javax.annotation.Nonnull;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+/**
+ * Thrown by {@link Options#parse(String)} when the input syntax could not
+ * be correctly parsed by the parser, for various reasons.
+ */
+public final class OptionsSyntaxException extends OptionsException {
+
+    // ===
+
+    OptionsSyntaxException(@Nonnull String message) {
+        super(message);
+    }
 }

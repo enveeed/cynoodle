@@ -19,13 +19,16 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.discord;
 
-// cynoodle
-include("cynoodle")
+import net.dv8tion.jda.api.sharding.ShardManager;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+public interface Discord {
+
+    ShardManager getAPI();
+
+    static Discord get() {
+        throw new UnsupportedOperationException();
+    }
+
 }

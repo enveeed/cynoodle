@@ -19,13 +19,15 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-rootProject.name = "cynoodle"
+package cynoodle.mongodb.fluent;
 
-// cynoodle
-include("cynoodle")
+import org.bson.BsonType;
+import org.bson.BsonValue;
 
-// modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
-    project(":cynoodle-" + it.name).projectDir = it
+public interface FluentValue {
+
+    BsonType getType();
+
+    BsonValue asBson();
+
 }
