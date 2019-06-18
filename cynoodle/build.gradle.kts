@@ -19,8 +19,6 @@
  * All trademarks are the property of their respective owners, including, but not limited to Discord Inc.
  */
 
-import java.io.ByteArrayOutputStream
-
 plugins {
     id("java")
     id("application")
@@ -28,18 +26,6 @@ plugins {
 
     id("de.fuerstenau.buildconfig") version "1.1.8"
 }
-
-// ======
-
-// gets the git hash of the last commit to use it in the version number
-val gitHash = {
-    val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine("git", "-C", project.projectDir, "rev-parse", "--short", "HEAD")
-        standardOutput = stdout
-    }
-    stdout.toString().trim()
-}.invoke()
 
 // ===
 

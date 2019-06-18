@@ -1,3 +1,5 @@
+import java.io.FileFilter
+
 /*
  * cynoodle, a bot for the chat platform Discord
  *
@@ -22,10 +24,10 @@
 rootProject.name = "cynoodle"
 
 // cynoodle
-include("cynoodle")
+include(":cynoodle")
 
 // modules
-file("modules").listFiles().forEach {
-    include("cynoodle-" + it.name)
+file("modules").listFiles(FileFilter { it.isDirectory }).forEach {
+    include(":cynoodle-" + it.name)
     project(":cynoodle-" + it.name).projectDir = it
 }
