@@ -21,11 +21,15 @@
 
 plugins {
     id("java")
+    id("java-library")
     id("application")
     id("idea")
 
     id("de.fuerstenau.buildconfig") version "1.1.8"
 }
+
+apply(plugin = "java")
+apply(plugin = "idea")
 
 // ===
 
@@ -53,40 +57,36 @@ application {
 
 // ===
 
-delegateClosureOf<Test> {
-    useJUnitPlatform()
-}
-
-// ===
-
 dependencies {
 
+    // NOTE: api(...) is used here cause most of these libraries should be usable also by modules
+    
     // APIs
-    implementation(group = "net.dv8tion",                   name = "JDA",                       version = "4.ALPHA.0_86")  // JDA (Discord)
-    implementation(group = "org.mongodb",                   name = "mongo-java-driver",         version = "3.10.1")     // MongoDB Java Driver
-    implementation(group = "de.u-mass",                     name = "lastfm-java",               version = "0.1.2")      // last.fm
+    api(group = "net.dv8tion",                   name = "JDA",                       version = "4.ALPHA.0_86")  // JDA (Discord)
+    api(group = "org.mongodb",                   name = "mongo-java-driver",         version = "3.10.1")     // MongoDB Java Driver
+    api(group = "de.u-mass",                     name = "lastfm-java",               version = "0.1.2")      // last.fm
 
     // Utilities / Libraries
-    implementation(group = "com.google.guava",              name = "guava",                     version = "27.0.1-jre") // Google Guava
-    implementation(group = "com.google.flogger",            name = "flogger",                   version = "0.3.1")      // Google Flogger API
-    implementation(group = "org.eclipse.collections",       name = "eclipse-collections",       version = "9.2.0")      // Eclipse Collections
-    implementation(group = "org.eclipse.collections",       name = "eclipse-collections-api",   version = "9.2.0")      // Eclipse Collections API
-    implementation(group = "com.fasterxml.jackson.core",    name = "jackson-core",              version = "2.9.8")      // Jackson (JSON)
-    implementation(group = "com.github.jillesvangurp",      name = "jsonj",                     version = "v2.56")      // JsonJ (JSON)
+    api(group = "com.google.guava",              name = "guava",                     version = "27.0.1-jre") // Google Guava
+    api(group = "com.google.flogger",            name = "flogger",                   version = "0.3.1")      // Google Flogger API
+    api(group = "org.eclipse.collections",       name = "eclipse-collections",       version = "9.2.0")      // Eclipse Collections
+    api(group = "org.eclipse.collections",       name = "eclipse-collections-api",   version = "9.2.0")      // Eclipse Collections API
+    api(group = "com.fasterxml.jackson.core",    name = "jackson-core",              version = "2.9.8")      // Jackson (JSON)
+    api(group = "com.github.jillesvangurp",      name = "jsonj",                     version = "v2.56")      // JsonJ (JSON)
 
 
     // Logging
-    implementation(group = "enveeed.carambola",             name = "carambola-core",            version = "0.0.10")      // carambola
-    implementation(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.10")      // carambola (Flogger)
-    implementation(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.10")      // carambola (SLF4J)
-    implementation(group = "enveeed.carambola",             name = "carambola-jul",             version = "0.0.10")      // carambola (JUL)
+    api(group = "enveeed.carambola",             name = "carambola-core",            version = "0.0.10")      // carambola
+    api(group = "enveeed.carambola",             name = "carambola-flogger",         version = "0.0.10")      // carambola (Flogger)
+    api(group = "enveeed.carambola",             name = "carambola-slf4j",           version = "0.0.10")      // carambola (SLF4J)
+    api(group = "enveeed.carambola",             name = "carambola-jul",             version = "0.0.10")      // carambola (JUL)
 
     // API
-    implementation(group = "com.graphql-java",              name = "graphql-java",              version = "12.0")       // GraphQL
+    api(group = "com.graphql-java",              name = "graphql-java",              version = "12.0")       // GraphQL
 
     // Legacy TODO This is for legacy imports only
-    implementation(group = "com.google.protobuf",           name = "protobuf-java",             version = "+")          // Google Protobuf
-
+    api(group = "com.google.protobuf",           name = "protobuf-java",             version = "+")          // Google Protobuf
+    
     // Testing
     testImplementation( group = "org.junit.jupiter", name = "junit-jupiter-api",    version = "5.3.2")  // JUnit API
     testRuntime(        group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.3.2")  // JUnit Engine

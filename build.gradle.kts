@@ -52,7 +52,7 @@ configure(
 
     apply(plugin = "java")
     apply(plugin = "idea")
-    
+
     version = rootProject.version
     group = "modules"
 
@@ -68,5 +68,15 @@ configure(
 
     dependencies {
         implementation(project(":cynoodle"))
+    }
+
+    // automatically replace the version placeholder
+    // in module.json with the actual version
+    delegateClosureOf<ProcessResources> {
+        filesMatching("module.json") {
+            filter {
+                it.replace("%version%", version.toString())
+            }
+        }
     }
 }
