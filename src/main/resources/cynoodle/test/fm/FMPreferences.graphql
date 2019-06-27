@@ -1,0 +1,9 @@
+type FMPreferences {
+    id: String!
+
+    username: String
+
+    format_preferred: String!
+    profile_link: Boole an!
+    profile_display: Boolean!
+}

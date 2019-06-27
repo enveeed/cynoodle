@@ -1,0 +1,17 @@
+# base:access
+
+type AccessList {
+    roles: [AccessListRoleEntry!]!
+    users: [AccessListUserEntry!]!
+    default: Int!
+}
+
+type AccessListRoleEntry {
+    role: String! # ID
+    status: Int!
+}
+
+type AccessListUserEntry {
+    user: String! # ID
+    status: Int!
+}

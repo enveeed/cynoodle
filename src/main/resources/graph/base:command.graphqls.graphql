@@ -1,0 +1,23 @@
+# base:command
+
+schema {
+    query: Query
+}
+
+type Query {
+    settings(guild: String!): CommandSettings
+}
+
+# ===
+
+type CommandSettings {
+    prefix: String!
+    nsc_policy: Int!
+    properties: [CommandProperties!]!
+}
+
+type CommandProperties {
+    identifier: String!
+    access: AccessList!
+    aliases: [String!]!
+}
