@@ -1,14 +1,12 @@
-![version](https://img.shields.io/badge/version-2019.0.0--beta-blue.svg?style=flat-square)
-![java-version](https://img.shields.io/badge/java-11-yellowgreen.svg?style=flat-square)
+# cynoodle
 
-# cynoodle-core
+`cynoodle` was a utility bot for the [Gorillaz Discord](https://discord.gg/gorillaz) and is no longer in development as of **June 11, 2019**.
 
-`cynoodle-core` is the core application for cynoodle, 
-a multi-purpose module based bot and bot framework for Discord.
+The project is licensed under **GPL v3**.
 
 ## Building
 
 This project requires at least **Java `11`** (class file version `55+`) to run and build.
 
-Use `./gradlew build` (or `gradlew.bat build` on Windows) to build cynoodle-core. This will create
+Use `./gradlew build` (or `gradlew.bat build` on Windows) to build cynoodle. This will create
 the distribution zip and tar files in `build/distributions/`.
